@@ -41,56 +41,36 @@ public class ShadowModelBenchmarkSetup {
 
         List<String> qiNames = new ArrayList<String>();
         List<String> qiTypes = new ArrayList<String>();
+        List<String> qiInclude = new ArrayList<String>();
 
         while (cfgIter.hasNext()) {
             String[] line = cfgIter.next();
-            if (line[2].equals("TRUE")) {
-                qiNames.add(line[0]);
-                qiTypes.add(line[1]);
-            }
+            qiNames.add(line[0]);
+            qiTypes.add(line[1]);
+            qiInclude.add(line[2]);
         }
 
-        Data data = getProjectedDataset(loadData(dataset), qiNames.toArray(new String[qiNames.size()]));
+        Data data = loadData(dataset);
 
         for (int i = 0; i < qiNames.size(); i++) {
-            data.getDefinition().setAttributeType(qiNames.get(i), loadHierarchy(dataset, qiNames.get(i)));
-            
-            switch (qiTypes.get(i)) {
-            case "categorical":
-                data.getDefinition().setDataType(qiNames.get(i), DataType.STRING);
-                break;
-            case "continuous":
-                data.getDefinition().setDataType(qiNames.get(i), DataType.createDecimal("#.#", Locale.US));
-                break;
-            case "ordinal":
-                // TODO
-            default:
-                throw new RuntimeException("Invalid datatype");
+            if (qiInclude.get(i).equals("TRUE")) {
+                data.getDefinition().setAttributeType(qiNames.get(i), loadHierarchy(dataset, qiNames.get(i)));
+                switch (qiTypes.get(i)) {
+                case "categorical":
+                    data.getDefinition().setDataType(qiNames.get(i), DataType.STRING);
+                    break;
+                case "continuous":
+                    data.getDefinition().setDataType(qiNames.get(i), DataType.createDecimal("#.#", Locale.US));
+                    break;
+                case "ordinal":
+                    // TODO
+                default:
+                    throw new RuntimeException("Invalid datatype");
+                }
             }
         }
         return data;
     }
-    
-    
-    /**
-     * Projects data
-     * @param data
-     * @param qis
-     * @return
-     */
-    private static Data getProjectedDataset(Data data, String[] qis) {
-        DataHandle handle = data.getHandle();
-        List<String[]> output = new ArrayList<>();
-        output.add(qis);
-        for (int i = 0; i < handle.getNumRows(); i++) {
-            String[] record = new String[qis.length];
-            for (int j = 0; j < qis.length; j++) {
-                record[j] = handle.getValue(i, handle.getColumnIndexOf(qis[j]));
-            }
-            output.add(record);
-        }
-        return Data.create(output);
-    };
     
     /**
      * Returns a dataset

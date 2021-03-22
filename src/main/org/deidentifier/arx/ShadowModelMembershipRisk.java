@@ -40,9 +40,10 @@ import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.ShadowModelBenchmarkSetup.BenchmarkDataset;
+
+import smile.classification.RandomForest;
+
 
 /**
  * Estimate risks for membership attacks, using shadow models
@@ -52,40 +53,6 @@ import org.deidentifier.arx.ShadowModelBenchmarkSetup.BenchmarkDataset;
  */
 public class ShadowModelMembershipRisk {
 
-    /**
-     * Main entry point
-     * @param args
-     * @throws IOException 
-     */
-    public static void main(String[] args) throws IOException {
-        
-        // TODO: The current implementation will not work, when a model with a data subset is being used
-        // TODO: Examples: d-presence or k-map.
-        
-        // TODO: Maybe not anonymize the output again? Might also be realistic to assume that the adversary just
-        // TODO: transforms the data in a way that she feels fits to known output, and doesn't care whether privacy 
-        // TODO: models are satisfied.
-        
-        // Example scenario
-        
-        // Create dataset
-        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS_10);
-        ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(1));
-        config.setSuppressionLimit(0.0d);
-        
-        // Anonymize
-        ARXAnonymizer anonymizer = new ARXAnonymizer();
-        
-        DataHandle output = anonymizer.anonymize(data, config).getOutput();
-        
-        // Perform risk assessment
-        ShadowModelMembershipRisk model = new ShadowModelMembershipRisk();
-        
-        
-        // TODO by setting repetitions to 0 the training is disabled - done for developing
-        model.getShadowModelBasedMembershipRisk(output, 0.01d, 0, 0);
-    }
     
     /**
      * Loads a dataset from disk
@@ -198,6 +165,9 @@ public class ShadowModelMembershipRisk {
         // codemap for uniform mapping between string-labels and int representation
         CodeMap codeMap = new CodeMap();
         
+        double[][] xTrain = new double[repetitions*2][];
+        int[] yTrain = new int[repetitions*2];
+        
         // For each training example
         for (int repetition = 0; repetition < repetitions; repetition++) {
             
@@ -236,10 +206,17 @@ public class ShadowModelMembershipRisk {
             // ---------------------------------------
             // ---------------------------------------
             
+            
+            
             // Create summarizing features
-            int[] featuresExcludingTarget = getSummary(datasetExcludingTarget, columns);
-            int[] featuresIncludingTarget = getSummary(datasetIncludingTarget, columns);
+            //int[] featuresExcludingTarget = getSummary(datasetExcludingTarget, columns);
+            //int[] featuresIncludingTarget = getSummary(datasetIncludingTarget, columns);
 
+            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, codeMap, columns).getNaiveFeatures();
+            yTrain[repetition*2] = 0;
+            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, codeMap, columns).getNaiveFeatures();
+            yTrain[repetition*2+1] = 1;
+            
             // ---------------------------------------
             // ---------------------------------------
             // TODO: Train classification method
@@ -247,10 +224,12 @@ public class ShadowModelMembershipRisk {
             // ---------------------------------------
         }
         
+        
+        //RandomForest randomForest = new RandomForest(xTrain, yTrain, 100);
 
         // Create summarizing features
         int[] featuresOutput = getSummary(outputHandle, columns);
-        new FeatureSet(outputHandle, codeMap).getNaiveFeatures();
+        new FeatureSet(outputHandle, codeMap, columns).getNaiveFeatures();
 
         // ---------------------------------------
         // ---------------------------------------
@@ -457,6 +436,9 @@ public class ShadowModelMembershipRisk {
         /** DataHandle */
         private DataHandle handle;
         
+        /** Columns to consider */
+        private int[] columns;
+        
         /** CodeMap for String -> Int mapping */
         private CodeMap codeMap;
         
@@ -475,9 +457,10 @@ public class ShadowModelMembershipRisk {
          * @param handle
          * @param codeMap
          */
-        FeatureSet (DataHandle handle, CodeMap codeMap){
+        FeatureSet (DataHandle handle, CodeMap codeMap, int[] columns){
             this.handle = handle;
             this.codeMap = codeMap;
+            this.columns = columns;
         }
         
         /**
@@ -518,7 +501,7 @@ public class ShadowModelMembershipRisk {
          * @return
          */
         double[] getAllFeatures() {
-            return Arrays.stream(new double[][]{getNaiveFeatures(), getCorrelationFeatures(), getHistogramFeatures()}).flatMapToDouble(Arrays::stream).toArray();
+            return flattenArray(new double[][]{getNaiveFeatures(), getCorrelationFeatures(), getHistogramFeatures()});
         }
               
         /**
@@ -526,8 +509,9 @@ public class ShadowModelMembershipRisk {
          * Each column is projected to 3 features.
          * Categorical:
          * [0] --> Number of unique elements
-         * [1] --> Label of most frequent element
-         * [2] --> Label of least frequent element
+         * [1] --> Label of most frequent element*
+         * [2] --> Label of least frequent element*
+         * (*) if multiple elements qualify, return element which appeared first in dataset
          * 
          * Numeric:
          * [0] --> mean
@@ -539,16 +523,16 @@ public class ShadowModelMembershipRisk {
          */
         private double[] calculateNaiveFeatures() {
             
-            double[][] result = new double[handle.getNumColumns()][];
+            double[][] result = new double[columns.length][];
             
-            for (int i = 0; i < handle.getNumColumns(); i++) {
+            for (int i = 0; i < columns.length; i++) {
 
                 String attributeName = handle.getAttributeName(i);
                 DataType<?> dt = handle.getDataType(attributeName);
                 //TODO Avoid dirty string fix
                 switch(dt+"") {
                     case "String":
-                        String[] col = getColumnAsString(handle, i);
+                        String[] col = getColumnAsString(handle, columns[i]);
                         
                         // Map to Integer labels
                         List<Integer> labelList = codeMap.getCode(Arrays.asList(col));
@@ -571,7 +555,7 @@ public class ShadowModelMembershipRisk {
                         
                         break;
                     case "Decimal":
-                        Double[] colDouble = getColumnAsDouble(handle, i);
+                        Double[] colDouble = getColumnAsDouble(handle, columns[i]);
 
                         double[] colPrimitive = ArrayUtils.toPrimitive(colDouble);
                         
@@ -592,11 +576,10 @@ public class ShadowModelMembershipRisk {
             }
 
             // flatten array
-            double[] flatResult = Arrays.stream(result).flatMapToDouble(Arrays::stream).toArray();
+            double[] flatResult = flattenArray(result);
             System.out.println(Arrays.toString(flatResult));
             return flatResult;
         }
-        
         
         /**
          * Extracts a column from the handle
@@ -628,6 +611,31 @@ public class ShadowModelMembershipRisk {
                 }
             }
             return result;
+        }
+        
+        /**
+         * Transforms array of arrays to flatten array
+         * 
+         * @param input
+         * @return
+         */
+        private double[] flattenArray(double[][] input) {
+            
+            // calculate size of flatten array
+            int outputLength = 0;
+            for(double[] part : input) {
+                outputLength += part.length;
+            }
+            
+            // copy into flatten array
+            double[] output = new double[outputLength];
+            int posOutput = 0;
+            for(double[] part : input) {
+                for(double value : part) {
+                    output[posOutput++] = value;
+                }
+            }
+            return output;
         }
         
     }
