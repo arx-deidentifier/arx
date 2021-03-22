@@ -24,11 +24,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -41,6 +39,7 @@ import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+
 
 import smile.classification.RandomForest;
 
@@ -162,8 +161,6 @@ public class ShadowModelMembershipRisk {
         // ---------------------------------------
         // ---------------------------------------
         
-        // codemap for uniform mapping between string-labels and int representation
-        CodeMap codeMap = new CodeMap();
         
         double[][] xTrain = new double[repetitions*2][];
         int[] yTrain = new int[repetitions*2];
@@ -212,9 +209,9 @@ public class ShadowModelMembershipRisk {
             //int[] featuresExcludingTarget = getSummary(datasetExcludingTarget, columns);
             //int[] featuresIncludingTarget = getSummary(datasetIncludingTarget, columns);
 
-            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, codeMap, columns).getNaiveFeatures();
+            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns).getNaiveFeatures();
             yTrain[repetition*2] = 0;
-            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, codeMap, columns).getNaiveFeatures();
+            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns).getNaiveFeatures();
             yTrain[repetition*2+1] = 1;
             
             // ---------------------------------------
@@ -225,11 +222,11 @@ public class ShadowModelMembershipRisk {
         }
         
         
-        //RandomForest randomForest = new RandomForest(xTrain, yTrain, 100);
+        //RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, 500, 100, 5, 0, 1d, SplitRule.GINI, null);
 
         // Create summarizing features
         int[] featuresOutput = getSummary(outputHandle, columns);
-        new FeatureSet(outputHandle, codeMap, columns).getNaiveFeatures();
+        new FeatureSet(outputHandle, columns).getNaiveFeatures();
 
         // ---------------------------------------
         // ---------------------------------------
@@ -365,65 +362,7 @@ public class ShadowModelMembershipRisk {
         return result;
     }
 
-    
-    /**
-     * Simple class used to map categorical string values to numeric labels
-     */
-    class CodeMap {
-        
-        /** Label --> Int Mapping */
-        private Map<String, Integer> codemap = new TreeMap<>();
-        
-        /** Next int to use for map */
-        private Integer currentPos = 0;
-        
-        /**
-         * Gets int representation for string label
-         * 
-         * @param str
-         * @return
-         */
-        Integer getCode(String str) {
-            if(!codemap.containsKey(str)) {
-                codemap.put(str, currentPos++);
-            }
-            return codemap.get(str);
-        }
 
-        /**
-         * Gets int representation for multiple string labels
-         * 
-         * @param str
-         * @ret
-         */
-        List<Integer> getCode(List<String> list) {
-            List<Integer> result = new ArrayList<>();
-            for(String str : list) {
-                result.add(getCode(str));
-            }
-            return result;
-        }
-        
-        /**
-         * Fancy represenation of code map
-         */
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            Iterator<Entry<String, Integer>> iter = codemap.entrySet().iterator();
-            while (iter.hasNext()) {
-                Entry<String, Integer> entry = iter.next();
-                sb.append(entry.getKey());
-                sb.append(" -> ");
-                sb.append(entry.getValue());
-                if (iter.hasNext()) {
-                    sb.append(",\n");
-                }
-            }
-            return sb.toString();
-        }
-        
-    }
     
     /**
      * Class used as enclosure for the features and their calculation.
@@ -438,9 +377,6 @@ public class ShadowModelMembershipRisk {
         
         /** Columns to consider */
         private int[] columns;
-        
-        /** CodeMap for String -> Int mapping */
-        private CodeMap codeMap;
         
         /** Naive feature vector */
         private double[] naiveFeatures;
@@ -457,9 +393,8 @@ public class ShadowModelMembershipRisk {
          * @param handle
          * @param codeMap
          */
-        FeatureSet (DataHandle handle, CodeMap codeMap, int[] columns){
+        FeatureSet (DataHandle handle, int[] columns){
             this.handle = handle;
-            this.codeMap = codeMap;
             this.columns = columns;
         }
         
@@ -526,16 +461,15 @@ public class ShadowModelMembershipRisk {
             double[][] result = new double[columns.length][];
             
             for (int i = 0; i < columns.length; i++) {
-
-                String attributeName = handle.getAttributeName(i);
+                System.out.println(Arrays.toString(columns));
+                String attributeName = handle.getAttributeName(columns[i]);
                 DataType<?> dt = handle.getDataType(attributeName);
                 //TODO Avoid dirty string fix
                 switch(dt+"") {
                     case "String":
-                        String[] col = getColumnAsString(handle, columns[i]);
                         
                         // Map to Integer labels
-                        List<Integer> labelList = codeMap.getCode(Arrays.asList(col));
+                        List<Integer> labelList = getCode(columns[i]);
                         // Remove duplicates 
                         //TODO Maybe use method of DataHandle instead
                         List<Integer> uniqueLabelsList = new ArrayList<Integer>(new LinkedHashSet<Integer>(labelList));
@@ -613,6 +547,30 @@ public class ShadowModelMembershipRisk {
             return result;
         }
         
+        /**
+         * Gets int representation for string label
+         * 
+         * @param str
+         * @return
+         */
+        Integer getCode(int row, int col) {
+            return handle.internalGetEncodedValue(row, col, false);  
+        }
+
+        /**
+         * Gets int representation for multiple string labels
+         * 
+         * @param str
+         * @ret
+         */
+        List<Integer> getCode(int col) {
+            List<Integer> result = new ArrayList<>();
+            for(int row = 0; row < handle.getNumRows(); row++) {
+                result.add(getCode(row, col));
+            }
+            return result;
+        }
+
         /**
          * Transforms array of arrays to flatten array
          * 
