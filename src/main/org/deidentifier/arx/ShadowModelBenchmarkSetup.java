@@ -10,6 +10,13 @@ import java.util.Locale;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.io.CSVDataInput;
 
+/**
+ * Setup class for ShadowModel MIA benchmark
+ * 
+ * @author Fabian Prasser
+ * @author Thierry Meurers
+ *
+ */
 public class ShadowModelBenchmarkSetup {
 
     /**
@@ -20,7 +27,8 @@ public class ShadowModelBenchmarkSetup {
     }
     
     /**
-     * Configures and returns the dataset
+     * Configures and returns the dataset.
+     * 
      * @param dataset
      * @param tm
      * @param qis
@@ -103,6 +111,13 @@ public class ShadowModelBenchmarkSetup {
         return Data.create("data/" + filename, Charset.defaultCharset(), ';');
     }
     
+    /**
+     * Returns handle for config file
+     * 
+     * @param dataset
+     * @return
+     * @throws IOException
+     */
     public static CSVDataInput loadDataConfig(BenchmarkDataset dataset) throws IOException {
         String filename = null;
         switch (dataset) {

@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -39,16 +38,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.apache.commons.math3.stat.descriptive.rank.Median;
-import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
-import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.ARXDecimal;
-import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.ShadowModelBenchmarkSetup.BenchmarkDataset;
 
 /**
@@ -74,8 +67,8 @@ public class ShadowModelMembershipRisk {
         // TODO: models are satisfied.
         
         // Example scenario
-        //Data data = createData("texas_10");
         
+        // Create dataset
         Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS_10);
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(1));
@@ -88,39 +81,6 @@ public class ShadowModelMembershipRisk {
         
         // Perform risk assessment
         ShadowModelMembershipRisk model = new ShadowModelMembershipRisk();
-        
-        if (1 == 0) {
-            // TODO Hardcoded stuff for testing
-            int[] targetCols = new int[] { 2, 4 };
-            for (int i = 0; i < targetCols.length; i++) {
-                int c = targetCols[i];
-                String attributeName = data.getHandle().getAttributeName(c);
-                data.getDefinition()
-                    .setDataType(attributeName,
-                                 data.getHandle().getMatchingDataTypes(c).get(0).getKey());
-            }
-
-            DataDefinition dataDef = data.getDefinition();
-            dataDef.setDataType("PAT_STATE", DataType.STRING);
-            dataDef.setDataType("LENGTH_OF_STAY", DataType.createDecimal("#.#", Locale.US));
-            dataDef.setDataType("TOTAL_CHARGES_ACCOMM", DataType.createDecimal("#.#", Locale.US));
-
-            // data.getDefinition().setDataType("LENGTH_OF_STAY",
-            // DataType.createDecimal("test"));
-            // (DataTypeWithFormat)
-            // data.getDefinition().getDataType("LENGTH_OF_STAY")
-            // System.out.println("Number of Rows: " + output.getNumRows()+
-            // "\n");
-
-            // TODO Hardcoded stuff for testing
-            // data.getDefinition().setDataType("LENGTH_OF_STAY", "INTEGER");
-
-            targetCols = new int[] { 2, 4, 11, 14 };
-            for (int i = 0; i < targetCols.length; i++) {
-                determineDataType(data.getHandle(), targetCols[i]);
-            }
-            model.getFeatures(output, targetCols);
-        }
         
         
         // TODO by setting repetitions to 0 the training is disabled - done for developing
@@ -235,6 +195,9 @@ public class ShadowModelMembershipRisk {
         // ---------------------------------------
         // ---------------------------------------
         
+        // codemap for uniform mapping between string-labels and int representation
+        CodeMap codeMap = new CodeMap();
+        
         // For each training example
         for (int repetition = 0; repetition < repetitions; repetition++) {
             
@@ -287,8 +250,7 @@ public class ShadowModelMembershipRisk {
 
         // Create summarizing features
         int[] featuresOutput = getSummary(outputHandle, columns);
-        getFeatures(outputHandle, columns);
-        new FeatureSet(outputHandle, new CodeMap()).getNaiveFaetures();
+        new FeatureSet(outputHandle, codeMap).getNaiveFeatures();
 
         // ---------------------------------------
         // ---------------------------------------
@@ -381,7 +343,6 @@ public class ShadowModelMembershipRisk {
         return result;
     }
     
-
     /**
      * Extracts a row from the handle
      * @param handle
@@ -397,132 +358,7 @@ public class ShadowModelMembershipRisk {
         return result;
     }
     
-    /**
-     * Extracts a column from the handle
-     * @param handle
-     * @param column
-     * @return
-     */
-    private String[] getColumn(DataHandle handle, int column) {
-        String[] result = new String[handle.getNumRows()];
-        for (int row = 0; row < handle.getNumRows(); row++) {
-            result[row] = handle.getValue(row, column);
-        }
-        return result;
-    }
-    
-    /**
-     * Extracts a column from the handle
-     * @param handle
-     * @param column
-     * @return
-     */
-    private Double[] getColumnDouble(DataHandle handle, int column) {
-        Double[] result = new Double[handle.getNumRows()];
-        for (int row = 0; row < handle.getNumRows(); row++) {
-            try {
-                result[row] = handle.getDouble(row, column);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-    
-    /**
-     * Calculates naive features for categorical attributes.
-     * [0] --> Number of unique elements
-     * [1] --> Label of most frequent element
-     * [2] --> Label of least frequent element
-     * 
-     * @param col
-     * @return
-     */
-    private double[] getNaiveFeatures(String[] col, CodeMap codemap) {
-        
-        // Map to Integer labels
-        List<Integer> labelList = codemap.getCode(Arrays.asList(col));
-        // Remove duplicates
-        List<Integer> uniqueLabelsList = new ArrayList<Integer>(new LinkedHashSet<Integer>(labelList));
-        
-        // count occurences and determin most and least frequent element
-        Map<Integer, Integer> labelOccMap = new TreeMap<>();
-        for(Integer label : uniqueLabelsList) {
-            labelOccMap.put(label, Collections.frequency(labelList, label));
-        }
-        //TODO Use sort instead (to avoid min=max)
-        Integer mostFreqLabel = Collections.max(labelOccMap.entrySet(), Map.Entry.comparingByValue()).getKey();
-        Integer leastFreqLabel = Collections.min(labelOccMap.entrySet(), Map.Entry.comparingByValue()).getKey();
-        
-        // return result
-        double[] result = new double[] {uniqueLabelsList.size(), mostFreqLabel, leastFreqLabel};       
 
-        return result;
-    }
-    
-    /**
-     * Calculates naive features for numeric attributes.
-     * [0] --> mean
-     * [1] --> median
-     * [2] --> var
-     * 
-     * @param col
-     * @return
-     */
-    private double[] getNaiveFeatures(Double[] col, CodeMap codemap) {
-        
-        double[] colPrimitive = ArrayUtils.toPrimitive(col);
-        
-        double mean = new Mean().evaluate(colPrimitive);
-        double median = new Median().evaluate(colPrimitive);
-        double var = new Variance().evaluate(colPrimitive);
-        
-        // return result
-        double[] result = new double[] {mean, median, var};       
-        System.out.println(Arrays.toString(colPrimitive));
-        return result;
-    }
-    
-    /**
-     * Create a feature vector
-     * @param handle
-     * @param columns
-     * @return
-     */
-    private int[] getFeatures(DataHandle handle, int[] columns) {
-        CodeMap codemap = new CodeMap();
-        //System.out.println(Arrays.toString(columns));
-        //System.out.println(columns.length);
-        for (int i = 0; i < columns.length; i++) {
-            double[] result = new double[3];
-            int c = columns[i];
-            String attributeName = handle.getAttributeName(c);
-            //DataType attributeDataType = handle.getMatchingDataTypes(c).get(0).getKey();
-            //handle.getDefinition().setDataType(attributeName, handle.getMatchingDataTypes(c).get(0).getKey());
-            //determineDataType(handle, c);
-            DataType<?> dt = handle.getDataType(attributeName);
-            System.out.println(attributeName + " | " + dt);
-            //TODO Avoid dirty string fix
-            switch(dt+"") {
-                case "String":
-                    String[] col = getColumn(handle, c);
-                    result = this.getNaiveFeatures(col, codemap);
-                    //System.out.println(codemap);
-                    break;
-                case "Decimal":
-                    Double[] colDouble = getColumnDouble(handle, c);
-                    result = this.getNaiveFeatures(colDouble, codemap);
-                    break;
-                default:
-                    System.out.println("Unsupported DT");
-                    break;
-            }
-            //System.out.println(dt + " | " + c + " | " + Arrays.toString(col));
-        System.out.println(Arrays.toString(result));
-        }
-
-        return null;
-    }
         
     /**
      * Create a summary vector
@@ -530,6 +366,7 @@ public class ShadowModelMembershipRisk {
      * @param columns
      * @return
      */
+    @Deprecated
     private int[] getSummary(DataHandle handle, int[] columns) {
 
         // ---------------------------------------
@@ -549,30 +386,6 @@ public class ShadowModelMembershipRisk {
         return result;
     }
 
-    
-    
-    /**
-     * Prints a list of matching data types
-     * @param handle
-     * @param column
-     */
-    private static void determineDataType(DataHandle handle, int column) {
-        System.out.println(" - Potential data types for attribute: "+handle.getAttributeName(column));
-        List<Pair<DataType<?>, Double>> types = handle.getMatchingDataTypes(column);
-
-        // Print entries sorted by match percentage
-        for (Pair<DataType<?>, Double> entry : types) {
-            System.out.print("   * ");
-            System.out.print(entry.getKey().getDescription().getLabel());
-            if (entry.getKey().getDescription().hasFormat()) {
-                System.out.print("[");
-                System.out.print(((DataTypeWithFormat) entry.getKey()).getFormat());
-                System.out.print("]");
-            }
-            System.out.print(": ");
-            System.out.println(entry.getValue());
-        }
-    }
     
     /**
      * Simple class used to map categorical string values to numeric labels
@@ -633,33 +446,97 @@ public class ShadowModelMembershipRisk {
         
     }
     
+    /**
+     * Class used as enclosure for the features and their calculation.
+     * 
+     * @author Thierry Meurers
+     *
+     */
     class FeatureSet {
         
+        /** DataHandle */
         private DataHandle handle;
+        
+        /** CodeMap for String -> Int mapping */
         private CodeMap codeMap;
         
+        /** Naive feature vector */
         private double[] naiveFeatures;
         
+        /** Correlation feature vector */
+        private double[] correlationFeatures;
+        
+        /** Histogram feature vector */
+        private double[] histogramFeatures;
+        
+        /**
+         * Creates a new FeatureSet
+         * 
+         * @param handle
+         * @param codeMap
+         */
         FeatureSet (DataHandle handle, CodeMap codeMap){
             this.handle = handle;
             this.codeMap = codeMap;
         }
         
-        double[] getNaiveFaetures() {
+        /**
+         * Return naive features
+         * 
+         * @return
+         */
+        double[] getNaiveFeatures() {
             if(naiveFeatures == null) {
                 naiveFeatures = calculateNaiveFeatures();
             }
-            return null;
+            return naiveFeatures;
         }
         
-        double[] getHistogramFaetures() {
-            return null;
+        /**
+         * Return histogram features
+         * 
+         * @return
+         */
+        double[] getHistogramFeatures() {
+            //TODO
+            return histogramFeatures;
         }
         
-        double[] getCorrelationFaetures() {
-            return null;
+        /**
+         * Return correlation features
+         * 
+         * @return
+         */
+        double[] getCorrelationFeatures() {
+            //TODO
+            return correlationFeatures;
         }
         
+        /**
+         * Return all features
+         * 
+         * @return
+         */
+        double[] getAllFeatures() {
+            return Arrays.stream(new double[][]{getNaiveFeatures(), getCorrelationFeatures(), getHistogramFeatures()}).flatMapToDouble(Arrays::stream).toArray();
+        }
+              
+        /**
+         * Calculates naive features for attributes. 
+         * Each column is projected to 3 features.
+         * Categorical:
+         * [0] --> Number of unique elements
+         * [1] --> Label of most frequent element
+         * [2] --> Label of least frequent element
+         * 
+         * Numeric:
+         * [0] --> mean
+         * [1] --> median
+         * [2] --> var
+         * 
+         * @param col
+         * @return
+         */
         private double[] calculateNaiveFeatures() {
             
             double[][] result = new double[handle.getNumColumns()][];
@@ -671,7 +548,7 @@ public class ShadowModelMembershipRisk {
                 //TODO Avoid dirty string fix
                 switch(dt+"") {
                     case "String":
-                        String[] col = getColumn(handle, i);
+                        String[] col = getColumnAsString(handle, i);
                         
                         // Map to Integer labels
                         List<Integer> labelList = codeMap.getCode(Arrays.asList(col));
@@ -694,7 +571,7 @@ public class ShadowModelMembershipRisk {
                         
                         break;
                     case "Decimal":
-                        Double[] colDouble = getColumnDouble(handle, i);
+                        Double[] colDouble = getColumnAsDouble(handle, i);
 
                         double[] colPrimitive = ArrayUtils.toPrimitive(colDouble);
                         
@@ -718,6 +595,39 @@ public class ShadowModelMembershipRisk {
             double[] flatResult = Arrays.stream(result).flatMapToDouble(Arrays::stream).toArray();
             System.out.println(Arrays.toString(flatResult));
             return flatResult;
+        }
+        
+        
+        /**
+         * Extracts a column from the handle
+         * @param handle
+         * @param column
+         * @return
+         */
+        private String[] getColumnAsString(DataHandle handle, int column) {
+            String[] result = new String[handle.getNumRows()];
+            for (int row = 0; row < handle.getNumRows(); row++) {
+                result[row] = handle.getValue(row, column);
+            }
+            return result;
+        }
+        
+        /**
+         * Extracts a column from the handle
+         * @param handle
+         * @param column
+         * @return
+         */
+        private Double[] getColumnAsDouble(DataHandle handle, int column) {
+            Double[] result = new Double[handle.getNumRows()];
+            for (int row = 0; row < handle.getNumRows(); row++) {
+                try {
+                    result[row] = handle.getDouble(row, column);
+                } catch (ParseException e) {
+                    throw new RuntimeException("Error reading double column");
+                }
+            }
+            return result;
         }
         
     }
