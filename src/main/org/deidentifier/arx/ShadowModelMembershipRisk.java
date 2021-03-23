@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Date;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
@@ -39,6 +40,10 @@ import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
+
+import org.deidentifier.arx.aggregates.StatisticsSummary;
 
 
 import smile.classification.RandomForest;
@@ -457,58 +462,114 @@ public class ShadowModelMembershipRisk {
          * @return
          */
         private double[] calculateNaiveFeatures() {
-            
+
             double[][] result = new double[columns.length][];
+
+            // Let ARX compute all statistics
+            // TODO really required for -all- attributes?
+            Map<String, StatisticsSummary<?>> statistics = handle.getStatistics().getSummaryStatistics(false);
+
             
             for (int i = 0; i < columns.length; i++) {
-                System.out.println(Arrays.toString(columns));
+                // Obtain attribute name
                 String attributeName = handle.getAttributeName(columns[i]);
-                DataType<?> dt = handle.getDataType(attributeName);
-                //TODO Avoid dirty string fix
-                switch(dt+"") {
-                    case "String":
-                        
-                        // Map to Integer labels
-                        List<Integer> labelList = getCode(columns[i]);
-                        // Remove duplicates 
-                        //TODO Maybe use method of DataHandle instead
-                        List<Integer> uniqueLabelsList = new ArrayList<Integer>(new LinkedHashSet<Integer>(labelList));
-                        
-                        // count occurences and determin most and least frequent element
-                        Map<Integer, Integer> labelOccMap = new TreeMap<>();
-                        for(Integer label : uniqueLabelsList) {
-                            labelOccMap.put(label, Collections.frequency(labelList, label));
+
+                // Obtain statistics
+                StatisticsSummary<?> summary = statistics.get(attributeName);
+                DataType<?> _type = handle.getDefinition().getDataType(attributeName);
+                Class<?> _clazz = _type.getDescription().getWrappedClass();
+
+                // Parameters to calculate
+                Double mostFreq = null;
+                Double leastFreq = null;
+                Double uniqueElements = null;
+                Double mean = null;
+                Double median = null;
+                Double var = null;
+                
+
+                // Calculate depending on data type
+                if (_clazz.equals(Long.class)) {
+                    
+                    // Handle data type represented as long
+                    DataType<Long> type = (DataType<Long>)_type;
+                    mean = summary.getArithmeticMeanAsDouble();
+                    var = summary.getSampleVarianceAsDouble();
+                    Long _median = type.parse(summary.getMedianAsString());
+                    median = _median != null ? _median.doubleValue() : 0d; // TODO: how to handle null here
+                    
+                } else if (_clazz.equals(Double.class)) {
+                    
+                    // Handle data type represented as double
+                    DataType<Double> type = (DataType<Double>)_type;
+                    mean = summary.getArithmeticMeanAsDouble();
+                    var = summary.getSampleVarianceAsDouble();
+                    Double _median = type.parse(summary.getMedianAsString());
+                    median = _median != null ? _median : 0d; // TODO: how to handle null here
+                    
+                } else if (_clazz.equals(Date.class)) {
+                    
+                    // Handle data type represented as date
+                    DataType<Date> type = (DataType<Date>)_type;
+                    mean = summary.getArithmeticMeanAsDouble();
+                    var = summary.getSampleVarianceAsDouble();
+                    Date _median = type.parse(summary.getMedianAsString());
+                    median = _median != null ? _median.getTime() : 0d; // TODO: how to handle null here
+                    
+                } else if (_clazz.equals(String.class)) {
+                    
+                    // Count frequencies of values
+                    int column = columns[i];
+                    IntIntOpenHashMap map = new IntIntOpenHashMap();
+                    for (int row = 0; row < handle.getNumRows(); row++) {
+                        int code = handle.internalGetEncodedValue(row, column, false); // Beware that code can be -1
+                        map.putOrAdd(code, 1, 1);
+                    }
+                    
+                    // Determine codes with highest and lowest frequencies
+                    int minFreq = Integer.MAX_VALUE;
+                    int maxFreq = Integer.MIN_VALUE;
+                    
+                    // Access map buffers
+                    final int [] keys = map.keys;
+                    final int [] values = map.values;
+                    final boolean [] states = map.allocated;
+                     
+                    // For each slot
+                    for (int j = 0; j < states.length; j++) {
+                        if (states[j]) {
+                            System.out.println("test");
+                            if (values[j] < minFreq) {
+                                minFreq = values[j];
+                                leastFreq = (double) keys[j];
+                            } if (values[j] > maxFreq) {
+                                maxFreq = values[j];
+                                mostFreq = (double) keys[j];
+                            }
                         }
-                        //TODO Use sort instead (to avoid min=max)
-                        Integer mostFreqLabel = Collections.max(labelOccMap.entrySet(), Map.Entry.comparingByValue()).getKey();
-                        Integer leastFreqLabel = Collections.min(labelOccMap.entrySet(), Map.Entry.comparingByValue()).getKey();
-                        
-                        // return result
-                        result[i] = new double[] {uniqueLabelsList.size(), mostFreqLabel, leastFreqLabel};   
-                        
-                        
-                        break;
-                    case "Decimal":
-                        Double[] colDouble = getColumnAsDouble(handle, columns[i]);
-
-                        double[] colPrimitive = ArrayUtils.toPrimitive(colDouble);
-                        
-                        double mean = new Mean().evaluate(colPrimitive);
-                        double median = new Median().evaluate(colPrimitive);
-                        double var = new Variance().evaluate(colPrimitive);
-                        
-                        result[i] = new double[] {mean, median, var};       
-                        
-
-                        break;
-                    default:
-                        System.out.println("Unsupported DT");
-                        break;
+                    }
+                    
+                    // Get number of assigned keys
+                    uniqueElements = (double) map.assigned;
+                    
+                } else {
+                    throw new IllegalStateException("Unknown data type");
                 }
-            System.out.println(attributeName + " ("+ dt + ") --> " + Arrays.toString(result[i]));  
-
+                
+                // Switch feature type
+                if (mean != null && var != null && median != null) {
+                    result[i] = new double[]  {mean, median, var};
+                    
+                } else if (mostFreq != null && leastFreq != null && uniqueElements != null) {
+                    result[i] = new double[]  {uniqueElements, mostFreq, leastFreq};
+                    
+                } else {
+                    throw new IllegalStateException("Features unavailable");
+                }
+                
+                System.out.println(attributeName + " --> " + Arrays.toString(result[i]));  
             }
-
+            
             // flatten array
             double[] flatResult = flattenArray(result);
             System.out.println(Arrays.toString(flatResult));
