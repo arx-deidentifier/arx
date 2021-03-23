@@ -24,19 +24,14 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Date;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
-import org.apache.commons.math3.stat.descriptive.moment.Variance;
-import org.apache.commons.math3.stat.descriptive.rank.Median;
+
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.io.CSVHierarchyInput;
@@ -45,8 +40,9 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 import org.deidentifier.arx.aggregates.StatisticsSummary;
 
-
+import smile.classification.DecisionTree.SplitRule;
 import smile.classification.RandomForest;
+import smile.data.Attribute;
 
 
 /**
@@ -192,15 +188,24 @@ public class ShadowModelMembershipRisk {
             
             // Create array of indices in sample including target
             int[] sampleIncludingTarget = new int[sampleExcludingTarget.length + 1];
+            System.arraycopy(sampleExcludingTarget, 0, sampleIncludingTarget, 0, sampleExcludingTarget.length);
             sampleIncludingTarget[sampleIncludingTarget.length-1] = targetRow;
             
             // Make sure that both sets are sorted
+            // TODO Why?
             Arrays.sort(sampleExcludingTarget);
             Arrays.sort(sampleIncludingTarget);
             
             // Anonymize both datasets
             DataHandle datasetExcludingTarget = getAnonymizedOutput(outputHandle, sampleExcludingTarget);
+            //System.out.println(Arrays.toString(sampleExcludingTarget));
+            //System.out.println("Excluding Sample before: "+ sampleExcludingTarget.length + " | After Anon: " + datasetExcludingTarget.getNumRows());
+            //printHead10(datasetExcludingTarget, columns);
+            
             DataHandle datasetIncludingTarget = getAnonymizedOutput(outputHandle, sampleIncludingTarget);
+            //System.out.println(Arrays.toString(sampleIncludingTarget));
+            //System.out.println("Including Sample before: "+ sampleIncludingTarget.length + " | After Anon: " + datasetIncludingTarget.getNumRows());
+            //printHead10(datasetIncludingTarget, columns);
 
             // ---------------------------------------
             // ---------------------------------------
@@ -226,13 +231,22 @@ public class ShadowModelMembershipRisk {
             // ---------------------------------------
         }
         
+        // TODO relocated to main() - and to ARX-config eventually
+        int numberOfTrees = 100; // sklearn default := 100 | ARX default := 500
+        int maxNumberOfLeafNodes = 100; // sklean default := +INF | ARX default = 100;
+        int minSizeOfLeafNodes = 1; // sklean default := 1 | ARX default := 5
+        int numberOfVariablesToSplit = (int) Math.floor(Math.sqrt(xTrain[0].length)); // sklearn := auto (i.e. sqrt(#features)) | ARX default := 0
+        double subSample = 1d; // skleanr --> provided at total number (2) | ARX default := 1d
+        SplitRule splitRule = SplitRule.GINI; // sklearn default := GINI |ARX dedault: = GINI
         
-        //RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, 500, 100, 5, 0, 1d, SplitRule.GINI, null);
+        RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, numberOfTrees, maxNumberOfLeafNodes, minSizeOfLeafNodes, numberOfVariablesToSplit, subSample, splitRule, null);
 
         // Create summarizing features
-        int[] featuresOutput = getSummary(outputHandle, columns);
-        new FeatureSet(outputHandle, columns).getNaiveFeatures();
+        double[] featuresAttackedDataset  = new FeatureSet(outputHandle, columns).getNaiveFeatures();
 
+        int _result = rm.predict(featuresAttackedDataset, new double[2]);
+        System.out.println(_result);
+        
         // ---------------------------------------
         // ---------------------------------------
         // TODO: Use classifier to attack output dataset using its features
@@ -246,7 +260,7 @@ public class ShadowModelMembershipRisk {
         // ---------------------------------------
         // ---------------------------------------
         
-        return 0d;
+        return _result;
     }
 
     /**
@@ -367,7 +381,19 @@ public class ShadowModelMembershipRisk {
         return result;
     }
 
-
+    /**
+     * Simple print function for debugging
+     * @param handle
+     * @param columns
+     */
+    private void printHead10(DataHandle handle, int[] columns) {
+        for(int i = 0; i < 10; i++){
+            for(int c = 0; c < columns.length; c++) {
+                System.out.print(handle.getValue(i, columns[c]) + " | ");
+            }
+            System.out.println();
+        }
+    }
     
     /**
      * Class used as enclosure for the features and their calculation.
@@ -486,7 +512,6 @@ public class ShadowModelMembershipRisk {
                 Double mean = null;
                 Double median = null;
                 Double var = null;
-                
 
                 // Calculate depending on data type
                 if (_clazz.equals(Long.class)) {
@@ -538,7 +563,6 @@ public class ShadowModelMembershipRisk {
                     // For each slot
                     for (int j = 0; j < states.length; j++) {
                         if (states[j]) {
-                            System.out.println("test");
                             if (values[j] < minFreq) {
                                 minFreq = values[j];
                                 leastFreq = (double) keys[j];
@@ -567,12 +591,12 @@ public class ShadowModelMembershipRisk {
                     throw new IllegalStateException("Features unavailable");
                 }
                 
-                System.out.println(attributeName + " --> " + Arrays.toString(result[i]));  
+                //System.out.println(attributeName + " (" + _clazz +") --> " + Arrays.toString(result[i]));  
             }
             
             // flatten array
             double[] flatResult = flattenArray(result);
-            System.out.println(Arrays.toString(flatResult));
+            //System.out.println(Arrays.toString(flatResult));
             return flatResult;
         }
         

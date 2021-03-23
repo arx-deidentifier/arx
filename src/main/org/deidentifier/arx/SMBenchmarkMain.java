@@ -23,7 +23,7 @@ public class SMBenchmarkMain {
         // Example scenario
         
         // Create dataset
-        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS_10);
+        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS);
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(1));
         config.setSuppressionLimit(0.0d);
@@ -36,9 +36,8 @@ public class SMBenchmarkMain {
         // Perform risk assessment
         ShadowModelMembershipRisk model = new ShadowModelMembershipRisk();
         
-        
         // TODO by setting repetitions to 0 the training is disabled - done for developing
-        model.getShadowModelBasedMembershipRisk(output, 0.01d, 0, 0);
+        model.getShadowModelBasedMembershipRisk(output, 0.02d, 0, 100);
     }
 
 }

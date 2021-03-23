@@ -23,7 +23,7 @@ public class ShadowModelBenchmarkSetup {
      * Datasets
      */
     public static enum BenchmarkDataset {
-        TEXAS_10
+        TEXAS_10, TEXAS
     }
     
     /**
@@ -85,6 +85,9 @@ public class ShadowModelBenchmarkSetup {
         case TEXAS_10:
             filename = "texas_10.csv";
             break;
+        case TEXAS:
+            filename = "texas.csv";
+            break;
         default:
             throw new RuntimeException("Invalid dataset");
         }
@@ -103,7 +106,10 @@ public class ShadowModelBenchmarkSetup {
         switch (dataset) {
 
         case TEXAS_10:
-            filename = "texas_10_config.csv";
+            filename = "texas_config.csv";
+            break;
+        case TEXAS:
+            filename = "texas_config.csv";
             break;
         default:
             throw new RuntimeException("Invalid dataset");
@@ -121,6 +127,8 @@ public class ShadowModelBenchmarkSetup {
     public static Hierarchy loadHierarchy(BenchmarkDataset dataset, String attribute) throws IOException {
         switch (dataset) {
         case TEXAS_10:
+            return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
+        case TEXAS:
             return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         default:
             throw new IllegalArgumentException("Unknown dataset");
