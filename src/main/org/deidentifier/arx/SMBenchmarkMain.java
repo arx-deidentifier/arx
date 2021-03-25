@@ -23,7 +23,7 @@ public class SMBenchmarkMain {
         // Example scenario
         
         // Create dataset
-        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS);
+        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.ADULT);
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(1));
         config.setSuppressionLimit(0.0d);

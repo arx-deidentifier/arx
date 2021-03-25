@@ -23,7 +23,7 @@ public class ShadowModelBenchmarkSetup {
      * Datasets
      */
     public static enum BenchmarkDataset {
-        TEXAS_10, TEXAS
+        TEXAS_10, TEXAS, ADULT
     }
     
     /**
@@ -82,6 +82,9 @@ public class ShadowModelBenchmarkSetup {
         String filename = null;
         switch (dataset) {
 
+        case ADULT:
+            filename = "adult.csv";
+            break;
         case TEXAS_10:
             filename = "texas_10.csv";
             break;
@@ -105,6 +108,9 @@ public class ShadowModelBenchmarkSetup {
         String filename = null;
         switch (dataset) {
 
+        case ADULT:
+            filename = "adult_config.csv";
+            break;
         case TEXAS_10:
             filename = "texas_config.csv";
             break;
@@ -126,6 +132,8 @@ public class ShadowModelBenchmarkSetup {
      */
     public static Hierarchy loadHierarchy(BenchmarkDataset dataset, String attribute) throws IOException {
         switch (dataset) {
+        case ADULT:
+            return Hierarchy.create("data/adult_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS_10:
             return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS:
