@@ -16,10 +16,7 @@
  */
 package org.deidentifier.arx;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,14 +24,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Date;
-
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
-import org.deidentifier.arx.io.CSVHierarchyInput;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 
@@ -53,46 +46,10 @@ import smile.data.Attribute;
  */
 public class ShadowModelMembershipRisk {
 
+    // Used to choose the sampling strategy 
+    //TODO remove from final code
+    private final boolean independentSamples = true;
     
-    /**
-     * Loads a dataset from disk
-     * @param dataset
-     * @return
-     * @throws IOException
-     */
-    @Deprecated
-    private static Data createData(final String dataset) throws IOException {
-        
-        // Load data
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
-        
-        // Read generalization hierarchies
-        FilenameFilter hierarchyFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name.matches(dataset + "_hierarchy_(.)+.csv")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-        
-        // Create definition
-        File testDir = new File("data/");
-        File[] genHierFiles = testDir.listFiles(hierarchyFilter);
-        Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-        for (File file : genHierFiles) {
-            Matcher matcher = pattern.matcher(file.getName());
-            if (matcher.find()) {
-                CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
-                String attributeName = matcher.group(1);
-                data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
-            }
-        }
-        
-        return data;
-    }
     
     /**
      * Returns an estimate of membership disclosure risks based on shadow models. 
@@ -118,6 +75,46 @@ public class ShadowModelMembershipRisk {
     
     }
 
+    
+    /**
+     * Create random sample of Ids excluding the target
+     * 
+     * @param availableIds
+     * @param sampleSize
+     * @return
+     */
+    private int[] createSample(List<Integer> availableIds, int sampleSize) {
+        // Shuffle list
+        Collections.shuffle(availableIds);
+        
+        int[] sample = new int[Math.min(sampleSize, availableIds.size())]; 
+        for (int i = 0; i < sample.length; i++) {
+            sample[i] = availableIds.get(i);
+        }
+        
+        return sample;
+    }
+    
+    /**
+     * Create random sample of Ids including the target
+     * 
+     * @param availableIds
+     * @param sampleSize
+     * @return
+     */
+    private int[] createSample(List<Integer> availableIds, int sampleSize, int targetId) {
+        // Shuffle list
+        Collections.shuffle(availableIds);
+        
+        int[] sample = new int[Math.min(sampleSize, availableIds.size())]; 
+        sample[0] = targetId; // TODO randomly decide on a position??
+        for (int i = 1; i < sample.length; i++) {
+            sample[i] = availableIds.get(i);
+        }
+        
+        return sample;
+    }
+    
     /**
      * Returns an estimate of membership disclosure risks based on shadow models.
      * All provided attributes will be used to construct features used in the attack.
@@ -153,48 +150,53 @@ public class ShadowModelMembershipRisk {
             if (attributes.contains(attribute)) {
                 columns[offset++] = i;
             }
-        }
-
-        // ---------------------------------------
-        // ---------------------------------------
-        // TODO: Prepare classification model here
-        // TODO: Before entering the loop
-        // ---------------------------------------
-        // ---------------------------------------
+        }        
         
-        
+        // Initialize arrays for features and labels
         double[][] xTrain = new double[repetitions*2][];
         int[] yTrain = new int[repetitions*2];
+        
+        
+        // Create list of available indices excluding target
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < outputHandle.getNumRows(); i++) {
+            if (i != targetRow) {
+                indices.add(i);
+            }
+        }
+        
+        int sampleSize = (int)Math.round(samplingFraction * (double)outputHandle.getNumRows());
         
         // For each training example
         for (int repetition = 0; repetition < repetitions; repetition++) {
             
-            // Create list of available indices excluding target
-            List<Integer> indices = new ArrayList<>();
-            for (int i = 0; i < outputHandle.getNumRows(); i++) {
-                if (i != targetRow) {
-                    indices.add(i);
+            int[] sampleExcludingTarget;
+            int[] sampleIncludingTarget;
+            
+            if(independentSamples) {
+                sampleExcludingTarget = createSample(indices, sampleSize);
+                sampleIncludingTarget = createSample(indices, sampleSize, targetRow);
+            } else {
+                // Shuffle list
+                Collections.shuffle(indices);
+                
+                // Create array of indices in sample excluding target
+                sampleExcludingTarget = new int[Math.min(sampleSize, indices.size())]; // Just to make sure that nothing does wrong when samplingFraction = 100%
+                for (int i = 0; i < sampleExcludingTarget.length; i++) {
+                    sampleExcludingTarget[i] = indices.get(i);
                 }
+                
+                // Create array of indices in sample including target
+                // TODO same sized samples and two times draw
+                sampleIncludingTarget = new int[sampleExcludingTarget.length + 1];
+                System.arraycopy(sampleExcludingTarget, 0, sampleIncludingTarget, 0, sampleExcludingTarget.length);
+                sampleIncludingTarget[sampleIncludingTarget.length-1] = targetRow;
+                
+                // Make sure that both sets are sorted
+                // TODO Why?
+                Arrays.sort(sampleExcludingTarget);
+                Arrays.sort(sampleIncludingTarget);
             }
-            // Shuffle list
-            Collections.shuffle(indices);
-            
-            // Create array of indices in sample excluding target
-            int sampleSize = (int)Math.round(samplingFraction * (double)outputHandle.getNumRows());
-            int[] sampleExcludingTarget = new int[Math.min(sampleSize, indices.size())]; // Just to make sure that nothing does wrong when samplingFraction = 100%
-            for (int i = 0; i < sampleExcludingTarget.length; i++) {
-                sampleExcludingTarget[i] = indices.get(i);
-            }
-            
-            // Create array of indices in sample including target
-            int[] sampleIncludingTarget = new int[sampleExcludingTarget.length + 1];
-            System.arraycopy(sampleExcludingTarget, 0, sampleIncludingTarget, 0, sampleExcludingTarget.length);
-            sampleIncludingTarget[sampleIncludingTarget.length-1] = targetRow;
-            
-            // Make sure that both sets are sorted
-            // TODO Why?
-            Arrays.sort(sampleExcludingTarget);
-            Arrays.sort(sampleIncludingTarget);
             
             // Anonymize both datasets
             DataHandle datasetExcludingTarget = getAnonymizedOutput(outputHandle, sampleExcludingTarget);
@@ -207,28 +209,15 @@ public class ShadowModelMembershipRisk {
             //System.out.println("Including Sample before: "+ sampleIncludingTarget.length + " | After Anon: " + datasetIncludingTarget.getNumRows());
             //printHead10(datasetIncludingTarget, columns);
 
-            // ---------------------------------------
-            // ---------------------------------------
-            // TODO: Implement method "getSummary"
-            // ---------------------------------------
-            // ---------------------------------------
-            
-            
-            
-            // Create summarizing features
-            //int[] featuresExcludingTarget = getSummary(datasetExcludingTarget, columns);
-            //int[] featuresIncludingTarget = getSummary(datasetIncludingTarget, columns);
 
+            // Get features and store in feature-array
             xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns).getNaiveFeatures();
-            yTrain[repetition*2] = 0;
             xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns).getNaiveFeatures();
+            
+            // Store labels in label-array
+            yTrain[repetition*2] = 0;
             yTrain[repetition*2+1] = 1;
             
-            // ---------------------------------------
-            // ---------------------------------------
-            // TODO: Train classification method
-            // ---------------------------------------
-            // ---------------------------------------
         }
         
         // TODO relocated to main() - and to ARX-config eventually
@@ -237,30 +226,18 @@ public class ShadowModelMembershipRisk {
         int minSizeOfLeafNodes = 1; // sklean default := 1 | ARX default := 5
         int numberOfVariablesToSplit = (int) Math.floor(Math.sqrt(xTrain[0].length)); // sklearn := auto (i.e. sqrt(#features)) | ARX default := 0
         double subSample = 1d; // skleanr --> provided at total number (2) | ARX default := 1d
-        SplitRule splitRule = SplitRule.GINI; // sklearn default := GINI |ARX dedault: = GINI
+        SplitRule splitRule = SplitRule.GINI; // sklearn default := GINI | ARX dedault: = GINI
         
         RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, numberOfTrees, maxNumberOfLeafNodes, minSizeOfLeafNodes, numberOfVariablesToSplit, subSample, splitRule, null);
 
         // Create summarizing features
         double[] featuresAttackedDataset  = new FeatureSet(outputHandle, columns).getNaiveFeatures();
+        double[] probabilities = new double[] {0, 0};
 
-        int _result = rm.predict(featuresAttackedDataset, new double[2]);
-        System.out.println(_result);
+        int _result = rm.predict(featuresAttackedDataset, probabilities);
+        System.out.println("Assigned Label: " + _result + " Probabilities: " + Arrays.toString(probabilities));
         
-        // ---------------------------------------
-        // ---------------------------------------
-        // TODO: Use classifier to attack output dataset using its features
-        // ---------------------------------------
-        // ---------------------------------------
-        
-
-        // ---------------------------------------
-        // ---------------------------------------
-        // TODO: Calculate any form of meaningful output (currently a double)
-        // ---------------------------------------
-        // ---------------------------------------
-        
-        return _result;
+        return probabilities[0];
     }
 
     /**
@@ -353,36 +330,10 @@ public class ShadowModelMembershipRisk {
         return result;
     }
     
-
-        
-    /**
-     * Create a summary vector
-     * @param handle
-     * @param columns
-     * @return
-     */
-    @Deprecated
-    private int[] getSummary(DataHandle handle, int[] columns) {
-
-        // ---------------------------------------
-        // ---------------------------------------
-        // TODO: Implement method "getSummary"
-        // ---------------------------------------
-        // ---------------------------------------
-        
-        // TODO This is just a meaningless example summarizing hash codes to get the code running
-        int[] result = new int[columns.length];
-        for (int row = 0; row < handle.getNumRows(); row++) {
-            String[] array = getRow(handle, row, columns);
-            for (int column = 0; column < result.length; column++) {
-                result[column] += array[column].hashCode();
-            }
-        }
-        return result;
-    }
-
+    //TODO Remove eventually
     /**
      * Simple print function for debugging
+     * 
      * @param handle
      * @param columns
      */
