@@ -26,7 +26,7 @@ public class SMBenchmarkMain {
         // Example scenario
         
         // Create dataset
-        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS);
+        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS_10);
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(1));
         config.setSuppressionLimit(0.0d);
@@ -42,8 +42,8 @@ public class SMBenchmarkMain {
         // TODO by setting repetitions to 0 the training is disabled - done for developing
         //model.getShadowModelBasedMembershipRisk(output, 0.02d, 0, 100);
         
-        Random rnd = new Random(1333337);
-        int[] targets = createRandomTargets(25, output.getNumRows(), rnd);
+        Random rnd = new Random(13337);
+        int[] targets = createRandomTargets(1, output.getNumRows(), rnd);
         System.out.println(targets.length);
         double performance = performMIA(output, targets);
         System.out.println("Average Performance " + performance); 
@@ -92,7 +92,7 @@ public class SMBenchmarkMain {
         
         int correctResults = 0;
         for(int i = 0; i < targets.length; i++) {
-            double result = model.getShadowModelBasedMembershipRisk(handle, 0.02d, targets[i], 100);
+            double result = model.getShadowModelBasedMembershipRisk(handle, 0.02d, targets[i], 0);
             // TODO check if this is really the threshold - probably not
             if (result <= 0.5) {
                 correctResults++;

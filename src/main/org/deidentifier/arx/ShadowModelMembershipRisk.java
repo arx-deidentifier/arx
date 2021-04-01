@@ -25,7 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 
@@ -220,9 +224,15 @@ public class ShadowModelMembershipRisk {
             
         }
         
+        if(0 == 1) {
+        for(int i = 0; i < 10; i++) {
+            System.out.println(Arrays.toString(xTrain[i]));
+            System.out.println(yTrain[i]);
+        }
+        
         // TODO relocated to main() - and to ARX-config eventually
         int numberOfTrees = 100; // sklearn default := 100 | ARX default := 500
-        int maxNumberOfLeafNodes = 100; // sklean default := +INF | ARX default = 100;
+        int maxNumberOfLeafNodes = Integer.MAX_VALUE; // sklean default := +INF | ARX default = 100;
         int minSizeOfLeafNodes = 1; // sklean default := 1 | ARX default := 5
         int numberOfVariablesToSplit = (int) Math.floor(Math.sqrt(xTrain[0].length)); // sklearn := auto (i.e. sqrt(#features)) | ARX default := 0
         double subSample = 1d; // skleanr --> provided at total number (2) | ARX default := 1d
@@ -231,13 +241,21 @@ public class ShadowModelMembershipRisk {
         RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, numberOfTrees, maxNumberOfLeafNodes, minSizeOfLeafNodes, numberOfVariablesToSplit, subSample, splitRule, null);
 
         // Create summarizing features
-        double[] featuresAttackedDataset  = new FeatureSet(outputHandle, columns).getNaiveFeatures();
+        double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns).getNaiveFeatures();
         double[] probabilities = new double[] {0, 0};
 
         int _result = rm.predict(featuresAttackedDataset, probabilities);
         System.out.println("Assigned Label: " + _result + " Probabilities: " + Arrays.toString(probabilities));
         
         return probabilities[0];
+        
+        } else {
+            double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns).getCorrelationFeatures();
+            
+        }
+        
+        return 0d;
+
     }
 
     /**
@@ -408,7 +426,9 @@ public class ShadowModelMembershipRisk {
          * @return
          */
         double[] getCorrelationFeatures() {
-            //TODO
+            if(correlationFeatures == null) {
+                correlationFeatures = calculateCorrelationFeatures();
+            }
             return correlationFeatures;
         }
         
@@ -420,7 +440,110 @@ public class ShadowModelMembershipRisk {
         double[] getAllFeatures() {
             return flattenArray(new double[][]{getNaiveFeatures(), getCorrelationFeatures(), getHistogramFeatures()});
         }
-              
+        
+        private double[] calculateCorrelationFeatures() {
+            
+            //double[][] frame = new double[columns.length][];
+            List<List<Double>> frame = new ArrayList<List<Double>>();
+            
+            for (int i = 0; i < columns.length; i++) {
+
+                // Obtain attribute name
+                
+                int c = columns[i];
+                
+                String attributeName = handle.getAttributeName(c);
+                DataType<?> _type = handle.getDefinition().getDataType(attributeName);
+                Class<?> _clazz = _type.getDescription().getWrappedClass();
+                
+                if (_clazz.equals(Double.class)) {
+                    
+                    frame.add(Arrays.asList(getColumnAsDouble(c)));
+                    
+                } else if (_clazz.equals(String.class)) {
+                    
+                    //TODO replace with more efficient Code !!!11
+                    
+                    // Transfer column to Int-Representation
+                    List<Integer> columnAsIntLabels = new ArrayList<Integer>();
+                    for(int row = 0; row < handle.getNumRows(); row++) {
+                        columnAsIntLabels.add(handle.internalGetEncodedValue(row, c, false));
+                    }
+                    
+                    // Remove duplicates
+                    List<Integer> uniqueLabelsList = new ArrayList<Integer>(new LinkedHashSet<Integer>(columnAsIntLabels));
+                    
+                    // Initialize parse representation with zeros
+                    Map<Integer, List<Double>> sparseColumnRepresentation = new HashMap<Integer, List<Double>>();
+                    for(Integer label : uniqueLabelsList) {
+                        sparseColumnRepresentation.put(label, new ArrayList<Double>(Collections.nCopies(handle.getNumRows(), 0d)));
+                    }
+                    
+                    // Fill sparse representation with ones (were applicable)
+                    for(int row = 0; row < handle.getNumRows(); row++) {
+                        //List<Integer> temp = sparseColumnRepresentation.get(columnAsIntLabels.get(row));
+                        //System.out.println(temp);
+                        sparseColumnRepresentation.get(columnAsIntLabels.get(row)).set(row, 1d);
+                    }
+                    
+                    // Ignore first label for copying into result frame - dont needed for correlation as one value can be condiedered the default
+                    sparseColumnRepresentation.remove(uniqueLabelsList.remove(0));
+                    // Copy to final frame
+                    for(Integer label : uniqueLabelsList) {
+                        frame.add(sparseColumnRepresentation.get(label));
+                    }
+                    
+                    
+                }
+            }
+            
+            // transfer lists to primitive arrays
+            double[][] corrIn = new double[frame.size()][];
+            for(int col = 0; col < frame.size(); col++) {
+                corrIn[col] = new double[handle.getNumRows()];
+                for(int row = 0; row < handle.getNumRows(); row++) {
+                    corrIn[col][row] = frame.get(col).get(row);
+                }
+            }
+
+            double[][] corrOut = new PearsonsCorrelation().computeCorrelationMatrix(corrIn).getData();
+            
+            printMatrix(corrIn);
+            System.out.println("---------------");
+            printMatrix(corrOut);
+            
+            return null;
+            
+        }
+        
+        
+        private void printMatrix(double[][] in) {
+
+            for (int r = 0; r < in[0].length; r++){
+                for (int c = 0; c < in.length; c++) 
+                    {
+                       System.out.print(in[c][r]);
+                       System.out.print(" | ");
+                    }
+                    System.out.println("/");
+                }
+
+        }
+
+        
+        private void printMatrix(List<List<Double>> in) {
+
+            for (int r = 0; r < in.get(0).size(); r++){
+                for (int c = 0; c < in.size(); c++) 
+                    {
+                       System.out.print(in.get(c).get(r));
+                       System.out.print(" | ");
+                    }
+                    System.out.println();
+                }
+
+        }
+
         /**
          * Calculates naive features for attributes. 
          * Each column is projected to 3 features.
@@ -557,7 +680,7 @@ public class ShadowModelMembershipRisk {
          * @param column
          * @return
          */
-        private String[] getColumnAsString(DataHandle handle, int column) {
+        private String[] getColumnAsString(int column) {
             String[] result = new String[handle.getNumRows()];
             for (int row = 0; row < handle.getNumRows(); row++) {
                 result[row] = handle.getValue(row, column);
@@ -571,7 +694,7 @@ public class ShadowModelMembershipRisk {
          * @param column
          * @return
          */
-        private Double[] getColumnAsDouble(DataHandle handle, int column) {
+        private Double[] getColumnAsDouble(int column) {
             Double[] result = new Double[handle.getNumRows()];
             for (int row = 0; row < handle.getNumRows(); row++) {
                 try {
