@@ -26,7 +26,7 @@ public class SMBenchmarkMain {
         // Example scenario
         
         // Create dataset
-        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS_10);
+        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS);
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(1));
         config.setSuppressionLimit(0.0d);
@@ -92,7 +92,7 @@ public class SMBenchmarkMain {
         
         int correctResults = 0;
         for(int i = 0; i < targets.length; i++) {
-            double result = model.getShadowModelBasedMembershipRisk(handle, 0.02d, targets[i], 0);
+            double result = model.getShadowModelBasedMembershipRisk(handle, 0.02d, targets[i], 100);
             // TODO check if this is really the threshold - probably not
             if (result <= 0.5) {
                 correctResults++;

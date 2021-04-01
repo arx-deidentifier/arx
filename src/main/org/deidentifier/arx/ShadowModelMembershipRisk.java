@@ -154,7 +154,35 @@ public class ShadowModelMembershipRisk {
             if (attributes.contains(attribute)) {
                 columns[offset++] = i;
             }
-        }        
+        }
+        
+        // Gather set of available values for categorical attributes
+        // TODO #1 Also support for ordinal attributes
+        // TODO #2 Maybe refactor - is this really the best place for this calculation?
+        int[][] availableValues = new int[columns.length][];
+        for(int i = 0; i < columns.length; i++) {
+            
+            // Obtain attribute details
+            int c = columns[i];
+            String attributeName = outputHandle.getAttributeName(c);
+            DataType<?> _type = outputHandle.getDefinition().getDataType(attributeName);
+            Class<?> _clazz = _type.getDescription().getWrappedClass();
+            
+            if (_clazz.equals(String.class)) {
+                //TODO replace with more efficient Code
+                
+                // Transfer column to Int-Representation
+                List<Integer> columnAsIntLabels = new ArrayList<Integer>();
+                for(int row = 0; row < outputHandle.getNumRows(); row++) {
+                    columnAsIntLabels.add(outputHandle.internalGetEncodedValue(row, c, false));
+                }
+                
+                // Remove duplicates
+                List<Integer> uniqueLabelsList = new ArrayList<Integer>(new LinkedHashSet<Integer>(columnAsIntLabels));
+                availableValues[i] = ArrayUtils.toPrimitive(uniqueLabelsList.toArray(new Integer[uniqueLabelsList.size()]));
+            }
+        }
+        
         
         // Initialize arrays for features and labels
         double[][] xTrain = new double[repetitions*2][];
@@ -215,8 +243,8 @@ public class ShadowModelMembershipRisk {
 
 
             // Get features and store in feature-array
-            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns).getNaiveFeatures();
-            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns).getNaiveFeatures();
+            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns, availableValues).getCorrelationFeatures();
+            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns, availableValues).getCorrelationFeatures();
             
             // Store labels in label-array
             yTrain[repetition*2] = 0;
@@ -224,11 +252,13 @@ public class ShadowModelMembershipRisk {
             
         }
         
-        if(0 == 1) {
+        if(1 == 1) {
         for(int i = 0; i < 10; i++) {
-            System.out.println(Arrays.toString(xTrain[i]));
+            System.out.println(xTrain[i].length + " | " + Arrays.toString(xTrain[i]));
             System.out.println(yTrain[i]);
         }
+        
+        
         
         // TODO relocated to main() - and to ARX-config eventually
         int numberOfTrees = 100; // sklearn default := 100 | ARX default := 500
@@ -241,7 +271,7 @@ public class ShadowModelMembershipRisk {
         RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, numberOfTrees, maxNumberOfLeafNodes, minSizeOfLeafNodes, numberOfVariablesToSplit, subSample, splitRule, null);
 
         // Create summarizing features
-        double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns).getNaiveFeatures();
+        double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getCorrelationFeatures();
         double[] probabilities = new double[] {0, 0};
 
         int _result = rm.predict(featuresAttackedDataset, probabilities);
@@ -250,7 +280,7 @@ public class ShadowModelMembershipRisk {
         return probabilities[0];
         
         } else {
-            double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns).getCorrelationFeatures();
+            double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getCorrelationFeatures();
             
         }
         
@@ -387,15 +417,19 @@ public class ShadowModelMembershipRisk {
         /** Histogram feature vector */
         private double[] histogramFeatures;
         
+        /** List of unique values per */
+        private int[][] availableValues;
+        
         /**
          * Creates a new FeatureSet
          * 
          * @param handle
          * @param codeMap
          */
-        FeatureSet (DataHandle handle, int[] columns){
+        FeatureSet (DataHandle handle, int[] columns, int[][] availableValues){
             this.handle = handle;
             this.columns = columns;
+            this.availableValues = availableValues;
         }
         
         /**
@@ -441,82 +475,91 @@ public class ShadowModelMembershipRisk {
             return flattenArray(new double[][]{getNaiveFeatures(), getCorrelationFeatures(), getHistogramFeatures()});
         }
         
+        /**
+         * Calculates correlation features using Pearson's product-moment correlation.
+         * All columns of continuous attributes are directly used for correlation calculation.
+         * Categorical and ordinal attributes are transfered to a sparse representation
+         * were each value becomes an own column and whether (or not) the value applies to a row
+         * is indicated by the value 1d (or 0d).
+         * 
+         * @return
+         */
         private double[] calculateCorrelationFeatures() {
             
-            //double[][] frame = new double[columns.length][];
+            // Initialize dataframe used to store the parts of the input matrix to assemble
             List<List<Double>> frame = new ArrayList<List<Double>>();
             
             for (int i = 0; i < columns.length; i++) {
 
-                // Obtain attribute name
-                
+                // Obtain attribute details
                 int c = columns[i];
-                
                 String attributeName = handle.getAttributeName(c);
                 DataType<?> _type = handle.getDefinition().getDataType(attributeName);
                 Class<?> _clazz = _type.getDescription().getWrappedClass();
                 
                 if (_clazz.equals(Double.class)) {
                     
+                    // Directly add column to frame
                     frame.add(Arrays.asList(getColumnAsDouble(c)));
                     
                 } else if (_clazz.equals(String.class)) {
                     
                     //TODO replace with more efficient Code !!!11
                     
-                    // Transfer column to Int-Representation
+                    //Transfer column to Int-Representation
                     List<Integer> columnAsIntLabels = new ArrayList<Integer>();
                     for(int row = 0; row < handle.getNumRows(); row++) {
                         columnAsIntLabels.add(handle.internalGetEncodedValue(row, c, false));
                     }
-                    
+                    /* 
                     // Remove duplicates
                     List<Integer> uniqueLabelsList = new ArrayList<Integer>(new LinkedHashSet<Integer>(columnAsIntLabels));
+                    sparseColumnRepresentation.remove(uniqueLabelsList.remove(0));
+                    */
                     
-                    // Initialize parse representation with zeros
+                    int[] uniqueValues = this.availableValues[i];
+                    
+                    
+                    // Initialize sparse representation with zeros
                     Map<Integer, List<Double>> sparseColumnRepresentation = new HashMap<Integer, List<Double>>();
-                    for(Integer label : uniqueLabelsList) {
+                    for(int label : uniqueValues) {
                         sparseColumnRepresentation.put(label, new ArrayList<Double>(Collections.nCopies(handle.getNumRows(), 0d)));
                     }
                     
                     // Fill sparse representation with ones (were applicable)
                     for(int row = 0; row < handle.getNumRows(); row++) {
                         //List<Integer> temp = sparseColumnRepresentation.get(columnAsIntLabels.get(row));
-                        //System.out.println(temp);
                         sparseColumnRepresentation.get(columnAsIntLabels.get(row)).set(row, 1d);
                     }
-                    
-                    // Ignore first label for copying into result frame - dont needed for correlation as one value can be condiedered the default
-                    sparseColumnRepresentation.remove(uniqueLabelsList.remove(0));
+                     
                     // Copy to final frame
-                    for(Integer label : uniqueLabelsList) {
-                        frame.add(sparseColumnRepresentation.get(label));
+                    // Ignore first label for copying into result frame - dont needed for correlation as one value can be condiedered the default
+                    for(int j = 1; j < uniqueValues.length; j++) {
+                        frame.add(sparseColumnRepresentation.get(uniqueValues[j]));
                     }
-                    
-                    
                 }
             }
             
-            // transfer lists to primitive arrays
-            double[][] corrIn = new double[frame.size()][];
-            for(int col = 0; col < frame.size(); col++) {
-                corrIn[col] = new double[handle.getNumRows()];
-                for(int row = 0; row < handle.getNumRows(); row++) {
-                    corrIn[col][row] = frame.get(col).get(row);
+            // transfer lists to primitive arrays and transpose
+            double[][] corrIn = new double[handle.getNumRows()][];
+            for(int i = 0; i < handle.getNumRows(); i++) {
+                corrIn[i] = new double[frame.size()];
+                for(int j = 0; j < frame.size(); j++) {
+                    corrIn[i][j] = frame.get(j).get(i);
                 }
             }
-
+            
+            // Calculate correlation coefficients
             double[][] corrOut = new PearsonsCorrelation().computeCorrelationMatrix(corrIn).getData();
             
-            printMatrix(corrIn);
-            System.out.println("---------------");
-            printMatrix(corrOut);
-            
-            return null;
+            // flatten array
+            double[] flatResult = flattenArray(corrOut);
+            //System.out.println(Arrays.toString(flatResult));
+            return flatResult;
             
         }
         
-        
+        //TODO remove - only for debugging
         private void printMatrix(double[][] in) {
 
             for (int r = 0; r < in[0].length; r++){
@@ -530,7 +573,7 @@ public class ShadowModelMembershipRisk {
 
         }
 
-        
+        //TODO remove - only for debugging
         private void printMatrix(List<List<Double>> in) {
 
             for (int r = 0; r < in.get(0).size(); r++){
