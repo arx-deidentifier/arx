@@ -6,9 +6,14 @@ import java.util.Random;
 import java.util.Set;
 
 import org.deidentifier.arx.ShadowModelBenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.ShadowModelMembershipRisk.FeatureType;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 public class SMBenchmarkMain {
+    
+    /** Feautre type(s) to use */
+    static final FeatureType FEATURE_TYPE = FeatureType.CORR;
+    
     
     /**
      * Main entry point
@@ -92,7 +97,7 @@ public class SMBenchmarkMain {
         
         int correctResults = 0;
         for(int i = 0; i < targets.length; i++) {
-            double result = model.getShadowModelBasedMembershipRisk(handle, 0.02d, targets[i], 100);
+            double result = model.getShadowModelBasedMembershipRisk(handle, 0.02d, targets[i], 100, FEATURE_TYPE);
             // TODO check if this is really the threshold - probably not
             if (result <= 0.5) {
                 correctResults++;

@@ -50,6 +50,8 @@ import smile.data.Attribute;
  */
 public class ShadowModelMembershipRisk {
 
+    public enum FeatureType{NAIVE, CORR, HIST, ALL};
+    
     // Used to choose the sampling strategy 
     //TODO remove from final code
     private final boolean independentSamples = true;
@@ -68,14 +70,16 @@ public class ShadowModelMembershipRisk {
     public double getShadowModelBasedMembershipRisk(DataHandle outputHandle,
                                                     double samplingFraction,
                                                     int targetRow,
-                                                    int repetitions) {
+                                                    int repetitions,
+                                                    FeatureType featureType) {
 
         // Use all quasi-identifiers as relevant attributes
         return getShadowModelBasedMembershipRisk(outputHandle,
                                                  outputHandle.getDefinition().getQuasiIdentifyingAttributes(),
                                                  samplingFraction,
                                                  targetRow,
-                                                 repetitions);
+                                                 repetitions,
+                                                 featureType);
     
     }
 
@@ -133,7 +137,8 @@ public class ShadowModelMembershipRisk {
                                                     Set<String> attributes,
                                                     double samplingFraction,
                                                     int targetRow,
-                                                    int repetitions) {
+                                                    int repetitions,
+                                                    FeatureType featureType) {
 
         // Various checks
         if (outputHandle == null) { throw new NullPointerException("Handle is null"); }
@@ -243,8 +248,8 @@ public class ShadowModelMembershipRisk {
 
 
             // Get features and store in feature-array
-            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns, availableValues).getCorrelationFeatures();
-            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns, availableValues).getCorrelationFeatures();
+            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns, availableValues).getFeatures(featureType);
+            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns, availableValues).getFeatures(featureType);
             
             // Store labels in label-array
             yTrain[repetition*2] = 0;
@@ -252,6 +257,7 @@ public class ShadowModelMembershipRisk {
             
         }
         
+        // TODO dev stuff - remove when finished implementing features
         if(1 == 1) {
         for(int i = 0; i < 10; i++) {
             System.out.println(xTrain[i].length + " | " + Arrays.toString(xTrain[i]));
@@ -271,7 +277,7 @@ public class ShadowModelMembershipRisk {
         RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, numberOfTrees, maxNumberOfLeafNodes, minSizeOfLeafNodes, numberOfVariablesToSplit, subSample, splitRule, null);
 
         // Create summarizing features
-        double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getCorrelationFeatures();
+        double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getFeatures(featureType);
         double[] probabilities = new double[] {0, 0};
 
         int _result = rm.predict(featuresAttackedDataset, probabilities);
@@ -280,11 +286,11 @@ public class ShadowModelMembershipRisk {
         return probabilities[0];
         
         } else {
-            double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getCorrelationFeatures();
-            
+            double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getFeatures(featureType);
+            return 0d;
         }
         
-        return 0d;
+        
 
     }
 
@@ -433,46 +439,31 @@ public class ShadowModelMembershipRisk {
         }
         
         /**
-         * Return naive features
+         * Returns a set of features
          * 
          * @return
          */
-        double[] getNaiveFeatures() {
-            if(naiveFeatures == null) {
-                naiveFeatures = calculateNaiveFeatures();
+        double[] getFeatures(FeatureType type) {
+            
+            switch (type){
+            case NAIVE:
+                if(naiveFeatures == null) {
+                    naiveFeatures = calculateNaiveFeatures();
+                }
+                return naiveFeatures;
+            case CORR:
+                if(correlationFeatures == null) {
+                    correlationFeatures = calculateCorrelationFeatures();
+                }
+                return correlationFeatures;
+            case HIST:
+                //TODO
+                return histogramFeatures;
+            case ALL:
+                return flattenArray(new double[][]{getFeatures(FeatureType.NAIVE), getFeatures(FeatureType.CORR), getFeatures(FeatureType.HIST)});
+            default:
+                throw new IllegalArgumentException("Unknown Feature Type");
             }
-            return naiveFeatures;
-        }
-        
-        /**
-         * Return histogram features
-         * 
-         * @return
-         */
-        double[] getHistogramFeatures() {
-            //TODO
-            return histogramFeatures;
-        }
-        
-        /**
-         * Return correlation features
-         * 
-         * @return
-         */
-        double[] getCorrelationFeatures() {
-            if(correlationFeatures == null) {
-                correlationFeatures = calculateCorrelationFeatures();
-            }
-            return correlationFeatures;
-        }
-        
-        /**
-         * Return all features
-         * 
-         * @return
-         */
-        double[] getAllFeatures() {
-            return flattenArray(new double[][]{getNaiveFeatures(), getCorrelationFeatures(), getHistogramFeatures()});
         }
         
         /**
@@ -484,6 +475,7 @@ public class ShadowModelMembershipRisk {
          * 
          * @return
          */
+        //TODO: Ass support for ALL attribute Types
         private double[] calculateCorrelationFeatures() {
             
             // Initialize dataframe used to store the parts of the input matrix to assemble
