@@ -11,8 +11,29 @@ import org.deidentifier.arx.criteria.KAnonymity;
 
 public class SMBenchmarkMain {
     
-    /** Feautre type(s) to use */
+    /** ~~~ Dataset & Targets ~~~ */
+    /** Dataset */
+    static final BenchmarkDataset BENCHMARK_DATASET = BenchmarkDataset.TEXAS;
+    
+    /** Use random targets or not */
+    static final boolean USE_RANDOM_TARGETS = true;
+    
+    /** Number of random targets */
+    static final int NUMBER_OF_TARGETS = 25;
+    
+    /** Target list of non-random targets */
+    static final int[] TARGET_IDS = new int[] {1,3,3,7};
+    
+    
+    /** ~~~ Classification ~~~ */
+    /** Feature type(s) to use */
     static final FeatureType FEATURE_TYPE = FeatureType.CORR;
+    
+    /** Number of subsamples used to train the classifier */
+    static final int REPETITIONS = 100;
+    
+    /** Size of subsamples (provided as fraction of original Dataset)*/
+    static final double FRACTION = 0.02d;
     
     
     /**
@@ -31,27 +52,28 @@ public class SMBenchmarkMain {
         // Example scenario
         
         // Create dataset
-        Data data = ShadowModelBenchmarkSetup.getData(BenchmarkDataset.TEXAS);
+        Data data = ShadowModelBenchmarkSetup.getData(BENCHMARK_DATASET);
+        
+        // Prepare config and anonymize
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(1));
         config.setSuppressionLimit(0.0d);
         
-        // Anonymize
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        
         DataHandle output = anonymizer.anonymize(data, config).getOutput();
         
-        // Perform risk assessment
-        //ShadowModelMembershipRisk model = new ShadowModelMembershipRisk();
-        
-        // TODO by setting repetitions to 0 the training is disabled - done for developing
-        //model.getShadowModelBasedMembershipRisk(output, 0.02d, 0, 100);
-        
-        Random rnd = new Random(13337);
-        int[] targets = createRandomTargets(1, output.getNumRows(), rnd);
-        System.out.println(targets.length);
-        double performance = performMIA(output, targets);
+        // Perform MIA
+        double performance = 0;
+        if (USE_RANDOM_TARGETS) {
+            int[] targets = createRandomTargets(NUMBER_OF_TARGETS, output.getNumRows());
+            performance = performMIA(output, targets);
+        } else {
+            performance = performMIA(output, TARGET_IDS);
+        }
+
         System.out.println("Average Performance " + performance); 
+        System.out.println("Feature Calc. Time: " + ShadowModelMembershipRisk.featureTime);
+        System.out.println("Measurement#1 Time: " + ShadowModelMembershipRisk.timeMeasurement1);
     }
     
     /**
@@ -82,8 +104,6 @@ public class SMBenchmarkMain {
         return samples.stream().mapToInt(Number::intValue).toArray();
     }
     
-    
-    
     /**
      * Repeat MIA for multiple targets
      * 
@@ -97,15 +117,14 @@ public class SMBenchmarkMain {
         
         int correctResults = 0;
         for(int i = 0; i < targets.length; i++) {
-            double result = model.getShadowModelBasedMembershipRisk(handle, 0.02d, targets[i], 100, FEATURE_TYPE);
+            System.out.print("(" + (i+1) + "/" + targets.length + ") | ");
+            double result = model.getShadowModelBasedMembershipRisk(handle, FRACTION, targets[i], REPETITIONS, FEATURE_TYPE);
             // TODO check if this is really the threshold - probably not
             if (result <= 0.5) {
                 correctResults++;
             }
         }
-        
         return (double) correctResults / (double) targets.length;
-        
     }
 
 }

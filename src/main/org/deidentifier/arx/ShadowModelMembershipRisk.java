@@ -50,7 +50,14 @@ import smile.data.Attribute;
  */
 public class ShadowModelMembershipRisk {
 
-    public enum FeatureType{NAIVE, CORR, HIST, ALL};
+    // TODO for dev only - remove when finished
+    public static long featureTime = 0;
+    public static long timeMeasurement1 = 0;
+    
+    /** Supported feature types */
+    public enum FeatureType{
+        NAIVE, CORR, HIST, ALL
+    }
     
     // Used to choose the sampling strategy 
     //TODO remove from final code
@@ -248,8 +255,10 @@ public class ShadowModelMembershipRisk {
 
 
             // Get features and store in feature-array
+            long tempTime = System.currentTimeMillis();
             xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns, availableValues).getFeatures(featureType);
             xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns, availableValues).getFeatures(featureType);
+            featureTime += System.currentTimeMillis() - tempTime;
             
             // Store labels in label-array
             yTrain[repetition*2] = 0;
@@ -257,15 +266,17 @@ public class ShadowModelMembershipRisk {
             
         }
         
-        // TODO dev stuff - remove when finished implementing features
-        if(1 == 1) {
-        for(int i = 0; i < 10; i++) {
+        /*
+        for (int i = 0; i < 10; i++) {
             System.out.println(xTrain[i].length + " | " + Arrays.toString(xTrain[i]));
             System.out.println(yTrain[i]);
-        }
+        }*/
         
+        // TODO dev stuff - remove when finished implementing features
+        if(1 == 1) {
         
-        
+
+
         // TODO relocated to main() - and to ARX-config eventually
         int numberOfTrees = 100; // sklearn default := 100 | ARX default := 500
         int maxNumberOfLeafNodes = Integer.MAX_VALUE; // sklean default := +INF | ARX default = 100;
@@ -277,12 +288,15 @@ public class ShadowModelMembershipRisk {
         RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, numberOfTrees, maxNumberOfLeafNodes, minSizeOfLeafNodes, numberOfVariablesToSplit, subSample, splitRule, null);
 
         // Create summarizing features
+        long tempTime = System.currentTimeMillis();
         double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getFeatures(featureType);
-        double[] probabilities = new double[] {0, 0};
-
-        int _result = rm.predict(featuresAttackedDataset, probabilities);
-        System.out.println("Assigned Label: " + _result + " Probabilities: " + Arrays.toString(probabilities));
+        featureTime += System.currentTimeMillis() - tempTime;
         
+        // Predict label
+        double[] probabilities = new double[] {0, 0};
+        int _result = rm.predict(featuresAttackedDataset, probabilities);
+        
+        System.out.println("Target ID: " + targetRow + "; Assigned Label: " + _result + "; Probabilities: " + Arrays.toString(probabilities));
         return probabilities[0];
         
         } else {
@@ -542,7 +556,9 @@ public class ShadowModelMembershipRisk {
             }
             
             // Calculate correlation coefficients
+            long tempTime = System.currentTimeMillis();
             double[][] corrOut = new PearsonsCorrelation().computeCorrelationMatrix(corrIn).getData();
+            timeMeasurement1 += System.currentTimeMillis() - tempTime;
             
             // flatten array
             double[] flatResult = flattenArray(corrOut);
@@ -602,8 +618,9 @@ public class ShadowModelMembershipRisk {
 
             // Let ARX compute all statistics
             // TODO really required for -all- attributes?
+            long tempTime = System.currentTimeMillis();
             Map<String, StatisticsSummary<?>> statistics = handle.getStatistics().getSummaryStatistics(false);
-
+            timeMeasurement1 += System.currentTimeMillis() - tempTime;
             
             for (int i = 0; i < columns.length; i++) {
                 // Obtain attribute name
@@ -664,6 +681,7 @@ public class ShadowModelMembershipRisk {
                     int minFreq = Integer.MAX_VALUE;
                     int maxFreq = Integer.MIN_VALUE;
                     
+                    
                     // Access map buffers
                     final int [] keys = map.keys;
                     final int [] values = map.values;
@@ -684,6 +702,7 @@ public class ShadowModelMembershipRisk {
                     
                     // Get number of assigned keys
                     uniqueElements = (double) map.assigned;
+
                     
                 } else {
                     throw new IllegalStateException("Unknown data type");
