@@ -61,7 +61,10 @@ public class ShadowModelMembershipRisk {
     
     // Used to choose the sampling strategy 
     //TODO remove from final code
-    private final boolean independentSamples = true;
+    private final static boolean INDEPENDENT_SAMPLES = true;
+    
+    /** Number of bins ot use for HIST feature */
+    private final static int NUM_BINS = 10;
     
     /**
      * Returns an estimate of membership disclosure risks based on shadow models. 
@@ -192,7 +195,7 @@ public class ShadowModelMembershipRisk {
             int[] sampleExcludingTarget;
             int[] sampleIncludingTarget;
             
-            if(independentSamples) {
+            if(INDEPENDENT_SAMPLES) {
                 sampleExcludingTarget = createSample(indices, sampleSize);
                 sampleIncludingTarget = createSample(indices, sampleSize, targetRow);
             } else {
@@ -416,7 +419,7 @@ public class ShadowModelMembershipRisk {
         private MetaData metaData;
         
         /**
-         * Creates a new FeatureSet
+         * Creates a new FeatureSet object
          * 
          * @param handle
          * @param codeMap
@@ -446,7 +449,9 @@ public class ShadowModelMembershipRisk {
                 }
                 return correlationFeatures;
             case HIST:
-                //TODO
+                if(histogramFeatures == null) {
+                    histogramFeatures = calculateHistogramFeatures();
+                }
                 return histogramFeatures;
             case ALL:
                 return flattenArray(new double[][]{getFeatures(FeatureType.NAIVE), getFeatures(FeatureType.CORR), getFeatures(FeatureType.HIST)});
@@ -455,6 +460,92 @@ public class ShadowModelMembershipRisk {
             }
         }
         
+        
+        /**
+         * Calculates histogram features.
+         * For categorical attributes this simply refers to the counts of distinct values.
+         * For continuous and ordinal attributes, the domain of the values is separated into 10 bins.
+         * 
+         * @return
+         */
+        private double[] calculateHistogramFeatures() {
+        
+            // Initialize array used to store the parts of the result
+            double[][] result = new double[columns.length][];
+            
+            for (int i = 0; i < columns.length; i++) {
+
+                // Obtain attribute details
+                int c = columns[i];
+                String attributeName = handle.getAttributeName(c);
+                DataType<?> _type = handle.getDefinition().getDataType(attributeName);
+                Class<?> _clazz = _type.getDescription().getWrappedClass();
+                
+                if (_clazz.equals(Double.class)) {
+                    
+                    double min = metaData.getMinValue(i);
+                    double max = metaData.getMaxValue(i);
+                    double binSize = (max - min) / NUM_BINS;
+                    
+                    double[] freqs = new double[NUM_BINS];
+                    Double[] values = getColumnAsDouble(c);
+                    
+                    /*
+                    for(int d = 0; d < NUM_BINS; d++) {
+                        System.out.println(d + " | " + (d*binSize+min) + " | " );
+                    }
+                    */
+                    
+                    for(Double v : values) {
+                        // calculate bin
+                        int bin = (int) ((v - min) / binSize);
+                        // check range
+                        if(0 > bin || bin > NUM_BINS) {
+                            throw new RuntimeException("Value out of histogram range");
+                        }
+                        // TODO Dirty quick-fix
+                        if(bin == NUM_BINS) {
+                            bin -= 1;
+                        }
+                        // inc freq of bin
+                        freqs[bin] += 1d;
+                    }
+                    
+                    result[i] = freqs;
+                    
+                } else if (_clazz.equals(String.class)) {
+                    
+                    // Count frequencies of values
+                    int column = columns[i];
+                    IntIntOpenHashMap map = new IntIntOpenHashMap();
+                    for (int row = 0; row < handle.getNumRows(); row++) {
+                        int code = handle.internalGetEncodedValue(row, column, false); // Beware that code can be -1
+                        map.putOrAdd(code, 1, 1);
+                    }
+                    
+                    int[] availableValues = metaData.getAvialableValues(i);
+                    double[] freqs = new double[availableValues.length];
+                    
+                    // Count freqs of all available values.
+                    for(int v = 0; v < availableValues.length; v++) {
+                        int value = availableValues[v];
+                        if(map.containsKey(value)) {
+                            freqs[v] = map.get(availableValues[v]);
+                        } else {
+                            freqs[v] = 0d;
+                        }
+                    }
+                    
+                    result[i] = freqs;
+                    //System.out.println(Arrays.toString(freqs));
+                }
+                System.out.println(attributeName + " --> " + Arrays.toString(result[i]));
+            }
+            // flatten array
+            double[] flatResult = flattenArray(result);
+            //System.out.println(Arrays.toString(flatResult));
+            return flatResult;
+        }
         /**
          * Calculates correlation features using Pearson's product-moment correlation.
          * All columns of continuous attributes are directly used for correlation calculation.

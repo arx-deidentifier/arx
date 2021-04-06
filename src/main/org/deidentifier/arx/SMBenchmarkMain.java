@@ -13,7 +13,7 @@ public class SMBenchmarkMain {
     
     /** ~~~ Dataset & Targets ~~~ */
     /** Dataset */
-    static final BenchmarkDataset BENCHMARK_DATASET = BenchmarkDataset.TEXAS_10;
+    static final BenchmarkDataset BENCHMARK_DATASET = BenchmarkDataset.TEXAS;
     
     /** Use random targets or not */
     static final boolean USE_RANDOM_TARGETS = false;
@@ -22,12 +22,12 @@ public class SMBenchmarkMain {
     static final int NUMBER_OF_TARGETS = 25;
     
     /** Target list of non-random targets */
-    static final int[] TARGET_IDS = new int[] {1,3,3,7};
+    static final int[] TARGET_IDS = new int[] {0};
     
     
     /** ~~~ Classification ~~~ */
     /** Feature type(s) to use */
-    static final FeatureType FEATURE_TYPE = FeatureType.CORR;
+    static final FeatureType FEATURE_TYPE = FeatureType.HIST;
     
     /** Number of subsamples used to train the classifier */
     static final int REPETITIONS = 0;
