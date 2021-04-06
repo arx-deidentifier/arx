@@ -63,7 +63,6 @@ public class ShadowModelMembershipRisk {
     //TODO remove from final code
     private final boolean independentSamples = true;
     
-    
     /**
      * Returns an estimate of membership disclosure risks based on shadow models. 
      * All quasi-identifiers will be used to construct features used in the attack.
@@ -168,33 +167,8 @@ public class ShadowModelMembershipRisk {
             }
         }
         
-        // Gather set of available values for categorical attributes
-        // TODO #1 Also support for ordinal attributes
-        // TODO #2 Maybe refactor - is this really the best place for this calculation?
-        int[][] availableValues = new int[columns.length][];
-        for(int i = 0; i < columns.length; i++) {
-            
-            // Obtain attribute details
-            int c = columns[i];
-            String attributeName = outputHandle.getAttributeName(c);
-            DataType<?> _type = outputHandle.getDefinition().getDataType(attributeName);
-            Class<?> _clazz = _type.getDescription().getWrappedClass();
-            
-            if (_clazz.equals(String.class)) {
-                //TODO replace with more efficient Code
-                
-                // Transfer column to Int-Representation
-                List<Integer> columnAsIntLabels = new ArrayList<Integer>();
-                for(int row = 0; row < outputHandle.getNumRows(); row++) {
-                    columnAsIntLabels.add(outputHandle.internalGetEncodedValue(row, c, false));
-                }
-                
-                // Remove duplicates
-                List<Integer> uniqueLabelsList = new ArrayList<Integer>(new LinkedHashSet<Integer>(columnAsIntLabels));
-                availableValues[i] = ArrayUtils.toPrimitive(uniqueLabelsList.toArray(new Integer[uniqueLabelsList.size()]));
-            }
-        }
-        
+        // Create MetaData obhject
+        MetaData metaData = new MetaData(outputHandle, columns);
         
         // Initialize arrays for features and labels
         double[][] xTrain = new double[repetitions*2][];
@@ -209,6 +183,7 @@ public class ShadowModelMembershipRisk {
             }
         }
         
+        // calculate size of subsamples
         int sampleSize = (int)Math.round(samplingFraction * (double)outputHandle.getNumRows());
         
         // For each training example
@@ -256,8 +231,8 @@ public class ShadowModelMembershipRisk {
 
             // Get features and store in feature-array
             long tempTime = System.currentTimeMillis();
-            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns, availableValues).getFeatures(featureType);
-            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns, availableValues).getFeatures(featureType);
+            xTrain[repetition*2] = new FeatureSet(datasetExcludingTarget, columns, metaData).getFeatures(featureType);
+            xTrain[repetition*2+1] = new FeatureSet(datasetIncludingTarget, columns, metaData).getFeatures(featureType);
             featureTime += System.currentTimeMillis() - tempTime;
             
             // Store labels in label-array
@@ -273,7 +248,7 @@ public class ShadowModelMembershipRisk {
         }*/
         
         // TODO dev stuff - remove when finished implementing features
-        if(1 == 1) {
+        if(1 == 0) {
         
 
 
@@ -289,7 +264,7 @@ public class ShadowModelMembershipRisk {
 
         // Create summarizing features
         long tempTime = System.currentTimeMillis();
-        double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getFeatures(featureType);
+        double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, metaData).getFeatures(featureType);
         featureTime += System.currentTimeMillis() - tempTime;
         
         // Predict label
@@ -300,7 +275,7 @@ public class ShadowModelMembershipRisk {
         return probabilities[0];
         
         } else {
-            double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, availableValues).getFeatures(featureType);
+            double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, metaData).getFeatures(featureType);
             return 0d;
         }
         
@@ -437,8 +412,8 @@ public class ShadowModelMembershipRisk {
         /** Histogram feature vector */
         private double[] histogramFeatures;
         
-        /** List of unique values per */
-        private int[][] availableValues;
+        /** MetaData of reference population */
+        private MetaData metaData;
         
         /**
          * Creates a new FeatureSet
@@ -446,10 +421,10 @@ public class ShadowModelMembershipRisk {
          * @param handle
          * @param codeMap
          */
-        FeatureSet (DataHandle handle, int[] columns, int[][] availableValues){
+        FeatureSet (DataHandle handle, int[] columns, MetaData metaData){
             this.handle = handle;
             this.columns = columns;
-            this.availableValues = availableValues;
+            this.metaData = metaData;
         }
         
         /**
@@ -523,7 +498,7 @@ public class ShadowModelMembershipRisk {
                     sparseColumnRepresentation.remove(uniqueLabelsList.remove(0));
                     */
                     
-                    int[] uniqueValues = this.availableValues[i];
+                    int[] uniqueValues = this.metaData.getAvialableValues(i);
                     
                     
                     // Initialize sparse representation with zeros
@@ -809,5 +784,128 @@ public class ShadowModelMembershipRisk {
             return output;
         }
         
+    }
+    
+    /**
+     * MetaData Object that is used to calculate and encapsul information of the reference population.
+     * 
+     * 
+     * @author Thierry
+     *
+     */
+    class MetaData {
+
+        /** DataHandle */
+        private DataHandle handle;
+
+        /** Columns to consider */
+        private int[]      columns;
+
+        /** Available Values */
+        private int[][]    availableValues;
+
+        private double[]   minValues;
+
+        private double[]   maxValues;
+
+        /**
+         * Creates a new MetaData Object
+         * 
+         * @param handle
+         * @param codeMap
+         */
+        MetaData(DataHandle handle, int[] columns) {
+            this.handle = handle;
+            this.columns = columns;
+        }
+
+        /**
+         * Return all available values for a certain column.
+         * 
+         * @param column
+         * @return
+         */
+        int[] getAvialableValues(int column) {
+            if (availableValues == null) {
+                calculateMetaData();
+            }
+            return availableValues[column];
+        }
+
+        /**
+         * Returns min value of column.
+         * 
+         * @param column
+         * @return
+         */
+        double getMinValue(int column) {
+            if (minValues == null) {
+                calculateMetaData();
+            }
+            return minValues[column];
+        }
+        
+        /**
+         * Returns max value of column.
+         * 
+         * @param column
+         * @return
+         */
+        double getMaxValue(int column) {
+            if (maxValues == null) {
+                calculateMetaData();
+            }
+            return maxValues[column];
+        }
+
+        /**
+         * Calculates all available values for all categorical columns.
+         * 
+         * @return
+         */
+        //TODO #1 Add support for all datatypes
+        //TODO #2 speed up process of getting min and max
+        private void calculateMetaData() {
+
+            // Prepare results
+            int[][] availableValues = new int[columns.length][];
+            double[] minValues = new double[columns.length];
+            double[] maxValues = new double[columns.length];
+
+            for (int i = 0; i < columns.length; i++) {
+
+                // Obtain attribute details
+                int c = columns[i];
+                String attributeName = handle.getAttributeName(c);
+                DataType<?> _type = handle.getDefinition().getDataType(attributeName);
+                Class<?> _clazz = _type.getDescription().getWrappedClass();
+
+                Map<String, StatisticsSummary<?>> statistics = handle.getStatistics()
+                                                                     .getSummaryStatistics(false);
+
+                if (_clazz.equals(String.class)) {
+                    // TODO replace with more efficient Code
+
+                    // Transfer column to Int-Representation
+                    List<Integer> columnAsIntLabels = new ArrayList<Integer>();
+                    for (int row = 0; row < handle.getNumRows(); row++) {
+                        columnAsIntLabels.add(handle.internalGetEncodedValue(row, c, false));
+                    }
+
+                    // Remove duplicates
+                    List<Integer> uniqueLabelsList = new ArrayList<Integer>(new LinkedHashSet<Integer>(columnAsIntLabels));
+                    availableValues[i] = ArrayUtils.toPrimitive(uniqueLabelsList.toArray(new Integer[uniqueLabelsList.size()]));
+                } else if (_clazz.equals(Double.class)) {
+
+                    StatisticsSummary<?> stats = statistics.get(attributeName);
+                    minValues[i] = (double) stats.getMinAsValue();
+                    maxValues[i] = (double) stats.getMaxAsValue();
+                }
+            }
+            this.availableValues = availableValues;
+            this.minValues = minValues;
+            this.maxValues = maxValues;
+        }
+
     }
 }
