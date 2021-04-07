@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.ShadowModelBenchmarkSetup.BenchmarkDataset;
 import org.deidentifier.arx.ShadowModelMembershipRisk.FeatureType;
+import org.deidentifier.arx.ShadowModelMembershipRisk.ClassifierType;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 public class SMBenchmarkMain {
@@ -16,7 +17,7 @@ public class SMBenchmarkMain {
     static final BenchmarkDataset BENCHMARK_DATASET = BenchmarkDataset.TEXAS;
     
     /** Use random targets or not */
-    static final boolean USE_RANDOM_TARGETS = false;
+    static final boolean USE_RANDOM_TARGETS = true;
     
     /** Number of random targets */
     static final int NUMBER_OF_TARGETS = 25;
@@ -27,10 +28,13 @@ public class SMBenchmarkMain {
     
     /** ~~~ Classification ~~~ */
     /** Feature type(s) to use */
-    static final FeatureType FEATURE_TYPE = FeatureType.HIST;
+    static final FeatureType FEATURE_TYPE = FeatureType.ALL;
+    
+    /** Classifier tyoe to use */
+    static final ClassifierType CLASSIFIER_TYPE = ClassifierType.RF;
     
     /** Number of subsamples used to train the classifier */
-    static final int REPETITIONS = 0;
+    static final int REPETITIONS = 50;
     
     /** Size of subsamples (provided as fraction of original Dataset)*/
     static final double FRACTION = 0.02d;
@@ -118,7 +122,7 @@ public class SMBenchmarkMain {
         int correctResults = 0;
         for(int i = 0; i < targets.length; i++) {
             System.out.print("(" + (i+1) + "/" + targets.length + ") | ");
-            double result = model.getShadowModelBasedMembershipRisk(handle, FRACTION, targets[i], REPETITIONS, FEATURE_TYPE);
+            double result = model.getShadowModelBasedMembershipRisk(handle, FRACTION, targets[i], REPETITIONS, FEATURE_TYPE, CLASSIFIER_TYPE);
             // TODO check if this is really the threshold - probably not
             if (result <= 0.5) {
                 correctResults++;

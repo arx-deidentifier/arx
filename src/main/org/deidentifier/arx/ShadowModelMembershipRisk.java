@@ -37,8 +37,13 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 import org.deidentifier.arx.aggregates.StatisticsSummary;
 
+
+// Doc for SMILE 1.3.0 https://javadoc.io/doc/com.github.haifengl/smile-core/1.3.0/index.html
 import smile.classification.DecisionTree.SplitRule;
+import smile.classification.KNN;
+import smile.classification.LogisticRegression;
 import smile.classification.RandomForest;
+import smile.classification.SoftClassifier;
 import smile.data.Attribute;
 
 
@@ -57,6 +62,10 @@ public class ShadowModelMembershipRisk {
     /** Supported feature types */
     public enum FeatureType{
         NAIVE, CORR, HIST, ALL
+    }
+    
+    public enum ClassifierType {
+        KNN, LR, RF
     }
     
     // Used to choose the sampling strategy 
@@ -80,7 +89,8 @@ public class ShadowModelMembershipRisk {
                                                     double samplingFraction,
                                                     int targetRow,
                                                     int repetitions,
-                                                    FeatureType featureType) {
+                                                    FeatureType featureType,
+                                                    ClassifierType classifierType) {
 
         // Use all quasi-identifiers as relevant attributes
         return getShadowModelBasedMembershipRisk(outputHandle,
@@ -88,7 +98,8 @@ public class ShadowModelMembershipRisk {
                                                  samplingFraction,
                                                  targetRow,
                                                  repetitions,
-                                                 featureType);
+                                                 featureType,
+                                                 classifierType);
     
     }
 
@@ -147,7 +158,8 @@ public class ShadowModelMembershipRisk {
                                                     double samplingFraction,
                                                     int targetRow,
                                                     int repetitions,
-                                                    FeatureType featureType) {
+                                                    FeatureType featureType,
+                                                    ClassifierType classifierType) {
 
         // Various checks
         if (outputHandle == null) { throw new NullPointerException("Handle is null"); }
@@ -244,27 +256,44 @@ public class ShadowModelMembershipRisk {
             
         }
         
-        /*
-        for (int i = 0; i < 10; i++) {
-            System.out.println(xTrain[i].length + " | " + Arrays.toString(xTrain[i]));
-            System.out.println(yTrain[i]);
-        }*/
+        // TODO: dev stuff - remove eventually
+        if (0 == 1) {
+            double[] featuresAttackedDataset = new FeatureSet(outputHandle,
+                                                              columns,
+                                                              metaData).getFeatures(featureType);
+            return 0d;
+        }
         
-        // TODO dev stuff - remove when finished implementing features
-        if(1 == 0) {
+        // Initialize and train classifier
+        SoftClassifier<double[]> classifier;
         
-
-
-        // TODO relocated to main() - and to ARX-config eventually
-        int numberOfTrees = 100; // sklearn default := 100 | ARX default := 500
-        int maxNumberOfLeafNodes = Integer.MAX_VALUE; // sklean default := +INF | ARX default = 100;
-        int minSizeOfLeafNodes = 1; // sklean default := 1 | ARX default := 5
-        int numberOfVariablesToSplit = (int) Math.floor(Math.sqrt(xTrain[0].length)); // sklearn := auto (i.e. sqrt(#features)) | ARX default := 0
-        double subSample = 1d; // skleanr --> provided at total number (2) | ARX default := 1d
-        SplitRule splitRule = SplitRule.GINI; // sklearn default := GINI | ARX dedault: = GINI
+        switch (classifierType) {
+        case KNN:
+            
+            // TODO relocated to main() - and to ARX-config eventually
+            int numberOfNeighbors = 5; // Privacy Mirage papper := 5
+            
+            classifier = KNN.learn(xTrain, yTrain, numberOfNeighbors, null);
+            break;
+        case LR:
+            classifier = new LogisticRegression(xTrain, yTrain, null);
+            break;
+        case RF:
+            
+            // TODO relocated to main() - and to ARX-config eventually
+            int numberOfTrees = 100; // sklearn default := 100 | ARX default := 500
+            int maxNumberOfLeafNodes = Integer.MAX_VALUE; // sklean default := +INF | ARX default = 100;
+            int minSizeOfLeafNodes = 1; // sklean default := 1 | ARX default := 5
+            int numberOfVariablesToSplit = (int) Math.floor(Math.sqrt(xTrain[0].length)); // sklearn := auto (i.e. sqrt(#features)) | ARX default := 0
+            double subSample = 1d; // skleanr --> provided at total number (2) | ARX default := 1d
+            SplitRule splitRule = SplitRule.GINI; // sklearn default := GINI | ARX dedault: = GINI
+            
+            classifier = new RandomForest((Attribute[])null, xTrain, yTrain, numberOfTrees, maxNumberOfLeafNodes, minSizeOfLeafNodes, numberOfVariablesToSplit, subSample, splitRule, null);
+            break;
+        default:
+            throw new RuntimeException("Classifier not supported");
+        }
         
-        RandomForest rm = new RandomForest((Attribute[])null, xTrain, yTrain, numberOfTrees, maxNumberOfLeafNodes, minSizeOfLeafNodes, numberOfVariablesToSplit, subSample, splitRule, null);
-
         // Create summarizing features
         long tempTime = System.currentTimeMillis();
         double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, metaData).getFeatures(featureType);
@@ -272,17 +301,10 @@ public class ShadowModelMembershipRisk {
         
         // Predict label
         double[] probabilities = new double[] {0, 0};
-        int _result = rm.predict(featuresAttackedDataset, probabilities);
+        int _result = classifier.predict(featuresAttackedDataset, probabilities);
         
         System.out.println("Target ID: " + targetRow + "; Assigned Label: " + _result + "; Probabilities: " + Arrays.toString(probabilities));
         return probabilities[0];
-        
-        } else {
-            double[] featuresAttackedDataset = new FeatureSet(outputHandle, columns, metaData).getFeatures(featureType);
-            return 0d;
-        }
-        
-        
 
     }
 
@@ -491,6 +513,9 @@ public class ShadowModelMembershipRisk {
                     Double[] values = getColumnAsDouble(c);
                     
                     /*
+                    System.out.println("MIN: " + min + " | MAX: " + max);
+                    
+                    
                     for(int d = 0; d < NUM_BINS; d++) {
                         System.out.println(d + " | " + (d*binSize+min) + " | " );
                     }
@@ -539,7 +564,7 @@ public class ShadowModelMembershipRisk {
                     result[i] = freqs;
                     //System.out.println(Arrays.toString(freqs));
                 }
-                System.out.println(attributeName + " --> " + Arrays.toString(result[i]));
+                //System.out.println(attributeName + " --> " + Arrays.toString(result[i]));
             }
             // flatten array
             double[] flatResult = flattenArray(result);
