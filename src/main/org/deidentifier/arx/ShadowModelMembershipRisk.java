@@ -553,12 +553,7 @@ public class ShadowModelMembershipRisk {
                     
                     // Count freqs of all available values.
                     for(int v = 0; v < availableValues.length; v++) {
-                        int value = availableValues[v];
-                        if(map.containsKey(value)) {
-                            freqs[v] = map.get(availableValues[v]);
-                        } else {
-                            freqs[v] = 0d;
-                        }
+                        freqs[v] = map.getOrDefault(availableValues[v], 0);
                     }
                     
                     result[i] = freqs;
@@ -571,6 +566,7 @@ public class ShadowModelMembershipRisk {
             //System.out.println(Arrays.toString(flatResult));
             return flatResult;
         }
+        
         /**
          * Calculates correlation features using Pearson's product-moment correlation.
          * All columns of continuous attributes are directly used for correlation calculation.
@@ -580,11 +576,11 @@ public class ShadowModelMembershipRisk {
          * 
          * @return
          */
-        //TODO: Ass support for ALL attribute Types
+        //TODO: Add support for ALL attribute Types
         private double[] calculateCorrelationFeatures() {
             
-            // Initialize dataframe used to store the parts of the input matrix to assemble
-            List<List<Double>> frame = new ArrayList<List<Double>>();
+            // Initialize list used to store the parts of the input matrix to assemble
+            List<List<Double>> preparedColumns = new ArrayList<List<Double>>();
             
             for (int i = 0; i < columns.length; i++) {
 
@@ -596,12 +592,12 @@ public class ShadowModelMembershipRisk {
                 
                 if (_clazz.equals(Double.class)) {
                     
-                    // Directly add column to frame
-                    frame.add(Arrays.asList(getColumnAsDouble(c)));
+                    // Directly add column to list of prepared columns
+                    preparedColumns.add(Arrays.asList(getColumnAsDouble(c)));
                     
                 } else if (_clazz.equals(String.class)) {
                     
-                    //TODO replace with more efficient Code !!!11
+                    //TODO replace with more efficient Code
                     
                     //Transfer column to Int-Representation
                     List<Integer> columnAsIntLabels = new ArrayList<Integer>();
@@ -618,7 +614,7 @@ public class ShadowModelMembershipRisk {
                     
                     
                     // Initialize sparse representation with zeros
-                    Map<Integer, List<Double>> sparseColumnRepresentation = new HashMap<Integer, List<Double>>();
+                    Map<Integer, List<Double>> sparseColumnRepresentation = new HashMap<>();
                     for(int label : uniqueValues) {
                         sparseColumnRepresentation.put(label, new ArrayList<Double>(Collections.nCopies(handle.getNumRows(), 0d)));
                     }
@@ -629,10 +625,10 @@ public class ShadowModelMembershipRisk {
                         sparseColumnRepresentation.get(columnAsIntLabels.get(row)).set(row, 1d);
                     }
                      
-                    // Copy to final frame
+                    // Copy to list of prepared columns
                     // Ignore first label for copying into result frame - dont needed for correlation as one value can be condiedered the default
                     for(int j = 1; j < uniqueValues.length; j++) {
-                        frame.add(sparseColumnRepresentation.get(uniqueValues[j]));
+                        preparedColumns.add(sparseColumnRepresentation.get(uniqueValues[j]));
                     }
                 }
             }
@@ -640,9 +636,9 @@ public class ShadowModelMembershipRisk {
             // transfer lists to primitive arrays and transpose
             double[][] corrIn = new double[handle.getNumRows()][];
             for(int i = 0; i < handle.getNumRows(); i++) {
-                corrIn[i] = new double[frame.size()];
-                for(int j = 0; j < frame.size(); j++) {
-                    corrIn[i][j] = frame.get(j).get(i);
+                corrIn[i] = new double[preparedColumns.size()];
+                for(int j = 0; j < preparedColumns.size(); j++) {
+                    corrIn[i][j] = preparedColumns.get(j).get(i);
                 }
             }
             
