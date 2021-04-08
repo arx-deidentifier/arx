@@ -14,10 +14,10 @@ public class SMBenchmarkMain {
     
     /** ~~~ Dataset & Targets ~~~ */
     /** Dataset */
-    static final BenchmarkDataset BENCHMARK_DATASET = BenchmarkDataset.TEXAS;
+    static final BenchmarkDataset BENCHMARK_DATASET = BenchmarkDataset.TEXAS_10;
     
     /** Use random targets or not */
-    static final boolean USE_RANDOM_TARGETS = true;
+    static final boolean USE_RANDOM_TARGETS = false;
     
     /** Number of random targets */
     static final int NUMBER_OF_TARGETS = 25;
@@ -28,13 +28,13 @@ public class SMBenchmarkMain {
     
     /** ~~~ Classification ~~~ */
     /** Feature type(s) to use */
-    static final FeatureType FEATURE_TYPE = FeatureType.ALL;
+    static final FeatureType FEATURE_TYPE = FeatureType.CORR;
     
     /** Classifier tyoe to use */
     static final ClassifierType CLASSIFIER_TYPE = ClassifierType.RF;
     
     /** Number of subsamples used to train the classifier */
-    static final int REPETITIONS = 50;
+    static final int REPETITIONS = 0;
     
     /** Size of subsamples (provided as fraction of original Dataset)*/
     static final double FRACTION = 0.02d;
@@ -100,6 +100,10 @@ public class SMBenchmarkMain {
      */
     public static int[] createRandomTargets(int numberOfTargets, int numberOfRows, Random rnd) {
         Set<Integer> samples = new LinkedHashSet<Integer>();
+        
+        if (numberOfRows < numberOfTargets) {
+            throw new RuntimeException("Number of targets exceeds number available rows");
+        }
         
         while(samples.size() < numberOfTargets) {
             samples.add(rnd.nextInt(numberOfRows+1));

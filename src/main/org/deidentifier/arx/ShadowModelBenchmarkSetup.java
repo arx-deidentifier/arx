@@ -109,13 +109,13 @@ public class ShadowModelBenchmarkSetup {
         switch (dataset) {
 
         case ADULT:
-            filename = "adult_config.csv";
+            filename = "adult.cfg";
             break;
         case TEXAS_10:
-            filename = "texas_config.csv";
+            filename = "texas_10.cfg";
             break;
         case TEXAS:
-            filename = "texas_config.csv";
+            filename = "texas.cfg";
             break;
         default:
             throw new RuntimeException("Invalid dataset");

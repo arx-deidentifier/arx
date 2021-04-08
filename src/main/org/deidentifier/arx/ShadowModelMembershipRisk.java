@@ -257,7 +257,7 @@ public class ShadowModelMembershipRisk {
         }
         
         // TODO: dev stuff - remove eventually
-        if (0 == 1) {
+        if (1 == 1) {
             double[] featuresAttackedDataset = new FeatureSet(outputHandle,
                                                               columns,
                                                               metaData).getFeatures(featureType);
@@ -633,7 +633,11 @@ public class ShadowModelMembershipRisk {
                 }
             }
             
-            // transfer lists to primitive arrays and transpose
+            printMatrix(preparedColumns);
+            System.out.println("-------------");
+            
+            // 1. transfer lists to primitive arrays and transpose
+            // transpose Arrays as the 
             double[][] corrIn = new double[handle.getNumRows()][];
             for(int i = 0; i < handle.getNumRows(); i++) {
                 corrIn[i] = new double[preparedColumns.size()];
@@ -642,14 +646,20 @@ public class ShadowModelMembershipRisk {
                 }
             }
             
+            printMatrix(corrIn);
+            System.out.println("-------------");
+            
             // Calculate correlation coefficients
             long tempTime = System.currentTimeMillis();
             double[][] corrOut = new PearsonsCorrelation().computeCorrelationMatrix(corrIn).getData();
             timeMeasurement1 += System.currentTimeMillis() - tempTime;
             
+            printMatrix(corrOut);
+            System.out.println("-------------");
+            
             // flatten array
             double[] flatResult = flattenArray(corrOut);
-            //System.out.println(Arrays.toString(flatResult));
+            System.out.println(Arrays.toString(flatResult));
             return flatResult;
             
         }
