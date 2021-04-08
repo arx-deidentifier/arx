@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVDataInput;
 
 /**
@@ -17,7 +18,35 @@ import org.deidentifier.arx.io.CSVDataInput;
  * @author Thierry Meurers
  *
  */
-public class ShadowModelBenchmarkSetup {
+public class ShadowModelSetup {
+    
+    /**
+     * Interface for anonymization methods
+     * 
+     * @author Fabian Prasser
+     */
+    public interface AnonymizationMethod {
+        public DataHandle anonymize(Data handle);
+    }
+    
+    public static AnonymizationMethod IDENTITY_ANONYMIZATION = new AnonymizationMethod() {
+        @Override
+        public DataHandle anonymize(Data data) {
+
+            // Prepare
+            ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new KAnonymity(1));
+            config.setSuppressionLimit(0.0d);
+            
+            // Anonymize
+            ARXAnonymizer anonymizer = new ARXAnonymizer();
+            try {
+                return anonymizer.anonymize(data, config).getOutput();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    };
 
     /**
      * Datasets
