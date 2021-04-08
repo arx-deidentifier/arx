@@ -633,8 +633,8 @@ public class ShadowModelMembershipRisk {
                 }
             }
             
-            printMatrix(preparedColumns);
-            System.out.println("-------------");
+            //printMatrix(preparedColumns);
+            //System.out.println("-------------");
             
             // 1. transfer lists to primitive arrays and transpose
             // transpose Arrays as the 
@@ -646,16 +646,16 @@ public class ShadowModelMembershipRisk {
                 }
             }
             
-            printMatrix(corrIn);
-            System.out.println("-------------");
+            //printMatrix(corrIn);
+            //System.out.println("-------------");
             
             // Calculate correlation coefficients
             long tempTime = System.currentTimeMillis();
             double[][] corrOut = new PearsonsCorrelation().computeCorrelationMatrix(corrIn).getData();
             timeMeasurement1 += System.currentTimeMillis() - tempTime;
             
-            printMatrix(corrOut);
-            System.out.println("-------------");
+            //printMatrix(corrOut);
+            //System.out.println("-------------");
             
             // flatten array
             double[] flatResult = flattenArray(corrOut);
