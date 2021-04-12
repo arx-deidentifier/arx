@@ -23,13 +23,13 @@ import org.deidentifier.arx.ShadowModelSetup.BenchmarkDataset;
 public class ShadowModelMain {
 
     /** Dataset */
-    private static final BenchmarkDataset    BENCHMARK_DATASET   = BenchmarkDataset.ADULT;
+    private static final BenchmarkDataset    BENCHMARK_DATASET   = BenchmarkDataset.ADULT_FULL;
 
     /** Anonymization */
     private static final AnonymizationMethod ANONYMIZATION       = ShadowModelSetup.IDENTITY_ANONYMIZATION;
 
     /** Feature type(s) to use */
-    private static final FeatureType         FEATURE_TYPE        = FeatureType.HISTOGRAM;
+    private static final FeatureType         FEATURE_TYPE        = FeatureType.CORRELATION;
 
     /** Classifier tyoe to use */
     private static final ClassifierType      CLASSIFIER_TYPE     = ClassifierType.RF;
@@ -43,7 +43,7 @@ public class ShadowModelMain {
     /** Number of subsamples used to train the classifier */
     private static final int                 NUMBER_OF_TRAININGS = 10;
 
-    /** TODO: Is this a suitable number? What is used in the paper? */
+    /** TODO: Is this a suitable number? What is used in the paper? --> 1000 */
     private static final int                 SAMPLE_SIZE         = 100;
 
     /**
@@ -65,6 +65,8 @@ public class ShadowModelMain {
                 
         // Perform tests
         for (int j = 0; j < NUMBER_OF_TESTS; j++) {
+            
+            System.out.println((j+1)+"/"+NUMBER_OF_TESTS + "--------");
             
             // Sample without target
             Set<Integer> rOut = getSample(rRef, SAMPLE_SIZE, targets);

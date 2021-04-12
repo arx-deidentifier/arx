@@ -10,6 +10,7 @@ import java.util.Locale;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 
 /**
  * Setup class for ShadowModel MIA benchmark
@@ -37,6 +38,8 @@ public class ShadowModelSetup {
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(1));
             config.setSuppressionLimit(0.0d);
+            config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
+            config.setHeuristicSearchStepLimit(1);
             
             // Anonymize
             ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -52,7 +55,7 @@ public class ShadowModelSetup {
      * Datasets
      */
     public static enum BenchmarkDataset {
-        TEXAS_10, TEXAS, ADULT
+        TEXAS_10, TEXAS, ADULT, ADULT_FULL
     }
     
     /**
@@ -112,18 +115,21 @@ public class ShadowModelSetup {
         switch (dataset) {
 
         case ADULT:
-            filename = "adult.csv";
+            filename = "data/adult.csv";
+            break;
+        case ADULT_FULL:
+            filename = "data_new/adult_full.csv";
             break;
         case TEXAS_10:
-            filename = "texas_10.csv";
+            filename = "data/texas_10.csv";
             break;
         case TEXAS:
-            filename = "texas.csv";
+            filename = "data/texas.csv";
             break;
         default:
             throw new RuntimeException("Invalid dataset");
         }
-        return Data.create("data/" + filename, Charset.defaultCharset(), ';');
+        return Data.create(filename, Charset.defaultCharset(), ';');
     }
     
     /**
@@ -138,18 +144,21 @@ public class ShadowModelSetup {
         switch (dataset) {
 
         case ADULT:
-            filename = "adult.cfg";
+            filename = "data/adult.cfg";
+            break;
+        case ADULT_FULL:
+            filename = "data_new/adult_full.cfg";
             break;
         case TEXAS_10:
-            filename = "texas_10.cfg";
+            filename = "data/texas_10.cfg";
             break;
         case TEXAS:
-            filename = "texas.cfg";
+            filename = "data/texas.cfg";
             break;
         default:
             throw new RuntimeException("Invalid dataset");
         }
-        return new CSVDataInput("data/" + filename, Charset.defaultCharset(), ';');
+        return new CSVDataInput(filename, Charset.defaultCharset(), ';');
     }
     
     /**
@@ -158,11 +167,13 @@ public class ShadowModelSetup {
      * @param attribute
      * @return
      * @throws IOException
-     */
+    */
     public static Hierarchy loadHierarchy(BenchmarkDataset dataset, String attribute) throws IOException {
         switch (dataset) {
         case ADULT:
             return Hierarchy.create("data/adult_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
+        case ADULT_FULL:
+            return Hierarchy.create("data_new/adult_full_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS_10:
             return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS:
@@ -171,5 +182,5 @@ public class ShadowModelSetup {
             throw new IllegalArgumentException("Unknown dataset");
         }
     }
-     
+      
 }

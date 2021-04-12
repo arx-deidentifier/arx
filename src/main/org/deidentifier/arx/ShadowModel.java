@@ -761,6 +761,7 @@ public class ShadowModel {
                 throw new IllegalStateException("Attribute is not numeric");
             }
         } catch (ParseException e) {
+            // TODO Why caused by short heuristic searches?
             throw new IllegalStateException(e);
         }
     }
