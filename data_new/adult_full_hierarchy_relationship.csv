@@ -1,6 +1,6 @@
-Husband;Married;*
-Wife;Married;*
-Not-in-family;No Family;*
-Unmarried;No Family;*
-Other-relative;Other;*
-Own-child;Other;*
+Husband,Direct,*
+Wife,Direct,*
+Own-child,Direct,*
+Unmarried,Direct,*
+Not-in-family,Indirect,*
+Other-relative,Indirect,*

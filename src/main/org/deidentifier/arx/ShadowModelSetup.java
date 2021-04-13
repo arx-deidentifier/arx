@@ -8,9 +8,14 @@ import java.util.List;
 import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVDataInput;
+
+import cern.colt.Arrays;
+
 import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
+import org.deidentifier.arx.ARXLattice.ARXNode;
 
 /**
  * Setup class for ShadowModel MIA benchmark
@@ -44,18 +49,46 @@ public class ShadowModelSetup {
             // Anonymize
             ARXAnonymizer anonymizer = new ARXAnonymizer();
             try {
-                return anonymizer.anonymize(data, config).getOutput();
+                ARXResult result = anonymizer.anonymize(data, config);
+                // TODO remove
+                /*
+                ARXNode node = result.getGlobalOptimum();
+                int[] transformation = node.getTransformation();
+                System.out.println(Arrays.toString(transformation));
+                */
+                return result.getOutput();
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
         }
     };
 
+    public static AnonymizationMethod K5_ANONYMIZATION = new AnonymizationMethod() {
+        @Override
+        public DataHandle anonymize(Data data) {
+
+            // Prepare
+            ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new KAnonymity(5));
+            config.setSuppressionLimit(0.0d);
+            config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
+            config.setHeuristicSearchStepLimit(1000);
+            
+            // Anonymize
+            ARXAnonymizer anonymizer = new ARXAnonymizer();
+            try {
+                return anonymizer.anonymize(data, config).getOutput();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    };
+    
     /**
      * Datasets
      */
     public static enum BenchmarkDataset {
-        TEXAS_10, TEXAS, ADULT, ADULT_FULL
+        TEXAS_10, TEXAS, TEXAS_OUTLIER, ADULT, ADULT_FULL, ADULT_14, ADULT_14_OUTLIER
     }
     
     /**
@@ -71,34 +104,45 @@ public class ShadowModelSetup {
 
         Iterator<String[]> cfgIter = loadDataConfig(dataset).iterator(false);
 
-        List<String> qiNames = new ArrayList<String>();
-        List<String> qiTypes = new ArrayList<String>();
-        List<String> qiInclude = new ArrayList<String>();
+        List<String> attributeNames = new ArrayList<String>();
+        List<String> attributeTypes = new ArrayList<String>();
+        List<String> attributeInclude = new ArrayList<String>();
+        List<String> attributeIsQI = new ArrayList<>();
 
         while (cfgIter.hasNext()) {
             String[] line = cfgIter.next();
-            qiNames.add(line[0]);
-            qiTypes.add(line[1]);
-            qiInclude.add(line[2]);
+            attributeNames.add(line[0]);
+            attributeTypes.add(line[1]);
+            attributeInclude.add(line[2]);
+            attributeIsQI.add(line[3]);
         }
 
         Data data = loadData(dataset);
 
-        for (int i = 0; i < qiNames.size(); i++) {
-            if (qiInclude.get(i).equals("TRUE")) {
-                data.getDefinition().setAttributeType(qiNames.get(i), loadHierarchy(dataset, qiNames.get(i)));
-                switch (qiTypes.get(i)) {
+        for (int i = 0; i < attributeNames.size(); i++) {
+            if (attributeInclude.get(i).equals("TRUE")) {
+                
+                switch (attributeTypes.get(i)) {
                 case "categorical":
-                    data.getDefinition().setDataType(qiNames.get(i), DataType.STRING);
+                    data.getDefinition().setDataType(attributeNames.get(i), DataType.STRING);
+                    if(attributeIsQI.get(i).equals("TRUE")) {
+                        // Set hierarchy
+                        data.getDefinition().setAttributeType(attributeNames.get(i), loadHierarchy(dataset, attributeNames.get(i)));
+                    } 
                     break;
                 case "continuous":
-                    data.getDefinition().setDataType(qiNames.get(i), DataType.createDecimal("#.#", Locale.US));
+                    data.getDefinition().setDataType(attributeNames.get(i), DataType.createDecimal("#.#", Locale.US));
+                    if(attributeIsQI.get(i).equals("TRUE")) {
+                        // Set aggregation function
+                        data.getDefinition().setAttributeType(attributeNames.get(i), MicroAggregationFunction.createGeometricMean());
+                    } 
                     break;
                 case "ordinal":
                     // TODO
                 default:
                     throw new RuntimeException("Invalid datatype");
                 }
+
             }
         }
         return data;
@@ -120,11 +164,20 @@ public class ShadowModelSetup {
         case ADULT_FULL:
             filename = "data_new/adult_full.csv";
             break;
+        case ADULT_14:
+            filename = "data_new/adult_14.csv";
+            break;
+        case ADULT_14_OUTLIER:
+            filename = "data_new/adult_14_outlier.csv";
+            break;
         case TEXAS_10:
             filename = "data/texas_10.csv";
             break;
         case TEXAS:
             filename = "data/texas.csv";
+            break;
+        case TEXAS_OUTLIER:
+            filename = "data_new/texas_outlier.csv";
             break;
         default:
             throw new RuntimeException("Invalid dataset");
@@ -149,11 +202,18 @@ public class ShadowModelSetup {
         case ADULT_FULL:
             filename = "data_new/adult_full.cfg";
             break;
+        case ADULT_14:
+        case ADULT_14_OUTLIER:
+            filename = "data_new/adult_14.cfg";
+            break;
         case TEXAS_10:
             filename = "data/texas_10.cfg";
             break;
         case TEXAS:
-            filename = "data/texas.cfg";
+            filename = "data_new/texas.cfg";
+            break;
+        case TEXAS_OUTLIER:
+            filename = "data_new/texas.cfg";
             break;
         default:
             throw new RuntimeException("Invalid dataset");
@@ -174,10 +234,15 @@ public class ShadowModelSetup {
             return Hierarchy.create("data/adult_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case ADULT_FULL:
             return Hierarchy.create("data_new/adult_full_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
+        case ADULT_14:
+        case ADULT_14_OUTLIER:
+            return Hierarchy.create("data_new/adult_full_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ',');
         case TEXAS_10:
             return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS:
-            return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
+            return Hierarchy.create("data_new/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
+        case TEXAS_OUTLIER:
+            return Hierarchy.create("data_new/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         default:
             throw new IllegalArgumentException("Unknown dataset");
         }

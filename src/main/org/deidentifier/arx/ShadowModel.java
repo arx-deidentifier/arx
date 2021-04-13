@@ -31,6 +31,7 @@ import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.aggregates.StatisticsSummary;
 
+import cern.colt.Arrays;
 import smile.classification.DecisionTree.SplitRule;
 import smile.classification.KNN;
 import smile.classification.LogisticRegression;
@@ -598,6 +599,11 @@ public class ShadowModel {
             // Predict label
             double[] probabilities = new double[] {0, 0};
             int target = classifier.predict(xValues[i], probabilities);
+            
+            //TODO remove
+            //System.out.println(Arrays.toString(xValues[i]));
+            //System.out.println(xValues[i].length);
+            
             double confidence = probabilities[target];
             result[i] = new Pair<>(target == 1, confidence);
         }

@@ -2,6 +2,7 @@ package org.deidentifier.arx;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,28 +24,34 @@ import org.deidentifier.arx.ShadowModelSetup.BenchmarkDataset;
 public class ShadowModelMain {
 
     /** Dataset */
-    private static final BenchmarkDataset    BENCHMARK_DATASET   = BenchmarkDataset.ADULT_FULL;
+    private static final BenchmarkDataset    BENCHMARK_DATASET     = BenchmarkDataset.ADULT_14;
 
     /** Anonymization */
-    private static final AnonymizationMethod ANONYMIZATION       = ShadowModelSetup.IDENTITY_ANONYMIZATION;
+    private static final AnonymizationMethod ANONYMIZATION         = ShadowModelSetup.IDENTITY_ANONYMIZATION;
 
     /** Feature type(s) to use */
-    private static final FeatureType         FEATURE_TYPE        = FeatureType.CORRELATION;
+    private static final FeatureType         FEATURE_TYPE          = FeatureType.NAIVE;
 
     /** Classifier tyoe to use */
-    private static final ClassifierType      CLASSIFIER_TYPE     = ClassifierType.RF;
+    private static final ClassifierType      CLASSIFIER_TYPE       = ClassifierType.RF;
 
     /** Number of random targets */
-    private static final int                 NUMBER_OF_TARGETS   = 50;
+    private static final int                 NUMBER_OF_TARGETS     = 50;
+
+    /** Use crafted target */
+    private static final boolean             USE_CRAFTED_TARGET    = false;
 
     /** Number of random targets */
-    private static final int                 NUMBER_OF_TESTS     = 25;
+    private static final int                 NUMBER_OF_TESTS       = 25;
 
     /** Number of subsamples used to train the classifier */
-    private static final int                 NUMBER_OF_TRAININGS = 10;
+    private static final int                 NUMBER_OF_TRAININGS   = 10;
 
     /** TODO: Is this a suitable number? What is used in the paper? --> 1000 */
-    private static final int                 SAMPLE_SIZE         = 100;
+    private static final int                 SAMPLE_SIZE           = 1000;
+
+    /** Size of population available for the adversary in each test */
+    private static final int                 ADVERSARY_POPULATION_SIZE = 10000;
 
     /**
      * Main entry point
@@ -60,9 +67,15 @@ public class ShadowModelMain {
         // Create dataset
         Data rRef = ShadowModelSetup.getData(BENCHMARK_DATASET);
         
-        // Draw targets
-        Set<Integer> targets = getTargets(rRef, NUMBER_OF_TARGETS);
-                
+        Set<Integer> targets;
+        if (USE_CRAFTED_TARGET) {
+            //TODO maybe not hardcode id of outlier
+            targets = new HashSet<>(Arrays.asList(0));
+        } else {
+            // Draw targets
+            targets = getTargets(rRef, NUMBER_OF_TARGETS);
+        }     
+        
         // Perform tests
         for (int j = 0; j < NUMBER_OF_TESTS; j++) {
             
@@ -71,9 +84,15 @@ public class ShadowModelMain {
             // Sample without target
             Set<Integer> rOut = getSample(rRef, SAMPLE_SIZE, targets);
             
+            // Sample adversary population
+            Set<Integer> rA = getSample(rRef, ADVERSARY_POPULATION_SIZE, targets);
+            
             // For each target
+            int targetNum = 0;
             for (int target : targets) {
 
+                System.out.println("| Target: " + (++targetNum)+"/"+targets.size() + " |");
+                
                 // Initialize shadow model
                 ShadowModel model = new ShadowModel(rRef.getHandle(),
                                                     rRef.getDefinition().getQuasiIdentifyingAttributes(),
@@ -82,9 +101,10 @@ public class ShadowModelMain {
 
                 // Train
                 for (int k = 0; k < NUMBER_OF_TRAININGS; k++) {
-                 
+
                     // Draw samples
-                    Set<Integer> rTrainOut = getSample(rRef, SAMPLE_SIZE, targets);
+                    Set<Integer> rTrainOut = getSubSample(rA, SAMPLE_SIZE);
+                    //Set<Integer> _rTrainIn = getSubSample(rA, SAMPLE_SIZE);
                     Set<Integer> rTrainIn = getSampleWithTarget(rTrainOut, target);
                     
                     // Anonymize
@@ -105,6 +125,7 @@ public class ShadowModelMain {
                 Set<Integer> rIn = getSampleWithTarget(rOut, target);
                 DataHandle rOutHandle = anonymize(rRef, rOut, ANONYMIZATION);
                 DataHandle rInHandle = anonymize(rRef, rIn, ANONYMIZATION);
+                
 
                 // Train
                 Pair<Boolean, Double>[] prediction = model.predict(new DataHandle[] {rOutHandle, rInHandle});
@@ -204,6 +225,22 @@ public class ShadowModelMain {
         
         // Extract
         return new HashSet<>(lists.subList(0, sampleSize));
+    }
+    
+    
+    /**
+     * Obtain a subset from a set.
+     * 
+     * @param samples
+     * @param subSampleSize
+     * @return
+     */
+    private static Set<Integer> getSubSample(Set<Integer> samples, int subSampleSize){
+        
+        List<Integer> list = new ArrayList<>(samples);
+        Collections.shuffle(list);
+        return new HashSet<>(list.subList(0, subSampleSize));
+
     }
   
     /**
