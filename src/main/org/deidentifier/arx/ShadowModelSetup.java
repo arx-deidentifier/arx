@@ -10,12 +10,15 @@ import java.util.Locale;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 import cern.colt.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXPopulationModel.Region;
 
 /**
  * Setup class for ShadowModel MIA benchmark
@@ -51,11 +54,8 @@ public class ShadowModelSetup {
             try {
                 ARXResult result = anonymizer.anonymize(data, config);
                 // TODO remove
-                /*
-                ARXNode node = result.getGlobalOptimum();
-                int[] transformation = node.getTransformation();
-                System.out.println(Arrays.toString(transformation));
-                */
+                //printTransformation(result);
+                
                 return result.getOutput();
             } catch (IOException e) {
                 throw new IllegalStateException(e);
@@ -71,8 +71,6 @@ public class ShadowModelSetup {
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(5));
             config.setSuppressionLimit(0.0d);
-            config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
-            config.setHeuristicSearchStepLimit(1000);
             
             // Anonymize
             ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -84,11 +82,65 @@ public class ShadowModelSetup {
         }
     };
     
+    public static AnonymizationMethod K2_ANONYMIZATION = new AnonymizationMethod() {
+        @Override
+        public DataHandle anonymize(Data data) {
+
+            // Prepare
+            ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new KAnonymity(2));
+            config.setSuppressionLimit(0.0d);
+            
+            // Anonymize
+            ARXAnonymizer anonymizer = new ARXAnonymizer();
+            try {
+                ARXResult result = anonymizer.anonymize(data, config);
+                // TODO remove
+                printTransformation(result);
+                
+                return result.getOutput();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    };
+    
+    public static AnonymizationMethod PITMAN_ANONYMIZATION = new AnonymizationMethod() {
+        @Override
+        public DataHandle anonymize(Data data) {
+
+            // Prepare
+            ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new PopulationUniqueness(0.01, PopulationUniquenessModel.PITMAN, ARXPopulationModel.create(Region.USA)));
+            config.setSuppressionLimit(0.0d);
+            
+            // Anonymize
+            ARXAnonymizer anonymizer = new ARXAnonymizer();
+            try {
+                ARXResult result = anonymizer.anonymize(data, config);
+                // TODO remove
+                //printTransformation(result);
+                
+                return result.getOutput();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    };
+    
+    
+    private static void printTransformation(ARXResult result) {
+        ARXNode node = result.getGlobalOptimum();
+        int[] transformation = node.getTransformation();
+        System.out.println(Arrays.toString(transformation));
+    }
+
+    
     /**
      * Datasets
      */
     public static enum BenchmarkDataset {
-        TEXAS_10, TEXAS, TEXAS_OUTLIER, ADULT, ADULT_FULL, ADULT_14, ADULT_14_OUTLIER
+        TEXAS_10, TEXAS, TEXAS_OUTLIER, ADULT, ADULT_FULL, ADULT_FULL_OUTLIER
     }
     
     /**
@@ -164,11 +216,8 @@ public class ShadowModelSetup {
         case ADULT_FULL:
             filename = "data_new/adult_full.csv";
             break;
-        case ADULT_14:
-            filename = "data_new/adult_14.csv";
-            break;
-        case ADULT_14_OUTLIER:
-            filename = "data_new/adult_14_outlier.csv";
+        case ADULT_FULL_OUTLIER:
+            filename = "data_new/adult_full_outlier.csv";
             break;
         case TEXAS_10:
             filename = "data/texas_10.csv";
@@ -195,23 +244,17 @@ public class ShadowModelSetup {
     public static CSVDataInput loadDataConfig(BenchmarkDataset dataset) throws IOException {
         String filename = null;
         switch (dataset) {
-
         case ADULT:
             filename = "data/adult.cfg";
             break;
         case ADULT_FULL:
+        case ADULT_FULL_OUTLIER:
             filename = "data_new/adult_full.cfg";
-            break;
-        case ADULT_14:
-        case ADULT_14_OUTLIER:
-            filename = "data_new/adult_14.cfg";
             break;
         case TEXAS_10:
             filename = "data/texas_10.cfg";
             break;
         case TEXAS:
-            filename = "data_new/texas.cfg";
-            break;
         case TEXAS_OUTLIER:
             filename = "data_new/texas.cfg";
             break;
@@ -233,14 +276,11 @@ public class ShadowModelSetup {
         case ADULT:
             return Hierarchy.create("data/adult_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case ADULT_FULL:
-            return Hierarchy.create("data_new/adult_full_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
-        case ADULT_14:
-        case ADULT_14_OUTLIER:
+        case ADULT_FULL_OUTLIER:
             return Hierarchy.create("data_new/adult_full_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ',');
         case TEXAS_10:
             return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS:
-            return Hierarchy.create("data_new/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS_OUTLIER:
             return Hierarchy.create("data_new/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         default:

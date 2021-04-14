@@ -24,13 +24,13 @@ import org.deidentifier.arx.ShadowModelSetup.BenchmarkDataset;
 public class ShadowModelMain {
 
     /** Dataset */
-    private static final BenchmarkDataset    BENCHMARK_DATASET     = BenchmarkDataset.ADULT_14;
+    private static final BenchmarkDataset    BENCHMARK_DATASET     = BenchmarkDataset.ADULT_FULL_OUTLIER;
 
     /** Anonymization */
     private static final AnonymizationMethod ANONYMIZATION         = ShadowModelSetup.IDENTITY_ANONYMIZATION;
 
     /** Feature type(s) to use */
-    private static final FeatureType         FEATURE_TYPE          = FeatureType.NAIVE;
+    private static final FeatureType         FEATURE_TYPE          = FeatureType.ENSEMBLE;
 
     /** Classifier tyoe to use */
     private static final ClassifierType      CLASSIFIER_TYPE       = ClassifierType.RF;
@@ -39,7 +39,7 @@ public class ShadowModelMain {
     private static final int                 NUMBER_OF_TARGETS     = 50;
 
     /** Use crafted target */
-    private static final boolean             USE_CRAFTED_TARGET    = false;
+    private static final boolean             USE_CRAFTED_TARGET    = true;
 
     /** Number of random targets */
     private static final int                 NUMBER_OF_TESTS       = 25;
@@ -91,7 +91,7 @@ public class ShadowModelMain {
             int targetNum = 0;
             for (int target : targets) {
 
-                System.out.println("| Target: " + (++targetNum)+"/"+targets.size() + " |");
+                System.out.println("Run: " + j + " | Target: " + (++targetNum)+"/"+targets.size() + " |");
                 
                 // Initialize shadow model
                 ShadowModel model = new ShadowModel(rRef.getHandle(),
@@ -104,7 +104,7 @@ public class ShadowModelMain {
 
                     // Draw samples
                     Set<Integer> rTrainOut = getSubSample(rA, SAMPLE_SIZE);
-                    //Set<Integer> _rTrainIn = getSubSample(rA, SAMPLE_SIZE);
+                    //Set<Integer> rTrainIn = getSampleWithTarget(getSubSample(rA, SAMPLE_SIZE), target);
                     Set<Integer> rTrainIn = getSampleWithTarget(rTrainOut, target);
                     
                     // Anonymize
