@@ -82,6 +82,25 @@ public class ShadowModelSetup {
         }
     };
     
+    public static AnonymizationMethod K10_ANONYMIZATION = new AnonymizationMethod() {
+        @Override
+        public DataHandle anonymize(Data data) {
+
+            // Prepare
+            ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new KAnonymity(10));
+            config.setSuppressionLimit(0.0d);
+            
+            // Anonymize
+            ARXAnonymizer anonymizer = new ARXAnonymizer();
+            try {
+                return anonymizer.anonymize(data, config).getOutput();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    };
+    
     public static AnonymizationMethod K2_ANONYMIZATION = new AnonymizationMethod() {
         @Override
         public DataHandle anonymize(Data data) {
@@ -96,7 +115,7 @@ public class ShadowModelSetup {
             try {
                 ARXResult result = anonymizer.anonymize(data, config);
                 // TODO remove
-                printTransformation(result);
+                //printTransformation(result);
                 
                 return result.getOutput();
             } catch (IOException e) {

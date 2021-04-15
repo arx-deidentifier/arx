@@ -24,10 +24,10 @@ import org.deidentifier.arx.ShadowModelSetup.BenchmarkDataset;
 public class ShadowModelMain {
 
     /** Dataset */
-    private static final BenchmarkDataset    BENCHMARK_DATASET     = BenchmarkDataset.ADULT_FULL_OUTLIER;
+    private static final BenchmarkDataset    BENCHMARK_DATASET     = BenchmarkDataset.ADULT_FULL;
 
     /** Anonymization */
-    private static final AnonymizationMethod ANONYMIZATION         = ShadowModelSetup.IDENTITY_ANONYMIZATION;
+    private static final AnonymizationMethod ANONYMIZATION         = ShadowModelSetup.PITMAN_ANONYMIZATION;
 
     /** Feature type(s) to use */
     private static final FeatureType         FEATURE_TYPE          = FeatureType.ENSEMBLE;
@@ -36,16 +36,16 @@ public class ShadowModelMain {
     private static final ClassifierType      CLASSIFIER_TYPE       = ClassifierType.RF;
 
     /** Number of random targets */
-    private static final int                 NUMBER_OF_TARGETS     = 50;
+    private static final int                 NUMBER_OF_TARGETS     = 10;
 
     /** Use crafted target */
-    private static final boolean             USE_CRAFTED_TARGET    = true;
+    private static final boolean             USE_CRAFTED_TARGET    = false;
 
-    /** Number of random targets */
+    /** Number of independent tests */
     private static final int                 NUMBER_OF_TESTS       = 25;
 
     /** Number of subsamples used to train the classifier */
-    private static final int                 NUMBER_OF_TRAININGS   = 10;
+    private static final int                 NUMBER_OF_TRAININGS   = 50;
 
     /** TODO: Is this a suitable number? What is used in the paper? --> 1000 */
     private static final int                 SAMPLE_SIZE           = 1000;
@@ -272,5 +272,10 @@ public class ShadowModelMain {
             result[column] = handle.getValue(row, column);
         }
         return result;
+    }
+    
+    public static List<Integer> getOutlier(){
+        
+        return null;
     }
 }
