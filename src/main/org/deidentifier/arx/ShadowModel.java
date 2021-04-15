@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.math3.linear.OpenMapRealMatrix;
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
@@ -522,6 +523,12 @@ public class ShadowModel {
 
     /** Attributes to consider */
     private String[]                 attributes;
+    /** Minimal distance*/
+    private double                   minDistance;
+    /** Maximal distance*/
+    private double                   maxDistance;
+    /** Distances of all records*/
+    private double[]                 distances;
     /** Classifier */
     private SoftClassifier<double[]> classifier;
     /** Type */
@@ -547,8 +554,9 @@ public class ShadowModel {
      * @param _attributes
      * @param featureType
      * @param classifierType
+     * @throws ParseException 
      */
-    public ShadowModel(DataHandle population, Set<String> _attributes, FeatureType featureType, ClassifierType classifierType) {
+    public ShadowModel(DataHandle population, Set<String> _attributes, FeatureType featureType, ClassifierType classifierType) throws ParseException {
         this.featureType = featureType;
         this.classifierType = classifierType;
         this.attributes = new String[_attributes.size()];
@@ -562,6 +570,15 @@ public class ShadowModel {
         this.analyzePopulation(population, attributes);
     }
     
+    /**
+     * Returns the normalized distance in [0, 1] for the record at the given row
+     * @param row
+     * @return
+     */
+    public double getDistance(int row) {
+        return (distances[row] - minDistance) / (maxDistance - minDistance);
+    }
+
     /**
      * Predicts for all datasets whether the target is included
      * @param handles
@@ -605,7 +622,7 @@ public class ShadowModel {
         // Done
         return result;
     }
-
+    
     /**
      * Train the shadow model
      * @param data
@@ -626,8 +643,9 @@ public class ShadowModel {
      * Analyze basic population properties
      * @param population
      * @param attributes
+     * @throws ParseException 
      */
-    private void analyzePopulation(DataHandle population, String[] attributes) {
+    private void analyzePopulation(DataHandle population, String[] attributes) throws ParseException {
 
         // Calculate statistics
         Map<String, StatisticsSummary<?>> statistics = population.getStatistics().getSummaryStatistics(false);
@@ -668,6 +686,30 @@ public class ShadowModel {
                     dictionary.probe(attribute, value);
                 }
             }
+        }
+        
+        // Calculate centroid
+        double[] centroid = new double[attributes.length];
+        for (int row = 0; row < population.getNumRows(); row++) {
+            double[] vector = getVector(population, row);
+            for (int i = 0; i < attributes.length; i++) {
+                centroid[i] += vector[i];
+            }
+        }
+        for (int i = 0; i < attributes.length; i++) {
+            centroid[i] /= (double)population.getNumRows();
+        }
+        
+        // Calculate min and max-distance
+        minDistance = Double.MAX_VALUE;
+        maxDistance = -Double.MAX_VALUE;
+        distances = new double[population.getNumRows()];
+        for (int row = 0; row < population.getNumRows(); row++) {
+            double[] vector = getVector(population, row);
+            double distance = new EuclideanDistance().compute(centroid, vector);
+            distances[row] = distance;
+            minDistance = Math.min(minDistance, distance);
+            maxDistance = Math.max(maxDistance, distance);
         }
     }
 
@@ -807,5 +849,66 @@ public class ShadowModel {
             }
         }
         return output;
-    }             
+    }
+    
+
+    /**
+     * Creates a new instance
+     * @param handle
+     * @throws ParseException 
+     */
+    private double[] getVector(DataHandle handle, int row) throws ParseException {
+        
+        // Prepare
+        double[] vector = new double[attributes.length];
+        int index = 0;
+        
+        // For each attribute
+        for (String attribute : attributes) {
+            
+            // Index
+            int column = handle.getColumnIndexOf(attribute);
+
+            // Obtain metadata
+            DataType<?> _type = handle.getDefinition().getDataType(attribute);
+            Class<?> _clazz = _type.getDescription().getWrappedClass();
+
+            // Value
+            double value = 0d;
+            
+            // Calculate depending on data type
+            if (_clazz.equals(Long.class)) {
+                
+                // Handle data type represented as long
+                Long _value = handle.getLong(row, column);
+                value = _value != null ? _value : 0d; // TODO: how to handle null here
+                
+            } else if (_clazz.equals(Double.class)) {
+                
+                // Handle data type represented as double
+                Double _value = handle.getDouble(row, column);
+                value = _value != null ? _value : 0d; // TODO: how to handle null here
+                
+            } else if (_clazz.equals(Date.class)) {
+                
+                // Handle data type represented as date
+                Date _value = handle.getDate(row, column);
+                value = _value != null ? _value.getTime() : 0d; // TODO: how to handle null here
+                
+            } else if (_clazz.equals(String.class)) {
+                
+                // Map via dictionary
+                value = dictionary.probe(attribute, handle.getValue(row, column));
+                
+            } else {
+                throw new IllegalStateException("Unknown data type");
+            }
+            
+            // Store
+            vector[index++] = value;
+        }
+        
+        // Done
+        return vector;
+    }
 }
