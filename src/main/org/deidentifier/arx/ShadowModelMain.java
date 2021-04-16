@@ -1,6 +1,7 @@
 package org.deidentifier.arx;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,8 +58,9 @@ public class ShadowModelMain {
      * Main entry point
      * @param args
      * @throws IOException 
+     * @throws ParseException 
      */
-    public static void main(String[] args) throws IOException  {
+    public static void main(String[] args) throws IOException, ParseException  {
         
         // Statistics
         int trueGuesses = 0;
