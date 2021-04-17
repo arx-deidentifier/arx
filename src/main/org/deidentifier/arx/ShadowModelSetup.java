@@ -61,6 +61,11 @@ public class ShadowModelSetup {
                 throw new IllegalStateException(e);
             }
         }
+        
+        @Override
+        public String toString() {
+            return "Identity";
+        }
     };
 
     public static AnonymizationMethod K5_ANONYMIZATION = new AnonymizationMethod() {
@@ -80,6 +85,11 @@ public class ShadowModelSetup {
                 throw new IllegalStateException(e);
             }
         }
+        
+        @Override
+        public String toString() {
+            return "5-Anonymity";
+        }
     };
     
     public static AnonymizationMethod K10_ANONYMIZATION = new AnonymizationMethod() {
@@ -98,6 +108,11 @@ public class ShadowModelSetup {
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
+        }
+        
+        @Override
+        public String toString() {
+            return "10-Anonymity";
         }
     };
     
@@ -122,6 +137,11 @@ public class ShadowModelSetup {
                 throw new IllegalStateException(e);
             }
         }
+        
+        @Override
+        public String toString() {
+            return "2-Anonymity";
+        }
     };
     
     public static AnonymizationMethod PITMAN_ANONYMIZATION = new AnonymizationMethod() {
@@ -144,6 +164,11 @@ public class ShadowModelSetup {
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
+        }
+        
+        @Override
+        public String toString() {
+            return "PITMANN";
         }
     };
     
