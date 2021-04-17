@@ -13,7 +13,7 @@ import org.deidentifier.arx.ShadowModelSetup.BenchmarkDataset;
  */
 public class SMBenchmarkConfig {
     
-    public enum TargetType {CRAFTED, RANDOM, OUTLIER}
+    public enum TargetType {CRAFTED, RANDOM, OUTLIER, IMPORT}
     
     /** Dataset */
     public static final BenchmarkDataset    BENCHMARK_DATASET         = BenchmarkDataset.ADULT_FULL;
@@ -28,10 +28,13 @@ public class SMBenchmarkConfig {
     public static final ClassifierType      CLASSIFIER_TYPE           = ClassifierType.RF;
 
     /** Number of random targets */
-    public static final int                 NUMBER_OF_TARGETS         = 2;
+    public static final int                 NUMBER_OF_TARGETS         = 50;
 
     /** Use crafted target */
-    public static final TargetType          TARGET_TYPE               = TargetType.OUTLIER;
+    public static final TargetType          TARGET_TYPE               = TargetType.IMPORT;
+
+    /** File storing list of targets */
+    public static final String              TARGET_IMPORT_FILE        = "data_new/targets_ADULT.txt";
 
     /** Number of independent tests */
     public static final int                 NUMBER_OF_TESTS           = 25;

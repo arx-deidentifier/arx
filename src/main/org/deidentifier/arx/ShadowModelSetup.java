@@ -235,9 +235,8 @@ public class ShadowModelSetup {
                     data.getDefinition().setDataType(attributeNames.get(i),DataType.createDecimal("#.#", Locale.US));
                     if (attributeIsQI.get(i).equals("TRUE")) {
                         // Set aggregation function
-                        //data.getDefinition().setAttributeType(attributeName, MicroAggregationFunction.createGeometricMean());
                         data.getDefinition().setAttributeType(attributeName, loadHierarchy(dataset, attributeName));
-                        data.getDefinition().setMicroAggregationFunction(attributeName, MicroAggregationFunction.createMedian(), true);
+                        data.getDefinition().setMicroAggregationFunction(attributeName, MicroAggregationFunction.createArithmeticMean(), true);
                     }
                     break;
                 case "ordinal":

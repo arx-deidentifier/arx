@@ -1,7 +1,9 @@
 package org.deidentifier.arx;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
@@ -366,6 +368,8 @@ public class SMConcBenchmark {
             return getRandomTargets(rRef, SMBenchmarkConfig.NUMBER_OF_TARGETS);
         case OUTLIER:
             return getOutlierTargets(rRef, SMBenchmarkConfig.NUMBER_OF_TARGETS);
+        case IMPORT:
+            return getImportTargets(SMBenchmarkConfig.TARGET_IMPORT_FILE);
         default:
             throw new RuntimeException("Invalid targettype");
         } 
@@ -403,7 +407,7 @@ public class SMConcBenchmark {
         int size = rRef.getHandle().getNumRows();
         
         // initlaize result set
-        Set<Integer> samples = new HashSet<>();
+        Set<Integer> targetIds = new HashSet<>();
 
         // initialize list used of pairs used to store distances
         List<Pair<Integer, Double>> distances = new ArrayList<Pair<Integer, Double>>();
@@ -429,10 +433,38 @@ public class SMConcBenchmark {
         
         // Copy to set
         for(int i = 0; i < targets; i++) {
-            samples.add(distances.get(i).getFirst());
+            targetIds.add(distances.get(i).getFirst());
         }
         
-        return samples;
+        return targetIds;
+    }
+    
+    
+    /**
+     * Imports target Ids from file.
+     * 
+     * @return
+     */
+    private static Set<Integer> getImportTargets(String file){
+        
+        Set<Integer> targetIds = new HashSet<>();
+        
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String line = reader.readLine();
+            while(line != null) {
+                targetIds.add(Integer.parseInt(line));
+                line = reader.readLine();
+            }
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read targets import file: " + SMBenchmarkConfig.TARGET_IMPORT_FILE);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Could not parse Target ID");
+        } 
+ 
+        return targetIds;
     }
     
     /**
