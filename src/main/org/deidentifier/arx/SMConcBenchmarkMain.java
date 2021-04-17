@@ -8,7 +8,7 @@ import java.util.Date;
 public class SMConcBenchmarkMain {
 
     /** Number of threads to use */
-    final static int THREAD_COUNT = 16;
+    final static int THREAD_COUNT = 7;
     
     /** Directory for sotring files */
     final static String RESULT_DIRECTORY = "results/";
@@ -22,13 +22,8 @@ public class SMConcBenchmarkMain {
      * @throws InterruptedException
      */
     public static void main(String[] args) throws IOException, ParseException, InterruptedException {
-        
         SMConcBenchmark benchmark = new SMConcBenchmark(THREAD_COUNT, RESULT_DIRECTORY, generateExperimentName());
         benchmark.execute();
-        System.out.println(SMBenchmarkConfig.asString());
-        
-        System.out.println(generateExperimentName());
-
     }
     
     /**

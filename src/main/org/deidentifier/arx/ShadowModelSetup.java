@@ -124,6 +124,8 @@ public class ShadowModelSetup {
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
             config.setSuppressionLimit(0.0d);
+            config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN);
+            config.setHeuristicSearchStepLimit(1000);
             
             // Anonymize
             ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -152,6 +154,8 @@ public class ShadowModelSetup {
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new PopulationUniqueness(0.01, PopulationUniquenessModel.PITMAN, ARXPopulationModel.create(Region.USA)));
             config.setSuppressionLimit(0.0d);
+            config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN);
+            config.setHeuristicSearchStepLimit(1000);
             
             // Anonymize
             ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -168,7 +172,7 @@ public class ShadowModelSetup {
         
         @Override
         public String toString() {
-            return "PITMANN";
+            return "Pitman01";
         }
     };
     
@@ -217,21 +221,24 @@ public class ShadowModelSetup {
 
         for (int i = 0; i < attributeNames.size(); i++) {
             if (attributeInclude.get(i).equals("TRUE")) {
-                
+                String attributeName = attributeNames.get(i);
                 switch (attributeTypes.get(i)) {
+
                 case "categorical":
-                    data.getDefinition().setDataType(attributeNames.get(i), DataType.STRING);
-                    if(attributeIsQI.get(i).equals("TRUE")) {
+                    data.getDefinition().setDataType(attributeName, DataType.STRING);
+                    if (attributeIsQI.get(i).equals("TRUE")) {
                         // Set hierarchy
-                        data.getDefinition().setAttributeType(attributeNames.get(i), loadHierarchy(dataset, attributeNames.get(i)));
-                    } 
+                        data.getDefinition().setAttributeType(attributeName, loadHierarchy(dataset, attributeName));
+                    }
                     break;
                 case "continuous":
-                    data.getDefinition().setDataType(attributeNames.get(i), DataType.createDecimal("#.#", Locale.US));
-                    if(attributeIsQI.get(i).equals("TRUE")) {
+                    data.getDefinition().setDataType(attributeNames.get(i),DataType.createDecimal("#.#", Locale.US));
+                    if (attributeIsQI.get(i).equals("TRUE")) {
                         // Set aggregation function
-                        data.getDefinition().setAttributeType(attributeNames.get(i), MicroAggregationFunction.createGeometricMean());
-                    } 
+                        //data.getDefinition().setAttributeType(attributeName, MicroAggregationFunction.createGeometricMean());
+                        data.getDefinition().setAttributeType(attributeName, loadHierarchy(dataset, attributeName));
+                        data.getDefinition().setMicroAggregationFunction(attributeName, MicroAggregationFunction.createMedian(), true);
+                    }
                     break;
                 case "ordinal":
                     // TODO

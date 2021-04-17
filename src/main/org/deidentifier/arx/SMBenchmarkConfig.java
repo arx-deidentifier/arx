@@ -19,7 +19,7 @@ public class SMBenchmarkConfig {
     public static final BenchmarkDataset    BENCHMARK_DATASET         = BenchmarkDataset.ADULT_FULL;
 
     /** Anonymization */
-    public static final AnonymizationMethod ANONYMIZATION             = ShadowModelSetup.IDENTITY_ANONYMIZATION;
+    public static final AnonymizationMethod ANONYMIZATION             = ShadowModelSetup.K2_ANONYMIZATION;
 
     /** Feature type(s) to use */
     public static final FeatureType         FEATURE_TYPE              = FeatureType.ENSEMBLE;
@@ -28,7 +28,7 @@ public class SMBenchmarkConfig {
     public static final ClassifierType      CLASSIFIER_TYPE           = ClassifierType.RF;
 
     /** Number of random targets */
-    public static final int                 NUMBER_OF_TARGETS         = 10;
+    public static final int                 NUMBER_OF_TARGETS         = 2;
 
     /** Use crafted target */
     public static final TargetType          TARGET_TYPE               = TargetType.OUTLIER;
