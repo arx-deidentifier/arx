@@ -32,7 +32,6 @@ import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.aggregates.StatisticsSummary;
 
-import cern.colt.Arrays;
 import smile.classification.DecisionTree.SplitRule;
 import smile.classification.KNN;
 import smile.classification.LogisticRegression;
@@ -177,12 +176,18 @@ public class ShadowModel {
                     
                 } else if (_clazz.equals(String.class)) {
                     
+                    // probe all values before crating matrix
+                    int[] _values = new int[handle.getNumRows()];
+                    for (int row = 0; row < handle.getNumRows(); row++) {
+                        _values[row] = dictionary.probe(attribute, handle.getValue(row, column));
+                    }
+                    
                     // Create matrix
                     OpenMapRealMatrix matrix = new OpenMapRealMatrix(handle.getNumRows(), dictionary.size(attribute));
                     
                     // Store values
                     for (int row = 0; row < handle.getNumRows(); row++) {
-                        matrix.setEntry(row, dictionary.probe(attribute, handle.getValue(row, column)), 1);
+                        matrix.setEntry(row, _values[row], 1);
                     }
                     
                     // Store
