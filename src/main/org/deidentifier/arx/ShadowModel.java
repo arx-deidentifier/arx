@@ -176,7 +176,8 @@ public class ShadowModel {
                     
                 } else if (_clazz.equals(String.class)) {
                     
-                    // probe all values before crating matrix
+                    // Probe all values in advance 
+                    // (For ensuring the matrix is initialized with the required dimensions)
                     int[] _values = new int[handle.getNumRows()];
                     for (int row = 0; row < handle.getNumRows(); row++) {
                         _values[row] = dictionary.probe(attribute, handle.getValue(row, column));
