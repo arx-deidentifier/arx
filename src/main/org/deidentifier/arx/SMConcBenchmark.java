@@ -7,10 +7,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -72,7 +74,8 @@ public class SMConcBenchmark {
             // Perform new test run until number of requried runs is reached
             while ((testRun = nextTestRun.getAndIncrement()) < SMBenchmarkConfig.NUMBER_OF_TESTS && isRunning()) {
                 
-                System.out.println("Thread " + threadId + " is starting TestRun " + testRun);
+                String time = new SimpleDateFormat("HH:mm.ss").format(new Date());
+                System.out.println(time + " | Thread " + threadId + " is starting TestRun " + testRun);
                 
                 // Result lines
                 Set<String> resultLines = new HashSet<>();
@@ -150,6 +153,8 @@ public class SMConcBenchmark {
                 // Update stats
                 executedRuns.getAndIncrement(); 
             } 
+            String time = new SimpleDateFormat("HH:mm.ss").format(new Date());
+            System.out.println(time + " | Thread " + threadId + " terminated");
         }
     }
 
@@ -308,7 +313,7 @@ public class SMConcBenchmark {
         input.getDefinition().read(dataset.getDefinition());
         
         // Anonymize
-        return anonymization.anonymize(input);
+        return anonymization.anonymize(input, SMBenchmarkConfig.SUPRESSION_LIMIT);
     }
 
     /**

@@ -5,6 +5,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Class for starting multithreaded shadow MIA evaluation.
+ * 
+ * @author Thierry
+ *
+ */
 public class SMConcBenchmarkMain {
 
     /** Number of threads to use */

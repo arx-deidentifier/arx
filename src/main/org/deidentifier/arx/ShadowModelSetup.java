@@ -35,17 +35,25 @@ public class ShadowModelSetup {
      * @author Fabian Prasser
      */
     public interface AnonymizationMethod {
+        
         public DataHandle anonymize(Data handle);
+        public DataHandle anonymize(Data handle, double supressionLimit);
     }
     
     public static AnonymizationMethod IDENTITY_ANONYMIZATION = new AnonymizationMethod() {
+        
         @Override
         public DataHandle anonymize(Data data) {
-
+            return anonymize(data, 0d);
+        }
+        
+        @Override
+        public DataHandle anonymize(Data data, double supressionLimit) {
+            
             // Prepare
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(1));
-            config.setSuppressionLimit(0.0d);
+            config.setSuppressionLimit(supressionLimit);
             config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
             config.setHeuristicSearchStepLimit(1);
             
@@ -68,62 +76,20 @@ public class ShadowModelSetup {
         }
     };
 
-    public static AnonymizationMethod K5_ANONYMIZATION = new AnonymizationMethod() {
-        @Override
-        public DataHandle anonymize(Data data) {
-
-            // Prepare
-            ARXConfiguration config = ARXConfiguration.create();
-            config.addPrivacyModel(new KAnonymity(5));
-            config.setSuppressionLimit(0.0d);
-            
-            // Anonymize
-            ARXAnonymizer anonymizer = new ARXAnonymizer();
-            try {
-                return anonymizer.anonymize(data, config).getOutput();
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        
-        @Override
-        public String toString() {
-            return "5-Anonymity";
-        }
-    };
-    
-    public static AnonymizationMethod K10_ANONYMIZATION = new AnonymizationMethod() {
-        @Override
-        public DataHandle anonymize(Data data) {
-
-            // Prepare
-            ARXConfiguration config = ARXConfiguration.create();
-            config.addPrivacyModel(new KAnonymity(10));
-            config.setSuppressionLimit(0.0d);
-            
-            // Anonymize
-            ARXAnonymizer anonymizer = new ARXAnonymizer();
-            try {
-                return anonymizer.anonymize(data, config).getOutput();
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        
-        @Override
-        public String toString() {
-            return "10-Anonymity";
-        }
-    };
-    
     public static AnonymizationMethod K2_ANONYMIZATION = new AnonymizationMethod() {
+        
         @Override
         public DataHandle anonymize(Data data) {
+            return anonymize(data, 0d);
+        }
+        
+        @Override
+        public DataHandle anonymize(Data data, double supressionLimit) {
 
             // Prepare
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setSuppressionLimit(0.0d);
+            config.setSuppressionLimit(supressionLimit);
             config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN);
             config.setHeuristicSearchStepLimit(1000);
             
@@ -146,14 +112,82 @@ public class ShadowModelSetup {
         }
     };
     
-    public static AnonymizationMethod PITMAN_ANONYMIZATION = new AnonymizationMethod() {
+    public static AnonymizationMethod K5_ANONYMIZATION = new AnonymizationMethod() {
+        
         @Override
         public DataHandle anonymize(Data data) {
+            return anonymize(data, 0d);
+        }
+        
+        @Override
+        public DataHandle anonymize(Data data, double supressionLimit) {
+
+            // Prepare
+            ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new KAnonymity(5));
+            config.setSuppressionLimit(supressionLimit);
+            
+            // Anonymize
+            ARXAnonymizer anonymizer = new ARXAnonymizer();
+            try {
+                return anonymizer.anonymize(data, config).getOutput();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        
+        @Override
+        public String toString() {
+            return "5-Anonymity";
+        }
+    };
+    
+    public static AnonymizationMethod K10_ANONYMIZATION = new AnonymizationMethod() {
+        
+        @Override
+        public DataHandle anonymize(Data data) {
+            return anonymize(data, 0d);
+        }
+        
+        @Override
+        public DataHandle anonymize(Data data, double supressionLimit) {
+
+            // Prepare
+            ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new KAnonymity(10));
+            config.setSuppressionLimit(supressionLimit);
+            
+            // Anonymize
+            ARXAnonymizer anonymizer = new ARXAnonymizer();
+            try {
+                return anonymizer.anonymize(data, config).getOutput();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        
+        @Override
+        public String toString() {
+            return "10-Anonymity";
+        }
+    };
+    
+
+    
+    public static AnonymizationMethod PITMAN_ANONYMIZATION = new AnonymizationMethod() {
+        
+        @Override
+        public DataHandle anonymize(Data data) {
+            return anonymize(data, 0d);
+        }
+        
+        @Override
+        public DataHandle anonymize(Data data, double supressionLimit) {
 
             // Prepare
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new PopulationUniqueness(0.01, PopulationUniquenessModel.PITMAN, ARXPopulationModel.create(Region.USA)));
-            config.setSuppressionLimit(0.0d);
+            config.setSuppressionLimit(supressionLimit);
             config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN);
             config.setHeuristicSearchStepLimit(1000);
             

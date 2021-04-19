@@ -21,6 +21,9 @@ public class SMBenchmarkConfig {
     /** Anonymization */
     public static final AnonymizationMethod ANONYMIZATION             = ShadowModelSetup.K2_ANONYMIZATION;
 
+    /** Supression Limit */
+    public static final double              SUPRESSION_LIMIT          = 0d;
+    
     /** Feature type(s) to use */
     public static final FeatureType         FEATURE_TYPE              = FeatureType.CORRELATION;
 
@@ -31,7 +34,7 @@ public class SMBenchmarkConfig {
     public static final int                 NUMBER_OF_TARGETS         = 50;
 
     /** Use crafted target */
-    public static final TargetType          TARGET_TYPE               = TargetType.IMPORT;
+    public static final TargetType          TARGET_TYPE               = TargetType.OUTLIER;
 
     /** File storing list of targets */
     public static final String              TARGET_IMPORT_FILE        = "data_new/targets_ADULT.txt";
@@ -55,6 +58,8 @@ public class SMBenchmarkConfig {
         stb.append("Dataset: " + BENCHMARK_DATASET);
         stb.append("\n");
         stb.append("Anonymization Method: " + ANONYMIZATION);
+        stb.append("\n");
+        stb.append("ASupression Limit: " + SUPRESSION_LIMIT);
         stb.append("\n");
         stb.append("Feature Type: " + FEATURE_TYPE);
         stb.append("\n");
