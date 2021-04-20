@@ -19,7 +19,7 @@ public class SMBenchmarkConfig {
     public static final BenchmarkDataset    BENCHMARK_DATASET         = BenchmarkDataset.ADULT_FULL;
 
     /** Anonymization */
-    public static final AnonymizationMethod ANONYMIZATION             = ShadowModelSetup.K2_ANONYMIZATION;
+    public static final AnonymizationMethod ANONYMIZATION             = ShadowModelSetup.PITMAN_ANONYMIZATION;
 
     /** Supression Limit */
     public static final double              SUPRESSION_LIMIT          = 1d;
@@ -34,7 +34,7 @@ public class SMBenchmarkConfig {
     public static final int                 NUMBER_OF_TARGETS         = 50;
 
     /** Use crafted target */
-    public static final TargetType          TARGET_TYPE               = TargetType.OUTLIER;
+    public static final TargetType          TARGET_TYPE               = TargetType.IMPORT;
 
     /** File storing list of targets */
     public static final String              TARGET_IMPORT_FILE        = "data_new/targets_ADULT.txt";
