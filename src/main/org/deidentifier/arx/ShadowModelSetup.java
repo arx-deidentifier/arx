@@ -222,7 +222,7 @@ public class ShadowModelSetup {
      * Datasets
      */
     public static enum BenchmarkDataset {
-        TEXAS_10, TEXAS, TEXAS_OUTLIER, ADULT, ADULT_FULL, ADULT_FULL_OUTLIER
+        TEXAS_10, TEXAS, TEXAS_CRAFTED, ADULT, ADULT_FULL, ADULT_FULL_CRAFTED
     }
     
     /**
@@ -300,8 +300,8 @@ public class ShadowModelSetup {
         case ADULT_FULL:
             filename = "data_new/adult_full.csv";
             break;
-        case ADULT_FULL_OUTLIER:
-            filename = "data_new/adult_full_outlier.csv";
+        case ADULT_FULL_CRAFTED:
+            filename = "data_new/adult_full_crafted.csv";
             break;
         case TEXAS_10:
             filename = "data/texas_10.csv";
@@ -309,8 +309,8 @@ public class ShadowModelSetup {
         case TEXAS:
             filename = "data/texas.csv";
             break;
-        case TEXAS_OUTLIER:
-            filename = "data_new/texas_outlier.csv";
+        case TEXAS_CRAFTED:
+            filename = "data_new/texas_crafted.csv";
             break;
         default:
             throw new RuntimeException("Invalid dataset");
@@ -332,14 +332,14 @@ public class ShadowModelSetup {
             filename = "data/adult.cfg";
             break;
         case ADULT_FULL:
-        case ADULT_FULL_OUTLIER:
+        case ADULT_FULL_CRAFTED:
             filename = "data_new/adult_full.cfg";
             break;
         case TEXAS_10:
             filename = "data/texas_10.cfg";
             break;
         case TEXAS:
-        case TEXAS_OUTLIER:
+        case TEXAS_CRAFTED:
             filename = "data_new/texas.cfg";
             break;
         default:
@@ -360,12 +360,12 @@ public class ShadowModelSetup {
         case ADULT:
             return Hierarchy.create("data/adult_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case ADULT_FULL:
-        case ADULT_FULL_OUTLIER:
+        case ADULT_FULL_CRAFTED:
             return Hierarchy.create("data_new/adult_full_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ',');
         case TEXAS_10:
             return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS:
-        case TEXAS_OUTLIER:
+        case TEXAS_CRAFTED:
             return Hierarchy.create("data_new/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         default:
             throw new IllegalArgumentException("Unknown dataset");

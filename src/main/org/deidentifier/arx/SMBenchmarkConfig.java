@@ -22,10 +22,10 @@ public class SMBenchmarkConfig {
     public static final AnonymizationMethod ANONYMIZATION             = ShadowModelSetup.K2_ANONYMIZATION;
 
     /** Supression Limit */
-    public static final double              SUPRESSION_LIMIT          = 0d;
+    public static final double              SUPRESSION_LIMIT          = 1d;
     
     /** Feature type(s) to use */
-    public static final FeatureType         FEATURE_TYPE              = FeatureType.CORRELATION;
+    public static final FeatureType         FEATURE_TYPE              = FeatureType.ENSEMBLE;
 
     /** Classifier type to use */
     public static final ClassifierType      CLASSIFIER_TYPE           = ClassifierType.RF;

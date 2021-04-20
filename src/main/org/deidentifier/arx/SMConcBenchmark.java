@@ -74,7 +74,7 @@ public class SMConcBenchmark {
             // Perform new test run until number of requried runs is reached
             while ((testRun = nextTestRun.getAndIncrement()) < SMBenchmarkConfig.NUMBER_OF_TESTS && isRunning()) {
                 
-                String time = new SimpleDateFormat("HH:mm.ss").format(new Date());
+                String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
                 System.out.println(time + " | Thread " + threadId + " is starting TestRun " + testRun);
                 
                 // Result lines
@@ -153,7 +153,7 @@ public class SMConcBenchmark {
                 // Update stats
                 executedRuns.getAndIncrement(); 
             } 
-            String time = new SimpleDateFormat("HH:mm.ss").format(new Date());
+            String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
             System.out.println(time + " | Thread " + threadId + " terminated");
         }
     }
@@ -213,6 +213,13 @@ public class SMConcBenchmark {
         }
     }
     
+    /**
+     * Called to start the threads
+     * 
+     * @throws InterruptedException
+     * @throws IOException
+     * @throws ParseException
+     */
     public void execute() throws InterruptedException, IOException, ParseException {
         // Start threads
         for (Thread t : threadPool) {
