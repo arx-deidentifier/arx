@@ -37,7 +37,7 @@ public class ShadowModelSetup {
     public interface AnonymizationMethod {
         
         public DataHandle anonymize(Data handle);
-        public DataHandle anonymize(Data handle, double supressionLimit);
+        public DataHandle anonymize(Data handle, double suppressionLimit);
     }
     
     public static AnonymizationMethod IDENTITY_ANONYMIZATION = new AnonymizationMethod() {
@@ -48,12 +48,12 @@ public class ShadowModelSetup {
         }
         
         @Override
-        public DataHandle anonymize(Data data, double supressionLimit) {
+        public DataHandle anonymize(Data data, double suppressionLimit) {
             
             // Prepare
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(1));
-            config.setSuppressionLimit(supressionLimit);
+            config.setSuppressionLimit(suppressionLimit);
             config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
             config.setHeuristicSearchStepLimit(1);
             
@@ -84,12 +84,12 @@ public class ShadowModelSetup {
         }
         
         @Override
-        public DataHandle anonymize(Data data, double supressionLimit) {
+        public DataHandle anonymize(Data data, double suppressionLimit) {
 
             // Prepare
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setSuppressionLimit(supressionLimit);
+            config.setSuppressionLimit(suppressionLimit);
             config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN);
             config.setHeuristicSearchStepLimit(1000);
             
@@ -120,12 +120,12 @@ public class ShadowModelSetup {
         }
         
         @Override
-        public DataHandle anonymize(Data data, double supressionLimit) {
+        public DataHandle anonymize(Data data, double suppressionLimit) {
 
             // Prepare
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(5));
-            config.setSuppressionLimit(supressionLimit);
+            config.setSuppressionLimit(suppressionLimit);
             
             // Anonymize
             ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -150,12 +150,12 @@ public class ShadowModelSetup {
         }
         
         @Override
-        public DataHandle anonymize(Data data, double supressionLimit) {
+        public DataHandle anonymize(Data data, double suppressionLimit) {
 
             // Prepare
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(10));
-            config.setSuppressionLimit(supressionLimit);
+            config.setSuppressionLimit(suppressionLimit);
             
             // Anonymize
             ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -182,12 +182,12 @@ public class ShadowModelSetup {
         }
         
         @Override
-        public DataHandle anonymize(Data data, double supressionLimit) {
+        public DataHandle anonymize(Data data, double suppressionLimit) {
 
             // Prepare
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new PopulationUniqueness(0.01, PopulationUniquenessModel.PITMAN, ARXPopulationModel.create(Region.USA)));
-            config.setSuppressionLimit(supressionLimit);
+            config.setSuppressionLimit(suppressionLimit);
             config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN);
             config.setHeuristicSearchStepLimit(1000);
             

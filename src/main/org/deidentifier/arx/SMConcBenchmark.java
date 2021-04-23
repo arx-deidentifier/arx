@@ -204,6 +204,10 @@ public class SMConcBenchmark {
         if (!logFile.createNewFile() || !summaryFile.createNewFile()) {
             throw new RuntimeException("File(s) already exist(s)!");
         }
+        
+        // write config to csv
+        writeToLog(Set.of(SMBenchmarkConfig.asCsv()));
+        // writer header to csv
         writeToLog(Set.of("TestRun;TargetId;TrueLabel;PredictedLabel;PredictionProbability"));
         
         // Create Threads
@@ -221,6 +225,10 @@ public class SMConcBenchmark {
      * @throws ParseException
      */
     public void execute() throws InterruptedException, IOException, ParseException {
+        
+        // Print config
+        System.out.println(SMBenchmarkConfig.asString());
+        
         // Start threads
         for (Thread t : threadPool) {
             t.start();
@@ -320,7 +328,7 @@ public class SMConcBenchmark {
         input.getDefinition().read(dataset.getDefinition());
         
         // Anonymize
-        return anonymization.anonymize(input, SMBenchmarkConfig.SUPRESSION_LIMIT);
+        return anonymization.anonymize(input, SMBenchmarkConfig.SUPPRESSION_LIMIT);
     }
 
     /**
