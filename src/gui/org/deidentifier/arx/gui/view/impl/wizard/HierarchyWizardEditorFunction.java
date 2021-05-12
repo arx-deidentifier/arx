@@ -190,7 +190,7 @@ public class HierarchyWizardEditorFunction<T> {
                 if (!accepts(value1) || !accepts(value2)) {
                     return true;
                 }
-                return value1.equals(value2);
+                return !value1.equals(value2);
             }
         };
     }
