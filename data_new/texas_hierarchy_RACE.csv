@@ -4,3 +4,4 @@
 4;{4};*
 5;{5-NULL};*
 NULL;{5-NULL};*
+INVALID;{5-NULL};*
