@@ -1,0 +1,6 @@
+Husband,Direct,*
+Wife,Direct,*
+Own-child,Direct,*
+Unmarried,Direct,*
+Not-in-family,Indirect,*
+Other-relative,Indirect,*

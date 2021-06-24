@@ -3,7 +3,9 @@ package org.deidentifier.arx;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -23,30 +25,41 @@ import org.deidentifier.arx.ShadowModelSetup.BenchmarkDataset;
  */
 public class ShadowModelMain {
 
+    public enum TargetType {CRAFTED, RANDOM, OUTLIER}
+    
     /** Dataset */
-    private static final BenchmarkDataset    BENCHMARK_DATASET   = BenchmarkDataset.ADULT;
+    private static final BenchmarkDataset    BENCHMARK_DATASET         = BenchmarkDataset.ADULT_FULL;
 
     /** Anonymization */
-    private static final AnonymizationMethod ANONYMIZATION       = ShadowModelSetup.IDENTITY_ANONYMIZATION;
+    private static final AnonymizationMethod ANONYMIZATION             = ShadowModelSetup.PITMAN_ANONYMIZATION;
 
     /** Feature type(s) to use */
-    private static final FeatureType         FEATURE_TYPE        = FeatureType.HISTOGRAM;
+    private static final FeatureType         FEATURE_TYPE              = FeatureType.ENSEMBLE;
 
     /** Classifier tyoe to use */
-    private static final ClassifierType      CLASSIFIER_TYPE     = ClassifierType.RF;
+    private static final ClassifierType      CLASSIFIER_TYPE           = ClassifierType.RF;
 
     /** Number of random targets */
-    private static final int                 NUMBER_OF_TARGETS   = 50;
+    private static final int                 NUMBER_OF_TARGETS         = 10;
 
-    /** Number of random targets */
-    private static final int                 NUMBER_OF_TESTS     = 25;
+    /** Use crafted target */
+    private static final TargetType          TARGET_TYPE               = TargetType.OUTLIER;
+
+    /** Number of independent tests */
+    private static final int                 NUMBER_OF_TESTS           = 25;
 
     /** Number of subsamples used to train the classifier */
-    private static final int                 NUMBER_OF_TRAININGS = 10;
+    private static final int                 NUMBER_OF_TRAININGS       = 10;
 
-    /** TODO: Is this a suitable number? What is used in the paper? */
-    private static final int                 SAMPLE_SIZE         = 100;
+    /** TODO: Is this a suitable number? What is used in the paper? --> 1000 */
+    private static final int                 SAMPLE_SIZE               = 1000;
 
+    /** Size of population available for the adversary in each test */
+    private static final int                 ADVERSARY_POPULATION_SIZE = 10000;
+
+    
+
+    
     /**
      * Main entry point
      * @param args
@@ -59,32 +72,59 @@ public class ShadowModelMain {
         int trueGuesses = 0;
         int numberOfGuesses = 0;
 
+        int[] trueGuessesPerTarget = new int[NUMBER_OF_TARGETS];
+        int[] numberOfGuessesPerTarget = new int[NUMBER_OF_TARGETS];
+        
         // Create dataset
         Data rRef = ShadowModelSetup.getData(BENCHMARK_DATASET);
         
-        // Draw targets
-        Set<Integer> targets = getTargets(rRef, NUMBER_OF_TARGETS);
-                
+        Set<Integer> targets;
+        
+        switch(TARGET_TYPE) {
+            case CRAFTED:
+                targets = new HashSet<>(Arrays.asList(0));
+                break;
+            case RANDOM:
+                targets = getTargets(rRef, NUMBER_OF_TARGETS);
+                break;
+            case OUTLIER:
+                targets = getOutlier(rRef, NUMBER_OF_TARGETS);
+                break;
+            default:
+                throw new RuntimeException("Invalid targettype");
+        }
+   
+
+        
         // Perform tests
         for (int j = 0; j < NUMBER_OF_TESTS; j++) {
+            
+            System.out.println((j+1)+"/"+NUMBER_OF_TESTS + "--------");
             
             // Sample without target
             Set<Integer> rOut = getSample(rRef, SAMPLE_SIZE, targets);
             
+            // Sample adversary population
+            Set<Integer> rA = getSample(rRef, ADVERSARY_POPULATION_SIZE, targets);
+            
             // For each target
+            int targetNum = 0;
             for (int target : targets) {
 
+                System.out.println("Run: " + j + " | Target: " + (targetNum+1)+"/"+targets.size() + " |");
+                
                 // Initialize shadow model
                 ShadowModel model = new ShadowModel(rRef.getHandle(),
                                                     rRef.getDefinition().getQuasiIdentifyingAttributes(),
                                                     FEATURE_TYPE,
                                                     CLASSIFIER_TYPE);
-
+                
                 // Train
                 for (int k = 0; k < NUMBER_OF_TRAININGS; k++) {
-                 
+
                     // Draw samples
-                    Set<Integer> rTrainOut = getSample(rRef, SAMPLE_SIZE, targets);
+                    Set<Integer> rTrainOut = getSubSample(rA, SAMPLE_SIZE);
+                    //Set<Integer> rTrainIn = getSampleWithTarget(getSubSample(rA, SAMPLE_SIZE), target);
                     Set<Integer> rTrainIn = getSampleWithTarget(rTrainOut, target);
                     
                     // Anonymize
@@ -110,15 +150,26 @@ public class ShadowModelMain {
                 Pair<Boolean, Double>[] prediction = model.predict(new DataHandle[] {rOutHandle, rInHandle});
                 System.out.println(prediction[0] + " -> Should be: false");
                 System.out.println(prediction[1] + " -> Should be: true");
+                
+                // Update record statistic
+                trueGuessesPerTarget[targetNum] += prediction[0].getFirst() == false ? 1 : 0;
+                trueGuessesPerTarget[targetNum] += prediction[1].getFirst() == true ? 1 : 0;
+                
+                // Update overall statistic
                 trueGuesses += prediction[0].getFirst() == false ? 1 : 0;
                 trueGuesses += prediction[1].getFirst() == true ? 1 : 0;
                 numberOfGuesses += 2;
-                System.out.println("Success rate: " + (double)trueGuesses / (double)numberOfGuesses);
                 
                 // Release
                 rOutHandle.release();
                 rInHandle.release();
+                
+                // Print record statistic
+                System.out.println("Success rate for Target " + target + ": " + (double)trueGuessesPerTarget[targetNum] / (double) ((j+1)*2) + "\n");
+                
+                targetNum++;
             }
+            System.out.println("Overall Success rate: " + (double)trueGuesses / (double)numberOfGuesses);
         }
     }
     
@@ -205,6 +256,74 @@ public class ShadowModelMain {
         // Extract
         return new HashSet<>(lists.subList(0, sampleSize));
     }
+    
+    /**
+     * Method to receive set of IDs corresponding to the most outlierish records
+     * 
+     * @param rRef
+     * @param targets
+     * @return
+     * @throws ParseException
+     */
+    private static Set<Integer> getOutlier(Data rRef, int targets) throws ParseException {
+        
+        // Collect random numbers
+        int size = rRef.getHandle().getNumRows();
+        
+        // initlaize result set
+        Set<Integer> samples = new HashSet<>();
+
+        // initialize list used of pairs used to store distances
+        List<Pair<Integer, Double>> distances = new ArrayList<Pair<Integer, Double>>();
+
+        ShadowModel model = new ShadowModel(rRef.getHandle(),
+                                            rRef.getDefinition().getQuasiIdentifyingAttributes(),
+                                            FEATURE_TYPE,
+                                            CLASSIFIER_TYPE);
+
+        // Get distances
+        for (int i = 0; i < size; i++) {
+            distances.add(new Pair<>(i, model.getDistance(i)));
+        }
+
+        // Sort indices by distance in descending order
+        Collections.sort(distances, new Comparator<Pair<Integer, Double>>() {
+            @Override
+            public int compare(final Pair<Integer, Double> p1, final Pair<Integer, Double> p2) {
+                if (p1.getSecond() < p2.getSecond()) return 1;
+                return -1;
+            }
+        });
+        
+        /*
+        for(int i = 0; i < 10; i++) {
+            Pair<Integer, Double> temp = distances.get(i);
+            System.out.println(temp.getFirst() + " --> " + temp.getSecond());
+        }
+        */
+        
+        // Copy to set
+        for(int i = 0; i < targets; i++) {
+            samples.add(distances.get(i).getFirst());
+        }
+        
+        return samples;
+    }
+    
+    /**
+     * Obtain a subset from a set.
+     * 
+     * @param samples
+     * @param subSampleSize
+     * @return
+     */
+    private static Set<Integer> getSubSample(Set<Integer> samples, int subSampleSize){
+        
+        List<Integer> list = new ArrayList<>(samples);
+        Collections.shuffle(list);
+        return new HashSet<>(list.subList(0, subSampleSize));
+
+    }
   
     /**
      * Create a copy of data
@@ -236,4 +355,5 @@ public class ShadowModelMain {
         }
         return result;
     }
+
 }

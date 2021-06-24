@@ -1,0 +1,15 @@
+Dataset: ADULT_FULL_CRAFTED
+Anonymization Method: 2-Anonymity
+ASupression Limit: 0.0
+Feature Type: ENSEMBLE
+Classifier Type: RF
+Number of Targets: 1
+Target Type: CRAFTED
+Number of Tests: 25
+Number of Trainings: 10
+Sample size: 1000
+Adversary population size: 10000
+
+
+TargetId;Distance;Accuracy
+0;1.0;0.74

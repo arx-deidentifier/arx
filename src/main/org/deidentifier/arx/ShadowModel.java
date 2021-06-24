@@ -147,9 +147,19 @@ public class ShadowModel {
          * @param handle
          */
         public FeatureCorrelation(DataHandle handle) {
+            
+            // Check which rows are not suppressed
+            boolean[] rowLive = new boolean[handle.getNumRows()];
+            int numLiveRows = 0;
+            for(int row = 0; row < handle.getNumRows(); row++) {
+                if(!handle.isSuppressed(row)) {
+                    rowLive[row] = true;
+                    numLiveRows++;
+                }
+            }
 
             // Prepare
-            this.rows = handle.getNumRows();
+            this.rows = numLiveRows;
             
             // For each attribute
             for (String attribute : attributes) {
@@ -164,11 +174,14 @@ public class ShadowModel {
                 if (_clazz.equals(Long.class) || _clazz.equals(Double.class) || _clazz.equals(Date.class)) {
                     
                     // Create array
-                    double[] values = new double[handle.getNumRows()];
+                    double[] values = new double[numLiveRows];
                     
                     // Copy values as double
+                    int pos = 0;
                     for (int row = 0; row < values.length; row++) {
-                        values[row] = getDouble(handle, row, column, _clazz);
+                        if (rowLive[row]) {
+                            values[pos++] = getDouble(handle, row, column, _clazz);
+                        }
                     }
                     
                     // Store
@@ -176,12 +189,22 @@ public class ShadowModel {
                     
                 } else if (_clazz.equals(String.class)) {
                     
+                    // Probe all values in advance 
+                    // (For ensuring the matrix is initialized with the required dimensions)
+                    int[] _values = new int[numLiveRows];
+                    int pos = 0;
+                    for (int row = 0; row < handle.getNumRows(); row++) {
+                        if (rowLive[row]) {
+                            _values[pos++] = dictionary.probe(attribute, handle.getValue(row, column));
+                        }
+                    }
+
                     // Create matrix
-                    OpenMapRealMatrix matrix = new OpenMapRealMatrix(handle.getNumRows(), dictionary.size(attribute));
+                    OpenMapRealMatrix matrix = new OpenMapRealMatrix(numLiveRows, dictionary.size(attribute));
                     
                     // Store values
-                    for (int row = 0; row < handle.getNumRows(); row++) {
-                        matrix.setEntry(row, dictionary.probe(attribute, handle.getValue(row, column)), 1);
+                    for (int row = 0; row < numLiveRows; row++) {
+                        matrix.setEntry(row, _values[row], 1);
                     }
                     
                     // Store
@@ -316,24 +339,28 @@ public class ShadowModel {
                     // For each value
                     for (int row = 0; row < handle.getNumRows(); row++) {
 
-                        // Parse value
-                        double value = getDouble(handle, row, column, _clazz);
+                        // check is row suppressed
+                        if (!handle.isSuppressed(row)) {
 
-                        // Calculate bin
-                        int bin = (int) ((value - min) / binSize);
+                            // Parse value
+                            double value = getDouble(handle, row, column, _clazz);
 
-                        // Check range
-                        if (0 > bin || bin > NUM_BINS) {
-                            throw new RuntimeException("Value out of histogram range");
+                            // Calculate bin
+                            int bin = (int) ((value - min) / binSize);
+
+                            // Check range
+                            if (0 > bin || bin > NUM_BINS) {
+                                throw new RuntimeException("Value out of histogram range");
+                            }
+
+                            // TODO Dirty quick-fix
+                            if (bin == NUM_BINS) {
+                                bin -= 1;
+                            }
+
+                            // Increment frequency of bin
+                            freqs[bin] += 1d;
                         }
-
-                        // TODO Dirty quick-fix
-                        if (bin == NUM_BINS) {
-                            bin -= 1;
-                        }
-
-                        // Increment frequency of bin
-                        freqs[bin] += 1d;
                     }
                     
                     // Store
@@ -615,6 +642,11 @@ public class ShadowModel {
             // Predict label
             double[] probabilities = new double[] {0, 0};
             int target = classifier.predict(xValues[i], probabilities);
+            
+            //TODO remove
+            //System.out.println(Arrays.toString(xValues[i]));
+            //System.out.println(xValues[i].length);
+            
             double confidence = probabilities[target];
             result[i] = new Pair<>(target == 1, confidence);
         }
@@ -803,6 +835,7 @@ public class ShadowModel {
                 throw new IllegalStateException("Attribute is not numeric");
             }
         } catch (ParseException e) {
+            // TODO Why caused by short heuristic searches?
             throw new IllegalStateException(e);
         }
     }
