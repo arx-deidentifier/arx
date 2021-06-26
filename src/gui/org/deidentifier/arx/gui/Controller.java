@@ -1366,6 +1366,7 @@ public class Controller implements IView {
             final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
             if (hierarchy != null) {
                 String attr = model.getSelectedAttribute();
+                model.getInputConfig().removeHierarchyBuilder(attr);
                 model.getInputConfig().setMaximumGeneralization(attr, null);
                 model.getInputConfig().setMinimumGeneralization(attr, null);
                 model.getInputConfig().setHierarchy(attr, hierarchy);
