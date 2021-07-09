@@ -246,7 +246,7 @@ public class ImportAdapterCSV extends ImportAdapter {
                     if (config.columns.get(i).isCleansing()) {
                         result[i] = DataType.NULL_VALUE;
                     } else {
-                        throw new IllegalArgumentException("Data value does not match data type");
+                        throw new IllegalArgumentException("Data value (" + result[i] + ") does not match data type");
                     }
                 }
             }
