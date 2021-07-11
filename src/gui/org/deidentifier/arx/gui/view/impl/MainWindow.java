@@ -73,6 +73,8 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogTopBottomCoding;
 import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility;
+import org.deidentifier.arx.gui.view.impl.wizard.RiskWizard;
+import org.deidentifier.arx.gui.view.impl.wizard.RiskWizardDialog;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -528,6 +530,18 @@ public class MainWindow implements IView {
     		this.showErrorDialog(Resources.getMessage("MainWindow.12"), e); //$NON-NLS-1$
     	}
     }
+    
+    /**
+     * Shows the checklist wizard
+     */
+	public void showChecklistWizard() {
+        try {
+            RiskWizardDialog dialog = new RiskWizardDialog(new RiskWizard(controller));
+            dialog.open();
+        } catch (Exception e) {
+            controller.actionShowInfoDialog(this.getShell(), Resources.getMessage("Controller.13"), Resources.getMessage("MainWindow.30")); //$NON-NLS-1$ //$NON-NLS-2$
+        } 
+	}
 
     /**
      * Shows an info dialog.
@@ -1073,6 +1087,15 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionMenuHelpHelp(); }
             public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.28"), //$NON-NLS-1$
+        		controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
+        		true) {
+        	public void action(Controller controller) { controller.actionMenuHelpChecklistWizard(); }
+        	public boolean isEnabled(Model model) { return true; }
         });
 
         items.add(new MainMenuSeparator());

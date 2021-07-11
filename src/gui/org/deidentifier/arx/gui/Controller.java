@@ -1475,6 +1475,13 @@ public class Controller implements IView {
     public void actionMenuHelpAbout() {
         main.showAboutDialog();
     }
+    
+    /**
+     * Shows the "risk analysis" dialog.
+     */
+    public void actionMenuHelpChecklistWizard() {
+        main.showChecklistWizard();
+    }
 
     /**
      * Shows the "debug" dialog.
