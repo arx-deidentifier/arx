@@ -263,6 +263,8 @@ public class ShadowModelSetup {
                     if (attributeIsQI.get(i).equals("TRUE")) {
                         // Set hierarchy
                         data.getDefinition().setAttributeType(attributeName, loadHierarchy(dataset, attributeName));
+                    } else {
+                        data.getDefinition().setAttributeType(attributeName, AttributeType.INSENSITIVE_ATTRIBUTE);
                     }
                     break;
                 case "continuous":
@@ -271,6 +273,8 @@ public class ShadowModelSetup {
                         // Set aggregation function
                         data.getDefinition().setAttributeType(attributeName, loadHierarchy(dataset, attributeName));
                         data.getDefinition().setMicroAggregationFunction(attributeName, MicroAggregationFunction.createArithmeticMean(), true);
+                    } else {
+                        data.getDefinition().setAttributeType(attributeName, AttributeType.INSENSITIVE_ATTRIBUTE);
                     }
                     break;
                 case "ordinal":
@@ -307,7 +311,7 @@ public class ShadowModelSetup {
             filename = "data/texas_10.csv";
             break;
         case TEXAS:
-            filename = "data/texas.csv";
+            filename = "data_new/texas.csv";
             break;
         case TEXAS_CRAFTED:
             filename = "data_new/texas_crafted.csv";
@@ -340,7 +344,7 @@ public class ShadowModelSetup {
             break;
         case TEXAS:
         case TEXAS_CRAFTED:
-            filename = "data_new/texas.cfg";
+            filename = "data_new/texas_NHS.cfg";
             break;
         default:
             throw new RuntimeException("Invalid dataset");

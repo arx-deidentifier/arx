@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ShadowModelSetup.AnonymizationMethod;
@@ -96,10 +98,10 @@ public class SMConcBenchmark {
 
                     // Initialize shadow model
                     ShadowModel model;
+                    Set<String> attributesToConsider = Stream.concat(rRef.getDefinition().getQuasiIdentifyingAttributes().stream(), rRef.getDefinition().getInsensitiveAttributes().stream()).collect(Collectors.toSet());
                     try {
                         model = new ShadowModel(rRef.getHandle(),
-                                                rRef.getDefinition()
-                                                    .getQuasiIdentifyingAttributes(),
+                                                attributesToConsider,
                                                     SMBenchmarkConfig.FEATURE_TYPE,
                                                     SMBenchmarkConfig.CLASSIFIER_TYPE);
                     } catch (ParseException e) {
