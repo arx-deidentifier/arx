@@ -1,9 +1,0 @@
-sex;categorical;TRUE
-age;continuous;TRUE
-race;categorical;TRUE
-marital-status;categorical;TRUE
-education;categorical;TRUE
-native-country;categorical;TRUE
-workclass;categorical;TRUE
-occupation;categorical;TRUE
-salary-class;categorical;TRUE

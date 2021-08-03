@@ -222,7 +222,7 @@ public class ShadowModelSetup {
      * Datasets
      */
     public static enum BenchmarkDataset {
-        TEXAS_10, TEXAS, TEXAS_CRAFTED, ADULT, ADULT_FULL, ADULT_FULL_CRAFTED
+        TEXAS_10, TEXAS, TEXAS_CRAFTED, ADULT_FULL, ADULT_FULL_CRAFTED
     }
     
     /**
@@ -297,24 +297,20 @@ public class ShadowModelSetup {
     public static Data loadData(BenchmarkDataset dataset) throws IOException {
         String filename = null;
         switch (dataset) {
-
-        case ADULT:
-            filename = "data/adult.csv";
-            break;
         case ADULT_FULL:
-            filename = "data_new/adult_full.csv";
+            filename = "data_shadow/adult_full.csv";
             break;
         case ADULT_FULL_CRAFTED:
-            filename = "data_new/adult_full_crafted.csv";
+            filename = "data_shadow/adult_full_crafted.csv";
             break;
         case TEXAS_10:
-            filename = "data/texas_10.csv";
+            filename = "data_shadow/texas_10.csv";
             break;
         case TEXAS:
-            filename = "data_new/texas.csv";
+            filename = "data_shadow/texas.csv";
             break;
         case TEXAS_CRAFTED:
-            filename = "data_new/texas_crafted.csv";
+            filename = "data_shadow/texas_crafted.csv";
             break;
         default:
             throw new RuntimeException("Invalid dataset");
@@ -332,19 +328,16 @@ public class ShadowModelSetup {
     public static CSVDataInput loadDataConfig(BenchmarkDataset dataset) throws IOException {
         String filename = null;
         switch (dataset) {
-        case ADULT:
-            filename = "data/adult.cfg";
-            break;
         case ADULT_FULL:
         case ADULT_FULL_CRAFTED:
-            filename = "data_new/adult_full.cfg";
+            filename = "data_shadow/adult_full.cfg";
             break;
         case TEXAS_10:
-            filename = "data/texas_10.cfg";
+            filename = "data_shadow/texas_10.cfg";
             break;
         case TEXAS:
         case TEXAS_CRAFTED:
-            filename = "data_new/texas_NHS.cfg";
+            filename = "data_shadow/texas.cfg";
             break;
         default:
             throw new RuntimeException("Invalid dataset");
@@ -361,16 +354,14 @@ public class ShadowModelSetup {
     */
     public static Hierarchy loadHierarchy(BenchmarkDataset dataset, String attribute) throws IOException {
         switch (dataset) {
-        case ADULT:
-            return Hierarchy.create("data/adult_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case ADULT_FULL:
         case ADULT_FULL_CRAFTED:
-            return Hierarchy.create("data_new/adult_full_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ',');
+            return Hierarchy.create("data_shadow/adult_full_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ',');
         case TEXAS_10:
-            return Hierarchy.create("data/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
+            return Hierarchy.create("data_shadow/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         case TEXAS:
         case TEXAS_CRAFTED:
-            return Hierarchy.create("data_new/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
+            return Hierarchy.create("data_shadow/texas_hierarchy_" + attribute + ".csv", Charset.defaultCharset(), ';');
         default:
             throw new IllegalArgumentException("Unknown dataset");
         }
