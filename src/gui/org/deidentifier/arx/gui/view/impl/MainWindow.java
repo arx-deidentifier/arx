@@ -276,6 +276,15 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
+
+    /**
+     * Shows an about dialog.
+     */
+//    public void showTutorialsDialog() {
+//        final DialogTutorials dialog = new DialogTutorials(shell, controller);
+//        dialog.create();
+//        dialog.open();
+//    }
     
     /**
      * Shows a dialog for selecting privacy criteria.
@@ -1086,6 +1095,18 @@ public class MainWindow implements IView {
 
         items.add(new MainMenuSeparator());
 
+        // ia: Test adding new menu item    
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
+                false) {
+		public void action(Controller controller) { controller.actionMenuHelpTutorials(); }
+		public boolean isEnabled(Model model) { return true; }
+		});
+		
+		items.add(new MainMenuSeparator());
+
+        
+        
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
                                    false) {

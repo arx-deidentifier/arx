@@ -1476,6 +1476,11 @@ public class Controller implements IView {
         main.showAboutDialog();
     }
 
+    //ia: Test add new item menu
+    public void actionMenuHelpTutorials() {
+        main.showAboutDialog();
+    }
+    
     /**
      * Shows the "debug" dialog.
      */
