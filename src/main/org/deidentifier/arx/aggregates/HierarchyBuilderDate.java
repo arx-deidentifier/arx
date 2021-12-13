@@ -188,7 +188,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         /**  Granularity */
         WEEK("W"),
         /**  Granularity */
-        QUARTER("MM", 4),
+        QUARTER("MM", 3),
         /**  Granularity */
         YEAR("yyyy"),
         /**  Granularity */
@@ -534,10 +534,11 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         if (_range == null) {
             return sdf.format(date);
         } else {
-            int year = Integer.valueOf(sdf.format(date));
-            int lower = (year / _range) * _range;
-            int upper = ((year / _range) + 1) * _range;
-            return "[" + lower + ", " + upper + "[";
+            int dateUnit = Integer.valueOf(sdf.format(date));
+            int lower    = Integer.valueOf((dateUnit - 1) / (_range))  * (_range) + 1;
+            int upper    = lower + _range - 1;
+            String outputDate = "[" + lower + "-" + upper + "]";
+            return outputDate;
         }
     }
 }
