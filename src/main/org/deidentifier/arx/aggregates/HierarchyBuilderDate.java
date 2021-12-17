@@ -537,7 +537,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             int dateUnit = Integer.valueOf(sdf.format(date));
             int lower    = Integer.valueOf((dateUnit - 1) / (_range))  * (_range) + 1;
             int upper    = lower + _range;
-            String outputDate = "[" + lower + "-" + upper + "[";
+            String outputDate = "[" + lower + ", " + upper + "[";
             return outputDate;
         }
     }
