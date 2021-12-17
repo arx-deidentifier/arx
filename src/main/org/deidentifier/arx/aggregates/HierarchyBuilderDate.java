@@ -538,11 +538,11 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         } else {
             int dateUnit = Integer.valueOf(sdf.format(date));
             int lower    = Integer.valueOf((dateUnit - 1) / (_range))  * (_range) + 1 ;
-            int upper    = lower + _range - 1;
-            String outputDate = "[" + lower + "-" + upper + "]";            
+            int upper    = lower + _range;
+            String outputDate = "[" + lower + "-" + upper + "[";            
             // handle QUARTER_YEAR option
             if (granularity.toString() == "QUARTER_YEAR"){
-                outputDate = input.substring(0,4) + " [" + lower + "-" + upper + "]";
+                outputDate = input.substring(0,4) + " [" + lower + "-" + upper + "[";
             }
             return outputDate;
         }
