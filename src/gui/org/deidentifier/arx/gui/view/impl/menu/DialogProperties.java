@@ -291,7 +291,7 @@ public class DialogProperties implements IDialog {
 
         window.addGroup(Resources.getMessage("DialogProperties.10")); //$NON-NLS-1$
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44"), false, true) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44"), true, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isHeuristicForSampleBasedCriteria(); }
             protected void setValue(Object t) { model.getInputConfig().setHeuristicForSampleBasedCriteria((Boolean)t); }});
     }
@@ -331,13 +331,13 @@ public class DialogProperties implements IDialog {
         
         window.addGroup(Resources.getMessage("DialogProperties.12")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.61"), false, true) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.61"), true, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getUseListwiseDeletion(); }
             protected void setValue(Object t) { model.setUseListwiseDeletion((Boolean)t); }});
 
         window.addGroup(Resources.getMessage("DialogProperties.13")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.62"), false, true) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.62"), true, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getUseFunctionalHierarchies(); }
             protected void setValue(Object t) { model.setUseFunctionalHierarchies((Boolean)t); }});
 
