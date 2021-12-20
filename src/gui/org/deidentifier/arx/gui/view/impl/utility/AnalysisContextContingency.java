@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
@@ -104,5 +105,12 @@ public class AnalysisContextContingency implements AnalysisContextVisualization 
         else if (this.attributeType1 == null) return false;
         else if (this.attributeType2 == null) return false;
         else return true;
+    }
+
+    @Override
+    public void
+           hideSuppressedData(StatisticsFrequencyDistribution distribution) throws InterruptedException {
+        // TODO Auto-generated method stub
+        //Empty by design
     }
 }

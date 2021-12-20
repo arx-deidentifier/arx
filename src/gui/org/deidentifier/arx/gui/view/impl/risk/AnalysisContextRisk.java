@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.risk;
 
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
@@ -67,5 +68,12 @@ public class AnalysisContextRisk implements AnalysisContextVisualization{
         if (this.handle == null) return false;
         else if (this.model == null) return false;
         else return true;
+    }
+
+    @Override
+    public void
+           hideSuppressedData(StatisticsFrequencyDistribution distribution) throws InterruptedException {
+        // TODO Auto-generated method stub
+        //Empty by design
     }
 }

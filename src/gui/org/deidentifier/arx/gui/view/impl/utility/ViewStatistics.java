@@ -386,4 +386,12 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected void setStatusWorking(){
         this.status.setWorking();
     }
+
+    /**
+     * Status working.
+     */
+    public void update(ModelEvent event, Boolean hideSuppressedRecords) {
+        // TODO Auto-generated method stub
+        
+    }
 }

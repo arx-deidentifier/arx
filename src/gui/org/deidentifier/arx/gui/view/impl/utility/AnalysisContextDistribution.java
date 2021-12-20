@@ -17,9 +17,14 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import java.util.ArrayList;
+
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
@@ -32,13 +37,13 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualizat
 public class AnalysisContextDistribution implements AnalysisContextVisualization{
 
     /** Context information. */
-    public String        attribute     = null;
+    public String        attribute      = null;
     
     /** Context information. */
-    public DataType<?>   dataType      = null;
+    public DataType<?>   dataType       = null;
     
     /** Context information. */
-    public AttributeType attributeType = null;
+    public AttributeType attributeType  = null;
     
     /** Context information. */
     public DataHandle    handle         = null;
@@ -47,8 +52,14 @@ public class AnalysisContextDistribution implements AnalysisContextVisualization
     public Model         model          = null;
     
     /** Context information. */
-    public AnalysisContext context       = null;
+    public AnalysisContext context      = null;
     
+    /** Context distribution. */
+    public String [] newDistValues      = null; 
+
+    /** Context distribution. */
+    public double [] newDistFreqs       = null; 
+
     /**
      * Creates a new context from the given context.
      *
@@ -86,4 +97,33 @@ public class AnalysisContextDistribution implements AnalysisContextVisualization
         else if (this.attributeType == null) return false;
         else return true;
     }
+    
+    /**
+     * Hide suppressed records.
+     *         
+     * @param distribution
+     * @throws InterruptedException 
+     */
+    public void hideSuppressedData(  StatisticsFrequencyDistribution distribution) throws InterruptedException {
+      
+      ArrayList <String> newValues = new ArrayList<String>();
+      for (String s: distribution.values) {           
+          newValues.add(s); 
+      }
+      double srSum = 0.0;
+      int sr=newValues.indexOf("*");
+      newValues.removeIf(element-> (element=="*"));
+      
+      for (int i = 0; i<distribution.frequency.length; i++) 
+          if (i==sr) srSum = distribution.frequency[i] / newValues.size();
+   
+      this.newDistValues =  new String [newValues.size()];
+      this.newDistFreqs =   new double [newValues.size()];
+      
+      for (int i=0; i < newValues.size(); i++) {
+          this.newDistValues[i] = newValues.get(i);
+          this.newDistFreqs [i] = distribution.frequency[i] + srSum;                    
+      }
+    }
+    
 }

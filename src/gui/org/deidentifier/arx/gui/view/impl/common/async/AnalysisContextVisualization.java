@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.gui.view.impl.common.async;
 
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
+
 /**
  * The current context.
  *
@@ -38,4 +40,12 @@ public interface AnalysisContextVisualization {
      * @return
      */
     public boolean isValid();
+    
+    /**
+     * Hide suppressed records.
+     * 
+     * @param distribution
+     * @return
+     */
+    public void hideSuppressedData(StatisticsFrequencyDistribution distribution) throws InterruptedException;
 }

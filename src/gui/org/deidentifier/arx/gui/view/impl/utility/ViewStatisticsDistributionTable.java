@@ -21,6 +21,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -47,6 +48,9 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     
     /** Internal stuff. */
     private AnalysisManager manager;
+
+    /** Internal stuff. */
+    public Boolean hideSuppressedRecords           = false;
 
     /**
      * Creates a new instance.
@@ -146,16 +150,26 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                     return;
                 }
 
+                if (hideSuppressedRecords) {
+                    try{
+                       context.hideSuppressedData(distribution);
+                    } catch (InterruptedException e) {
+                      e.printStackTrace();
+                    }
+                 }
+                 
                 // Now update the table
                 table.setData(new IDataProvider() {
                     public int getColumnCount() {
                         return 2;
                     }
                     public Object getDataValue(int arg0, int arg1) {
-                        return arg0 == 0 ? distribution.values[arg1] : SWTUtil.getPrettyString(distribution.frequency[arg1]*100d)+"%"; //$NON-NLS-1$
+                        if (!hideSuppressedRecords) return arg0 == 0 ? distribution.values[arg1] : SWTUtil.getPrettyString(distribution.frequency[arg1]*100d)+"%"; //$NON-NLS-1$                          
+                        else return arg0 == 0 ? context.newDistValues[arg1] : SWTUtil.getPrettyString(context.newDistFreqs[arg1]*100d)+"%"; //$NON-NLS-1$
                     }
                     public int getRowCount() {
-                        return distribution.values.length;
+                        if (!hideSuppressedRecords) return distribution.values.length;
+                        else return context.newDistValues.length;
                     }
                     public void setDataValue(int arg0, int arg1, Object arg2) { 
                         /* Ignore */
@@ -204,4 +218,12 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
     }
+    
+    /**
+     * View/Hide suppressed records 
+     */
+    @Override
+    public void update(ModelEvent event, Boolean hsr) {
+        hideSuppressedRecords = hsr;
+    }    
 }

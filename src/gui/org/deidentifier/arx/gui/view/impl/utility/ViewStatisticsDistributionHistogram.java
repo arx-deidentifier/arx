@@ -21,6 +21,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -71,6 +72,9 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     
     /** Internal stuff. */
     private AnalysisManager  manager;
+
+    /** Internal stuff. */
+    public Boolean hideSuppressedRecords           = false;
 
     /**
      * Creates a new instance.
@@ -276,7 +280,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
             private boolean                         stopped = false;
             private StatisticsFrequencyDistribution distribution;
-
+            
             @Override
             public int getProgress() {
                 return builder.getProgress();
@@ -288,13 +292,21 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
             }
 
             @Override
-            public void onFinish() {
+            public void onFinish()   {
 
                 // Check
                 if (stopped || !isEnabled()) {
                     return;
                 }
-
+                
+                if (hideSuppressedRecords) {
+                   try{
+                      context.hideSuppressedData(distribution);
+                   } catch (InterruptedException e) {
+                     e.printStackTrace();
+                   }
+                }
+                
                 // Update chart
                 chart.setRedraw(false);
 
@@ -304,10 +316,12 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 series.getLabel().setVisible(false);
                 series.getLabel().setFont(chart.getFont());
                 series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-                for (int i = 0; i < this.distribution.frequency.length; i++) {
-                    this.distribution.frequency[i] *= 100d;
-                }
-                series.setYSeries(this.distribution.frequency);
+                if (!hideSuppressedRecords) {
+                    series.setYSeries(this.distribution.frequency);
+                } else {
+                     series.setYSeries(context.newDistFreqs);                  
+                }                
+                
                 chart.getLegend().setVisible(false);
 
                 IAxisSet axisSet = chart.getAxisSet();
@@ -317,7 +331,11 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 yAxis.adjustRange();
 
                 IAxis xAxis = axisSet.getXAxis(0);
-                xAxis.setCategorySeries(this.distribution.values);
+                if (!hideSuppressedRecords) {
+                   xAxis.setCategorySeries(this.distribution.values);
+                } else {
+                   xAxis.setCategorySeries(context.newDistValues);                   
+                }
                 xAxis.adjustRange();
                 updateCategories();
 
@@ -344,6 +362,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 long time = System.currentTimeMillis();
                 
                 // Perform work
+                
                 this.distribution = builder.getFrequencyDistribution(column, hierarchy);
 
                 // Our users are patient
@@ -367,5 +386,13 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
+    }
+
+    /**
+     * View/Hide suppressed records 
+     */
+    @Override
+    public void update(ModelEvent event, Boolean hsr) {
+        hideSuppressedRecords = hsr;
     }
 }
