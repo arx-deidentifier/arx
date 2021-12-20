@@ -291,7 +291,7 @@ public class DialogProperties implements IDialog {
 
         window.addGroup(Resources.getMessage("DialogProperties.10")); //$NON-NLS-1$
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44"), true, true) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44"), false, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isHeuristicForSampleBasedCriteria(); }
             protected void setValue(Object t) { model.getInputConfig().setHeuristicForSampleBasedCriteria((Boolean)t); }});
     }
