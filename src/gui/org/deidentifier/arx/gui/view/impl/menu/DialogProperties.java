@@ -130,7 +130,7 @@ public class DialogProperties implements IDialog {
             protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmMutationProbability(); }
             protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmMutationProbability((Double)t); }});  
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), false) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), false, true) { //$NON-NLS-1$
         protected Boolean getValue() { return model.getInputConfig().getGeneticAlgorithmDeterministic(); }
         protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmDeterministic((Boolean)t); }});
     }
@@ -162,7 +162,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getMaximalSizeForComplexOperations(); }
             protected void setValue(Object t) { model.setMaximalSizeForComplexOperations((Integer)t); }});
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.29"), false) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.29"), false, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.isDebugEnabled(); }
             protected void setValue(Object t) { model.setDebugEnabled((Boolean)t); }});
 
@@ -262,7 +262,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getTimeTotal(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().timeTotal((Integer)t); }});
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), ARXSolverConfiguration.getDefaultDeterministic()) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), ARXSolverConfiguration.getDefaultDeterministic(), true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getRiskModel().getSolverConfiguration().isDeterministic(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().setDeterministic((Boolean)t); }});        
     }
@@ -291,7 +291,7 @@ public class DialogProperties implements IDialog {
 
         window.addGroup(Resources.getMessage("DialogProperties.10")); //$NON-NLS-1$
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44"), false, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isHeuristicForSampleBasedCriteria(); }
             protected void setValue(Object t) { model.getInputConfig().setHeuristicForSampleBasedCriteria((Boolean)t); }});
     }
@@ -307,15 +307,15 @@ public class DialogProperties implements IDialog {
 
         window.addGroup(Resources.getMessage("DialogProperties.11")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.11"), true) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.11"), true, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isSuppressionAlwaysEnabled(); }
             protected void setValue(Object t) { model.getInputConfig().setSuppressionAlwaysEnabled((Boolean)t); }});
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.31"), false) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.31"), false, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE); }
             protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE, (Boolean)t); }});
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.32"), false) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.32"), false, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE); }
             protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, (Boolean)t); }});
     }
@@ -331,13 +331,13 @@ public class DialogProperties implements IDialog {
         
         window.addGroup(Resources.getMessage("DialogProperties.12")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.61")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.61"), true, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getUseListwiseDeletion(); }
             protected void setValue(Object t) { model.setUseListwiseDeletion((Boolean)t); }});
 
         window.addGroup(Resources.getMessage("DialogProperties.13")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.62")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.62"), true, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getUseFunctionalHierarchies(); }
             protected void setValue(Object t) { model.setUseFunctionalHierarchies((Boolean)t); }});
 
@@ -347,7 +347,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getMaxRecords(); }
             protected void setValue(Object t) { model.getClassificationModel().setMaxRecords((Integer)t); }});
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17"), ARXClassificationConfiguration.DEFAULT_DETERMINISTIC) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17"), ARXClassificationConfiguration.DEFAULT_DETERMINISTIC, true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getClassificationModel().getCurrentConfiguration().isDeterministic(); }
             protected void setValue(Object t) { model.getClassificationModel().setDeterministic((Boolean)t); }});
         
