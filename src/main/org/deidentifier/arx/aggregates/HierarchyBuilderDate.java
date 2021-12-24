@@ -21,7 +21,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,6 +70,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             map.put(Granularity.WEEK_MONTH_YEAR, "W/MM.yyyy");
             map.put(Granularity.WEEK_YEAR, "ww/yyyy");
             map.put(Granularity.MONTH_YEAR, "MM/yyyy");
+            map.put(Granularity.QUARTER_YEAR, "QQQ yyyy");
         }
 
         /**
@@ -112,7 +115,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             
             // Check if valid
             try {
-                new SimpleDateFormat(input);
+                DateTimeFormatter.ofPattern(input);
             } catch (Exception e) {
                 return false;
             }
@@ -184,11 +187,13 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         /**  Granularity */
         MONTH_YEAR("MM/yyyy"),
         /**  Granularity */
+        QUARTER_YEAR("QQQ yyyy"),
+        /**  Granularity */
         WEEKDAY("u"),
         /**  Granularity */
-        WEEK("W"),
+        WEEK("w"),
         /**  Granularity */
-        QUARTER("MM", 3),
+        QUARTER("QQQ"),
         /**  Granularity */
         YEAR("yyyy"),
         /**  Granularity */
@@ -196,7 +201,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         /**  Granularity */
         CENTURY("yyyy", 100),
         /**  Granularity */
-        MILLENIUM("yyyy", 1000);
+        MILLENNIUM("yyyy", 1000);
 
         /** Format string */
         private String  format;
@@ -504,16 +509,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             return ARXDate.NULL_VALUE;
         }
         
-        // Format
-        String _format = (format != null && format.contains(granularity)) ? format.get(granularity) : granularity.format;
-        Integer _range = granularity.range;
-        
-        // Init
-        SimpleDateFormat sdf = new SimpleDateFormat(_format);
-        if (this.timeZone != null) {
-            sdf.setTimeZone(this.timeZone);
-        }
-        
+        // Parse
         Date date = datatype.parse(input);
 
         // Bottom coding
@@ -530,12 +526,24 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             }
         }
         
+
+        // Format
+        String _format = (format != null && format.contains(granularity)) ? format.get(granularity) : granularity.format;
+        Integer _range = granularity.range;
+        
+        // Create zoned date time
+        ZonedDateTime dateTime = ZonedDateTime.ofInstant(date.toInstant(),
+                                                         timeZone != null ? timeZone.toZoneId() : ZoneId.systemDefault());
+        
+        // Create formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(_format, datatype.getLocale());
+        
         // Range mapping
         if (_range == null) {
-            return sdf.format(date);
+            return formatter.format(dateTime);
         } else {
-            int dateUnit = Integer.valueOf(sdf.format(date));
-            int lower    = Integer.valueOf((dateUnit - 1) / (_range))  * (_range) + 1;
+            int dateUnit = Integer.valueOf(formatter.format(dateTime));
+            int lower    = Integer.valueOf((dateUnit) / (_range))  * (_range);
             int upper    = lower + _range;
             String outputDate = "[" + lower + ", " + upper + "[";
             return outputDate;
