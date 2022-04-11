@@ -58,7 +58,7 @@ public class DataTableHandleDataProvider implements IDataProvider {
         } else if (arg0 == 0) {
             // Remap row index for subset if in subset view
             if (data instanceof DataHandleSubset){
-                int[] subset = ((DataHandleSubset)data).getSubset();
+                int[] subset = ((DataHandleSubset)data).getSubset().getArray();
                 arg1 = subset[arg1];
             }
             return rows.contains(arg1);

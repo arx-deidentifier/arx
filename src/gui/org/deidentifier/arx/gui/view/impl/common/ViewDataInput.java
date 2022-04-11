@@ -250,7 +250,7 @@ public class ViewDataInput extends ViewData {
 
             // Remap row index if showing the subset
             if (table.getData() instanceof DataHandleSubset) {
-                int[] subset = ((DataHandleSubset) table.getData()).getSubset();
+                int[] subset = ((DataHandleSubset) table.getData()).getSubset().getArray();
                 row = subset[row];
             }
 

@@ -92,9 +92,9 @@ public class DataHandleSubset extends DataHandle {
      *
      * @return
      */
-    public int[] getSubset() {
+    public DataSubset getSubset() {
         checkReleased();
-        return this.subset.getArray();
+        return this.subset;
     }
 
     @Override
