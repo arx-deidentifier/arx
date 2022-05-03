@@ -33,12 +33,12 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 
 /**
- * This class implements an example of how to use (e,d)-DP
+ * This class implements an example of how to use data-dependent (e,d)-DP
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Example37 extends Example {
+public class Example37_data_dependent_DP extends Example {
 
     /**
      * Entry point.
@@ -87,13 +87,21 @@ public class Example37 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
 
-        // Create a data-independent differential privacy criterion
-        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.00001d,
-                                                                    DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
-
+        // Create a data-dependent differential privacy criterion
+        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.00001d); 
+        
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(criterion);
         config.setSuppressionLimit(1d);
+        
+        // Number of steps to search, default is Integer.MAX_VALUE 
+        int steps = 10000;
+        config.setHeuristicSearchStepLimit(steps);
+        
+        // Additional epsilon for search process, default is 0.1
+        double dpSearchBudget = 0.5;              
+        config.setDPSearchBudget(dpSearchBudget);  
+        
         ARXResult result = anonymizer.anonymize(data, config);
 
         // Access output
