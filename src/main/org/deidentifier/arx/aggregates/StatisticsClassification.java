@@ -547,37 +547,7 @@ public class StatisticsClassification {
                 } else {
                     throw new UnexpectedErrorException(e);
                 }
-            }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+            }                        
         }
         
         // Maintain data about inputZR
