@@ -88,7 +88,7 @@ public class Example37_data_dependent_DP extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         // Create a data-dependent differential privacy criterion
-        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.00001d); 
+        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.999d); 
         
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(criterion);
@@ -99,7 +99,7 @@ public class Example37_data_dependent_DP extends Example {
         config.setHeuristicSearchStepLimit(steps);
         
         // Additional epsilon for search process, default is 0.1
-        double dpSearchBudget = 0.5;              
+        double dpSearchBudget = 0.1;              
         config.setDPSearchBudget(dpSearchBudget);  
         
         ARXResult result = anonymizer.anonymize(data, config);
