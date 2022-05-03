@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -28,6 +29,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.aggregates.classification.ClassificationDataSpecification;
 import org.deidentifier.arx.aggregates.classification.ClassificationMethod;
 import org.deidentifier.arx.aggregates.classification.ClassificationResult;
@@ -361,9 +363,105 @@ public class StatisticsClassification {
         double[] zerorConfidences = new double[numSamples * ( 1 + numClasses)];
         int confidencesIndex = 0;
                 
-        // For each fold as a validation set
-        for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
-            
+        if (config.getEvaluateWithKfold()) {        
+            // For each fold as a validation set
+            for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
+                
+                // Create classifiers
+                ClassificationMethod inputClassifier = getClassifier(interrupt, specification, config, inputHandle);
+                ClassificationMethod inputZeroR = new MultiClassZeroR(interrupt, specification);
+                ClassificationMethod outputClassifier = null;
+                if (inputHandle != outputHandle) {
+                    outputClassifier = getClassifier(interrupt, specification, config, inputHandle);
+                }
+                
+                // Try
+                try {
+                    
+                    // Train with all training sets
+                    boolean trained = false;
+                    for (int trainingFold = 0; trainingFold < folds.size(); trainingFold++) {
+                        if (trainingFold != evaluationFold) {                        
+                            for (int index : folds.get(trainingFold)) {
+                                checkInterrupt();
+                                inputClassifier.train(inputHandle, outputHandle, index);
+                                inputZeroR.train(inputHandle, outputHandle, index);
+                                if (outputClassifier != null && !outputHandle.isOutlier(index)) {
+                                    outputClassifier.train(outputHandle, outputHandle, index);
+                                    trained = true;
+                                }
+                                this.progress.value = (int)((++done) * total);
+                            }
+                        }
+                    }
+                    
+                    // Close
+                    inputClassifier.close();
+                    inputZeroR.close();
+                    if (outputClassifier != null && trained) {
+                        outputClassifier.close();
+                    }
+                    
+                    // Now validate
+                    for (int index : folds.get(evaluationFold)) {
+                        
+                        // Check
+                        checkInterrupt();
+                        
+                        // Classify
+                        ClassificationResult resultInput = inputClassifier.classify(inputHandle, index);
+                        ClassificationResult resultInputZR = inputZeroR.classify(inputHandle, index);
+                        ClassificationResult resultOutput = outputClassifier == null || !trained ? null : outputClassifier.classify(outputHandle, index);
+                        classifications++;
+                            
+                        // Correct result
+                        String actualValue = outputHandle.getValue(index, specification.classIndex, true);
+                            
+                        // Maintain data about ZeroR
+                        this.zeroRAverageError += resultInputZR.error(actualValue);
+                        this.zeroRAccuracy += resultInputZR.correct(actualValue) ? 1d : 0d;
+                        double[] confidences = resultInputZR.confidences();
+                        zerorConfidences[confidencesIndex] = index;
+                        System.arraycopy(confidences, 0, zerorConfidences, confidencesIndex + 1, confidences.length);
+    
+                        // Maintain data about input-based classifier
+                        boolean correct = resultInput.correct(actualValue);
+                        this.originalAverageError += resultInput.error(actualValue);
+                        this.originalAccuracy += correct ? 1d : 0d;
+                        confidences = resultInput.confidences();
+                        inputConfidences[confidencesIndex] = index;
+                        System.arraycopy(confidences, 0, inputConfidences, confidencesIndex + 1, confidences.length);
+    
+                        // Maintain data about output-based                     
+                        if (resultOutput != null) {
+                            correct = resultOutput.correct(actualValue);
+                            this.averageError += resultOutput.error(actualValue);
+                            this.accuracy += correct ? 1d : 0d;
+                            confidences = resultOutput.confidences();
+                            outputConfidences[confidencesIndex] = index;
+                            System.arraycopy(confidences, 0, outputConfidences, confidencesIndex + 1, confidences.length);
+                        }
+                            
+                        // Next
+                        confidencesIndex += numClasses + 1;
+                        
+                        this.progress.value = (int)((++done) * total);
+                    }
+                } catch (Exception e) {
+                    if (e instanceof ComputationInterruptedException) {
+                        throw e;
+                    } else {
+                        throw new UnexpectedErrorException(e);
+                    }
+                }
+            }
+        } else {
+                
+            // get the training data  
+            DataSubset subsetTrain = inputHandle.getSubset();
+
+            // do training 
+           
             // Create classifiers
             ClassificationMethod inputClassifier = getClassifier(interrupt, specification, config, inputHandle);
             ClassificationMethod inputZeroR = new MultiClassZeroR(interrupt, specification);
@@ -373,42 +471,41 @@ public class StatisticsClassification {
             }
             
             // Try
-            try {
-                
-                // Train with all training sets
-                boolean trained = false;
-                for (int trainingFold = 0; trainingFold < folds.size(); trainingFold++) {
-                    if (trainingFold != evaluationFold) {                        
-                        for (int index : folds.get(trainingFold)) {
-                            checkInterrupt();
-                            inputClassifier.train(inputHandle, outputHandle, index);
-                            inputZeroR.train(inputHandle, outputHandle, index);
-                            if (outputClassifier != null && !outputHandle.isOutlier(index)) {
-                                outputClassifier.train(outputHandle, outputHandle, index);
-                                trained = true;
-                            }
-                            this.progress.value = (int)((++done) * total);
-                        }
+            try {                    
+                // Train with the training subset
+                for (int index : subsetTrain.getArray()) {
+                    checkInterrupt();                                    
+                    inputClassifier.train(inputHandle, outputHandle, index);
+                    inputZeroR.train(inputHandle, outputHandle, index);
+                    if (outputClassifier != null && !outputHandle.isOutlier(index)) {
+                        outputClassifier.train(outputHandle, outputHandle, index);
                     }
+                    this.progress.value = (int)((++done) * total);
                 }
-                
+               
                 // Close
                 inputClassifier.close();
                 inputZeroR.close();
-                if (outputClassifier != null && trained) {
+                if (outputClassifier != null ) {
                     outputClassifier.close();
                 }
                 
-                // Now validate
-                for (int index : folds.get(evaluationFold)) {
-                    
+                // create the testing subset indices   
+                Set<Integer> subsetIndicesTest = new HashSet<Integer>();
+                for (int i = 0; i <  inputHandle.getNumRows(); ++i) {
+                    if (! subsetTrain.getSet().contains(i)) {
+                       subsetIndicesTest.add(i);
+                    }           
+                }        
+
+                for (int index : subsetIndicesTest ) {    
                     // Check
                     checkInterrupt();
                     
                     // Classify
                     ClassificationResult resultInput = inputClassifier.classify(inputHandle, index);
                     ClassificationResult resultInputZR = inputZeroR.classify(inputHandle, index);
-                    ClassificationResult resultOutput = outputClassifier == null || !trained ? null : outputClassifier.classify(outputHandle, index);
+                    ClassificationResult resultOutput = outputClassifier == null  ? null : outputClassifier.classify(outputHandle, index);
                     classifications++;
                         
                     // Correct result
@@ -451,6 +548,36 @@ public class StatisticsClassification {
                     throw new UnexpectedErrorException(e);
                 }
             }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         }
         
         // Maintain data about inputZR

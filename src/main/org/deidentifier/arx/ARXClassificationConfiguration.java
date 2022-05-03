@@ -74,7 +74,8 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     private int                 vectorLength            = DEFAULT_VECTOR_LENGTH;
     /** Modified */
     private boolean             modified                = false;
-
+    /** EvaluateWithKfold */
+    private boolean             EvaluateWithKfold       = true;
     /**
      * Creates a new instance with default settings
      */
@@ -241,5 +242,18 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
             this.vectorLength = vectorLength;
         }
         return (T)this;
+    }
+    /**
+     * Get EvaluateWithKfold
+     */
+    public boolean getEvaluateWithKfold() {
+        return this.EvaluateWithKfold;
+    }
+
+    /**
+     * Set EvaluateWithKfold
+     */
+    public void setEvaluateWithKfold(boolean value) {
+        this.EvaluateWithKfold = value;
     }
 }
