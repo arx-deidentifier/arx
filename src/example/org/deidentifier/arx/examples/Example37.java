@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 
 /**
- * This class implements an example of how to use (e,d)-DP
+ * This class implements an example of how to use data-dependent (e,d)-DP
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -87,19 +88,55 @@ public class Example37 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
 
-        // Create a data-independent differential privacy criterion
-        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.999d,
-                                                                    DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
+        // Setting epsilon and delta parameters as found in equation 1 in the SafePub paper
+        //    https://doi.org/10.1515/popets-2018-0004
+        
+        // epsilon parameter
+        double epsilon = 2d;
+        
+        // delta parameter, highest value is 0.1d
+        // note: for this small dataset, all records will be suppressed
+        double delta = 0.00001d;
+        
+        // Create a data-dependent differential privacy criterion
+        EDDifferentialPrivacy criterionDataIndependentDP = new EDDifferentialPrivacy(epsilon, delta); 
 
+        // Create a data-independent differential privacy criterion
+        EDDifferentialPrivacy criterionDataDependentDP = new EDDifferentialPrivacy(epsilon, delta,
+                                                                    DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
+               
+        // parameter to control which criterion to use
+        boolean useDataIndependentDP = true;
+
+        // Number of steps to search, default is Integer.MAX_VALUE
+        // Number of steps should not be more than the product of height of all hierarchies e.g. for this dataset 3 * 2 * 6.
+        int steps = 36;
+
+        // Additional epsilon for search process, default is 0.1
+        double dpSearchBudget = 0.1;              
+        
+        // Create anonymization configuration
         ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(criterion);
+
+        if (useDataIndependentDP) {
+           config.addPrivacyModel(criterionDataIndependentDP);
+        }  else {
+           config.addPrivacyModel(criterionDataDependentDP);              
+        }
+        
         config.setSuppressionLimit(1d);
+        
+        config.setHeuristicSearchStepLimit(steps);
+        
+        config.setDPSearchBudget(dpSearchBudget);  
+        
         ARXResult result = anonymizer.anonymize(data, config);
 
         // Access output
         DataHandle optimal = result.getOutput();
 
-        System.out.println(result.isResultAvailable());
+        System.out.println("useDataIndependentDP: " + useDataIndependentDP);
+        System.out.println("isResultAvailable: " + result.isResultAvailable());
 
         // Print input
         System.out.println(" - Input data:");
