@@ -34,7 +34,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 
 /**
- * This class implements an example of how to use data-dependent (e,d)-DP
+ * This class implements an example of how to use data-dependent and data-independent (e,d)-DP
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
