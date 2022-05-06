@@ -18,6 +18,7 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -37,6 +38,7 @@ import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Ibraheem Al-Dhamari
  */
 public class Example37 extends Example {
 
@@ -47,27 +49,52 @@ public class Example37 extends Example {
      * @param config: the anonymization configuration 
      *
      */
-    public static void dataDependentDP (ARXConfiguration config ) {
+    public static void dataDependentDP (DefaultData data) throws IOException {
         
-        // Setting epsilon and delta parameters as found in equation 1 in the SafePub paper
-        //    https://doi.org/10.1515/popets-2018-0004
+        System.out.println("--------- Data dependent DP ------------ ");
 
         // The parameter epsilon
         double epsilon = 2d;
         
-        // The parameter delta, highest value is 0.1d
-        // Note: for this small dataset, all records will be suppressed
-        double delta = 0.00001d;
+        // The parameter delta
+        // Notes: 1. It is recommended that it is less than 1/number_of_records
+        //        2. For this small dataset, all records will be suppressed
+        double delta = 0.1d;
         
         // Create a data-dependent differential privacy criterion
         EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(epsilon, delta); 
 
-        // Number of steps to search, default is Integer.MAX_VALUE
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+
+        // Additional epsilon for search process, default is 0.1
+        double dpSearchBudget = 0.1;              
+
+        // Create anonymization configuration
+        ARXConfiguration config = ARXConfiguration.create();
+        config.setSuppressionLimit(1d);        
+        config.setDPSearchBudget(dpSearchBudget);  
+
+        // Number of steps to search
         // Number of steps should not be more than the product of height of all hierarchies e.g. for this dataset 3 * 2 * 6.
-        int steps = 36;
-        
+        int steps = 36;               
         config.setHeuristicSearchStepLimit(steps);
+        
         config.addPrivacyModel(criterion);
+
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Access output
+        DataHandle optimal = result.getOutput();
+
+        System.out.println("Is the result available? " + result.isResultAvailable());
+
+        // Print input
+        System.out.println(" - Input data:");
+        printHandle(data.getHandle());
+
+        System.out.println(" - Result:");
+        printHandle(optimal);
     }
     
     /**
@@ -76,32 +103,57 @@ public class Example37 extends Example {
      * @param config: the anonymization configuration 
      *
      */
-    public static void dataIndependentDP(ARXConfiguration config,  DefaultData data) {
+    public static void dataIndependentDP(DefaultData data) throws IOException {
 
-        // Setting epsilon and delta parameters as found in equation 1 in the SafePub paper
-        //    https://doi.org/10.1515/popets-2018-0004
-
+        System.out.println("--------- Data independent DP ------------ ");
+        
         // The parameter epsilon
         double epsilon = 2d;
         
-        // The parameter delta, highest value is 0.1d
-        // Note: for this small dataset, all records will be suppressed
-        double delta = 0.00001d;
+        // The parameter delta
+        // Notes: 1. It is recommended that delta is less than 1/number_of_records
+        //        2. For this small dataset, all records will be suppressed
+        double delta = 0.1d;
         
         // Create a data-independent differential privacy criterion
         EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(epsilon, delta,
                                                                     DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
-               
-        // Number of steps to search, default is Integer.MAX_VALUE
+
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+
+        // Additional epsilon for search process, default is 0.1
+        double dpSearchBudget = 0.1;              
+
+        // Create anonymization configuration
+        ARXConfiguration config = ARXConfiguration.create();
+        config.setSuppressionLimit(1d);        
+        config.setDPSearchBudget(dpSearchBudget);  
+
+        // Number of steps to search
         // Number of steps should not be more than the product of height of all hierarchies e.g. for this dataset 3 * 2 * 6.
-        int steps = 36;
-       
+        int steps = 36;               
         config.setHeuristicSearchStepLimit(steps);
+        
         config.addPrivacyModel(criterion);
+        
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Access output
+        DataHandle optimal = result.getOutput();
+
+        System.out.println("Is the result available? " + result.isResultAvailable());
+
+        // Print input
+        System.out.println(" - Input data:");
+        printHandle(data.getHandle());
+
+        System.out.println(" - Result:");
+        printHandle(optimal);
     }
     
     /**
-     *  Data dependent differential privacy
+     *  Differential privacy example
      * 
      * @param args
      *            the arguments
@@ -144,39 +196,11 @@ public class Example37 extends Example {
         data.getDefinition().setHierarchy("gender", gender);
         data.getDefinition().setHierarchy("zipcode", zipcode);
 
-        // Create an instance of the anonymizer
-        ARXAnonymizer anonymizer = new ARXAnonymizer();
-        
-        // Additional epsilon for search process, default is 0.1
-        double dpSearchBudget = 0.1;              
-        
-        // Create anonymization configuration
-        ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionLimit(1d);        
-        config.setDPSearchBudget(dpSearchBudget);  
-        
-        // A parameter to control which criterion to use
-        boolean useDataIndependentDP = true;
-        
-        if (useDataIndependentDP) {
-            dataIndependentDP(config, data);
-        }  else {
-            dataDependentDP(config); 
-        }
-        
-        ARXResult result = anonymizer.anonymize(data, config);
-
-        // Access output
-        DataHandle optimal = result.getOutput();
-
-        System.out.println("Is data-independent differntial privacy used? " + useDataIndependentDP);
-        System.out.println("Is the result available? " + result.isResultAvailable());
-
-        // Print input
-        System.out.println(" - Input data:");
-        printHandle(data.getHandle());
-
-        System.out.println(" - Result:");
-        printHandle(optimal);
+       // Anonymize using data independent DP         
+       dataIndependentDP(data);
+       
+       data.getHandle().release();
+       // Anonymize using data dependent DP         
+       dataDependentDP(data); 
     }
 }
