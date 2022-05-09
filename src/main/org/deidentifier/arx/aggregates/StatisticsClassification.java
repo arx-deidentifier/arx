@@ -1,4 +1,3 @@
-/*
  * ARX: Powerful Data Anonymization
  * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
@@ -632,8 +631,11 @@ public class StatisticsClassification {
     /**
      * Evaluation of the Classification using 10 K-fold cross validation  
      * 
-     * @param 
-     * @param 
+     * @param inputHandle - The input features handle
+     * @param outputHandle - The output features handle
+     * @param config - The configuration
+     * @param specification - The specification 
+     * @throws ParseException 
      */
     private void evaluateWithKFoldCrossValidation(DataHandleInternal inputHandle,
                                                   DataHandleInternal outputHandle,
@@ -811,8 +813,11 @@ public class StatisticsClassification {
     /**
      * Evaluation of the Classification using a test subset 
      * 
-     * @param 
-     * @param 
+     * @param inputHandle - The input features handle
+     * @param outputHandle - The output features handle
+     * @param config - The configuration
+     * @param specification - The specification 
+     * @throws ParseException 
      */
     private void evaluateWithTestingSet(DataHandleInternal inputHandle,
                                         DataHandleInternal outputHandle,
@@ -981,3 +986,4 @@ public class StatisticsClassification {
         this.numMeasurements = classifications;
     }
 }
+
