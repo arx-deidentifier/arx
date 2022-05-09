@@ -986,4 +986,3 @@ public class StatisticsClassification {
         this.numMeasurements = classifications;
     }
 }
-
