@@ -18,6 +18,7 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -33,15 +34,126 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 
 /**
- * This class implements an example of how to use (e,d)-DP
+ * This class implements an example of how to use data-dependent and data-independent (e,d)-DP
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Ibraheem Al-Dhamari
  */
 public class Example37 extends Example {
 
+    
     /**
-     * Entry point.
+     * Data Dependent DP.
+     * 
+     * @param config: the anonymization configuration 
+     *
+     */
+    public static void dataDependentDP (DefaultData data) throws IOException {
+        
+        System.out.println("--------- Data dependent DP ------------ ");
+
+        // The parameter epsilon
+        double epsilon = 2d;
+        
+        // The parameter delta
+        // Notes: 1. It is recommended that it is less than 1/number_of_records
+        //        2. For this small dataset, all records will be suppressed
+        double delta = 0.1d;
+        
+        // Create a data-dependent differential privacy criterion
+        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(epsilon, delta); 
+
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+
+        // Additional epsilon for search process, default is 0.1
+        double dpSearchBudget = 0.1;              
+
+        // Create anonymization configuration
+        ARXConfiguration config = ARXConfiguration.create();
+        config.setSuppressionLimit(1d);        
+        config.setDPSearchBudget(dpSearchBudget);  
+
+        // Number of steps to search
+        // Number of steps should not be more than the product of height of all hierarchies e.g. for this dataset 3 * 2 * 6.
+        int steps = 36;               
+        config.setHeuristicSearchStepLimit(steps);
+        
+        config.addPrivacyModel(criterion);
+
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Access output
+        DataHandle optimal = result.getOutput();
+
+        System.out.println("Is the result available? " + result.isResultAvailable());
+
+        // Print input
+        System.out.println(" - Input data:");
+        printHandle(data.getHandle());
+
+        System.out.println(" - Result:");
+        printHandle(optimal);
+    }
+    
+    /**
+     *  Data independent differential privacy
+     * 
+     * @param config: the anonymization configuration 
+     *
+     */
+    public static void dataIndependentDP(DefaultData data) throws IOException {
+
+        System.out.println("--------- Data independent DP ------------ ");
+        
+        // The parameter epsilon
+        double epsilon = 2d;
+        
+        // The parameter delta
+        // Notes: 1. It is recommended that delta is less than 1/number_of_records
+        //        2. For this small dataset, all records will be suppressed
+        double delta = 0.1d;
+        
+        // Create a data-independent differential privacy criterion
+        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(epsilon, delta,
+                                                                    DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
+
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+
+        // Additional epsilon for search process, default is 0.1
+        double dpSearchBudget = 0.1;              
+
+        // Create anonymization configuration
+        ARXConfiguration config = ARXConfiguration.create();
+        config.setSuppressionLimit(1d);        
+        config.setDPSearchBudget(dpSearchBudget);  
+
+        // Number of steps to search
+        // Number of steps should not be more than the product of height of all hierarchies e.g. for this dataset 3 * 2 * 6.
+        int steps = 36;               
+        config.setHeuristicSearchStepLimit(steps);
+        
+        config.addPrivacyModel(criterion);
+        
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Access output
+        DataHandle optimal = result.getOutput();
+
+        System.out.println("Is the result available? " + result.isResultAvailable());
+
+        // Print input
+        System.out.println(" - Input data:");
+        printHandle(data.getHandle());
+
+        System.out.println(" - Result:");
+        printHandle(optimal);
+    }
+    
+    /**
+     *  Differential privacy example
      * 
      * @param args
      *            the arguments
@@ -84,28 +196,11 @@ public class Example37 extends Example {
         data.getDefinition().setHierarchy("gender", gender);
         data.getDefinition().setHierarchy("zipcode", zipcode);
 
-        // Create an instance of the anonymizer
-        ARXAnonymizer anonymizer = new ARXAnonymizer();
-
-        // Create a differential privacy criterion
-        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.00001d,
-                                                                    DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
-
-        ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(criterion);
-        config.setSuppressionLimit(1d);
-        ARXResult result = anonymizer.anonymize(data, config);
-
-        // Access output
-        DataHandle optimal = result.getOutput();
-
-        System.out.println(result.isResultAvailable());
-
-        // Print input
-        System.out.println(" - Input data:");
-        printHandle(data.getHandle());
-
-        System.out.println(" - Result:");
-        printHandle(optimal);
+       // Anonymize using data independent DP         
+       dataIndependentDP(data);
+       
+       data.getHandle().release();
+       // Anonymize using data dependent DP         
+       dataDependentDP(data); 
     }
 }
