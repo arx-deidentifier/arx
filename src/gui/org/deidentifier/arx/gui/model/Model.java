@@ -49,6 +49,9 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
+import org.deidentifier.arx.risk.HIPAAConstants;
+import org.deidentifier.arx.risk.RiskQuestionnaire;
+import org.deidentifier.arx.risk.RiskQuestionnaireWeights;
 
 /**
  * This class implements a large portion of the model used by the GUI.
@@ -303,6 +306,14 @@ public class Model implements Serializable {
 
     /** Model */
     private ModelClassification                           classificationModel             = new ModelClassification();
+
+    /* *****************************************
+     * RISK WIZARD
+     ******************************************/
+    /** Current configuration for the risk wizard */
+    private RiskQuestionnaireWeights                      riskQuestionnaireWeights        = null;
+    /** Current configuration for the risk wizard */
+    private RiskQuestionnaire                             riskQuestionnaire               = null;
 
     /* *****************************************
      * Information about the last anonymization process
@@ -1045,6 +1056,29 @@ public class Model implements Serializable {
     }
 
     /**
+     * Returns the risk wizard configuration
+     * @return
+     * @throws IOException 
+     */
+    public RiskQuestionnaire getRiskQuestionnaire() throws IOException {
+        if (this.riskQuestionnaire == null) {
+            this.riskQuestionnaire = new RiskQuestionnaire(HIPAAConstants.getUSData());
+        }
+        return this.riskQuestionnaire;
+    }
+
+    /**
+     * Returns the risk wizard configuration
+     * @return
+     */
+    public RiskQuestionnaireWeights getRiskQuestionnaireWeights() {
+        if (this.riskQuestionnaireWeights == null) {
+            this.riskQuestionnaireWeights = new RiskQuestionnaireWeights();
+        }
+		return this.riskQuestionnaireWeights;
+	}
+
+    /**
      * Returns the currently selected attribute.
      *
      * @return
@@ -1108,7 +1142,7 @@ public class Model implements Serializable {
     public ARXNode getSelectedNode() {
         return selectedNode;
     }
-
+    
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -1698,6 +1732,15 @@ public class Model implements Serializable {
     }
 
     /**
+     * Sets the risk wizard configuration
+     * @param weights
+     * @return
+     */
+    public void setRiskQuestionnaireWeights(RiskQuestionnaireWeights weights) {
+        this.riskQuestionnaireWeights = weights;
+    }
+
+    /**
      * Sets the selected attribute.
      *
      * @param attribute
@@ -1765,9 +1808,9 @@ public class Model implements Serializable {
         this.selectedQuasiIdentifiers = set;
         this.setModified();
     }
-    
-    /**
-     * 
+
+	/**
+     * Delegate method
      *
      * @param snapshotSize
      */
