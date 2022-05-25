@@ -836,9 +836,19 @@ public class StatisticsClassification {
         int confidencesIndex = 0;
 
         double total = 100d / (double)numSamples;
-
-        // get the training data  
-        DataSubset subsetTrain = inputHandle.getSubset();
+        
+        // Training dataset
+        DataSubset subsetTrain ;
+        
+        // Complete dataset size 
+        int dataSize = inputHandle.getNumRows();
+        
+        // Get the training dataset
+        subsetTrain = inputHandle.getSubset();
+        if (inputHandle.getSubset()== null) {
+            subsetTrain = inputHandle.getSuperset().getSubset();
+            dataSize = inputHandle.getSuperset().getNumRows();
+        }            
 
         // do training 
        
@@ -851,34 +861,31 @@ public class StatisticsClassification {
         }
         
         // Try
-        try {                    
+        try {   
             // Train with the training subset
-            for (int index : subsetTrain.getArray()) {
-                checkInterrupt();                                    
-                inputClassifier.train(inputHandle, outputHandle, index);
+            for (int index=0; index<subsetTrain.getSize(); index++) {
+                checkInterrupt();
+                inputClassifier.train(inputHandle, outputHandle, index); 
                 inputZeroR.train(inputHandle, outputHandle, index);
                 if (outputClassifier != null && !outputHandle.isOutlier(index)) {
                     outputClassifier.train(outputHandle, outputHandle, index);
                 }
                 this.progress.value = (int)((++done) * total);
             }
-           
             // Close
             inputClassifier.close();
             inputZeroR.close();
             if (outputClassifier != null ) {
                 outputClassifier.close();
             }
-            
             // create the testing subset indices   
             Set<Integer> subsetIndicesTest = new HashSet<Integer>();
-            for (int i = 0; i <  inputHandle.getNumRows(); ++i) {
+            for (int i = 0; i <  dataSize; i++) {
                 if (! subsetTrain.getSet().contains(i)) {
                    subsetIndicesTest.add(i);
                 }           
             }        
-
-            for (int index : subsetIndicesTest ) {    
+            for (int index=0; index< subsetIndicesTest.size();index++ ) {    
                 // Check
                 checkInterrupt();
                 
@@ -897,7 +904,7 @@ public class StatisticsClassification {
                 double[] confidences = resultInputZR.confidences();
                 zerorConfidences[confidencesIndex] = index;
                 System.arraycopy(confidences, 0, zerorConfidences, confidencesIndex + 1, confidences.length);
-
+    
                 // Maintain data about input-based classifier
                 boolean correct = resultInput.correct(actualValue);
                 this.originalAverageError += resultInput.error(actualValue);
@@ -905,7 +912,7 @@ public class StatisticsClassification {
                 confidences = resultInput.confidences();
                 inputConfidences[confidencesIndex] = index;
                 System.arraycopy(confidences, 0, inputConfidences, confidencesIndex + 1, confidences.length);
-
+    
                 // Maintain data about output-based                     
                 if (resultOutput != null) {
                     correct = resultOutput.correct(actualValue);
@@ -921,6 +928,8 @@ public class StatisticsClassification {
                 this.progress.value = (int)((++done) * total);
             }
         } catch (Exception e) {
+            System.out.println("IA Error      : " + e.getMessage() );
+            
             if (e instanceof ComputationInterruptedException) {
                 throw e;
             } else {
@@ -983,6 +992,6 @@ public class StatisticsClassification {
             this.accuracy = this.originalAccuracy;
         }
         
-        this.numMeasurements = classifications;
+        this.numMeasurements = classifications;        
     }
 }
