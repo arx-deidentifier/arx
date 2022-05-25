@@ -252,6 +252,7 @@ public class Resources {
         if (imageCache.containsKey(name)) {
             return imageCache.get(name);
         } else {
+        	//System.out.println("xxxxxxxxxxxxx image: " + name);
             Image image = getImage(name);
             imageCache.put(name, image);
             return image;
