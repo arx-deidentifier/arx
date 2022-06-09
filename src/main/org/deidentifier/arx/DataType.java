@@ -215,7 +215,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             if (s == null) {
                 return NULL_VALUE;
             }
-        	return format.format(s);
+            // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+        	return ((SimpleDateFormat)format.clone()).format(s);
         }
         
         /**
@@ -229,9 +230,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
             
             // Prepare
-            SimpleDateFormat sdf = format;
+            // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+            SimpleDateFormat sdf = ((SimpleDateFormat)format.clone());
             if (zone != null) {
-                sdf = (SimpleDateFormat) format.clone();   
                 sdf.setTimeZone(zone);
             }
             
@@ -338,7 +339,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         	try {
         	    ParsePosition pos = new ParsePosition(0);
-                Date parsed = format.parse(s, pos);
+                // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                Date parsed = ((SimpleDateFormat)format.clone()).parse(s, pos);
                 if (pos.getIndex() != s.length() || pos.getErrorIndex() != -1) {
                     throw new IllegalArgumentException("Parse error");
                 }
@@ -538,7 +540,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             if (format==null){
                 return String.valueOf(s);
             } else {
-                return format.format(s);
+                // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                return ((DecimalFormat)format.clone()).format(s);
             }
         }
 
@@ -640,7 +643,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
                     return Double.valueOf(s);
                 } else {
                     ParsePosition pos = new ParsePosition(0);
-                    double parsed = format.parse(s, pos).doubleValue();
+                    // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                    double parsed = ((DecimalFormat)format.clone()).parse(s, pos).doubleValue();
                     if (pos.getIndex() != s.length() || pos.getErrorIndex() != -1) {
                         throw new IllegalArgumentException("Parse error");
                     }
@@ -833,7 +837,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             if (format==null){
                 return String.valueOf(s);
             } else {
-                return format.format(s);
+                // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                return ((DecimalFormat)format.clone()).format(s);
             }
         }
         
@@ -934,7 +939,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
                 if (format == null) {
                     return Long.valueOf(s);
                 } else {
-                    return format.parse(s).longValue();
+                    // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                    return ((DecimalFormat)format.clone()).parse(s).longValue();
                 }
             } catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
