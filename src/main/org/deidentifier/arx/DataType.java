@@ -127,6 +127,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         }
 
+        /**
+         * Clone constructor
+         * @param format
+         * @param string
+         * @param locale
+         */
+        private ARXDate(SimpleDateFormat format, String string, Locale locale) {
+            this.format = format;
+            this.string = string;
+            this.locale = locale;
+        }
+
         @Override
         public Date add(Date augend, Date addend) {
             long d1 = augend.getTime();
@@ -136,7 +148,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
 
         @Override
         public DataType<Date> clone() {
-            return this;
+            return new ARXDate((SimpleDateFormat)format.clone(), string, (Locale)locale.clone());
         }
 
         @Override
@@ -430,6 +442,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         }
 
+        /**
+         * Clone constructor
+         * @param format
+         * @param string
+         * @param locale
+         */
+        private ARXDecimal(DecimalFormat format, String string, Locale locale) {
+            this.format = format;
+            this.string = string;
+            this.locale = locale;
+        }
+
         @Override
         public Double add(Double augend, Double addend) {
             return parse(format(augend + addend));
@@ -437,7 +461,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
         
         @Override
         public DataType<Double> clone() {
-            return this;
+            return new ARXDecimal((DecimalFormat)format.clone(), string, (Locale)locale.clone());
         }
 
         @Override
@@ -716,6 +740,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         }
         
+        /**
+         * Clone constructor
+         * @param format
+         * @param string
+         * @param locale
+         */
+        private ARXInteger(DecimalFormat format, String string, Locale locale) {
+            this.format = format;
+            this.string = string;
+            this.locale = locale;
+        }
+
         @Override
         public Long add(Long augend, Long addend) {
             return augend + addend;
@@ -723,7 +759,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
         
         @Override
         public DataType<Long> clone() {
-            return this;
+            return new ARXInteger((DecimalFormat)format.clone(), string, (Locale)locale.clone());
         }
 
         @Override
@@ -1012,9 +1048,17 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         }
         
+        /**
+         * Clone constructor
+         * @param order
+         */
+        private ARXOrderedString(Map<String, Integer> order) {
+            this.order = order;
+        }
+
         @Override
         public DataType<String> clone() {
-            return this;
+            return new ARXOrderedString(new HashMap<String, Integer>(order));
         }
         
         @Override
