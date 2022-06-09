@@ -148,7 +148,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
 
         @Override
         public DataType<Date> clone() {
-            return new ARXDate((SimpleDateFormat)format.clone(), string, (Locale)locale.clone());
+            return new ARXDate( format == null ? null : (SimpleDateFormat)format.clone(), 
+                                string,
+                                locale == null ? null : (Locale)locale.clone());
         }
 
         @Override
@@ -461,7 +463,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
         
         @Override
         public DataType<Double> clone() {
-            return new ARXDecimal((DecimalFormat)format.clone(), string, (Locale)locale.clone());
+            return new ARXDecimal(  format == null ? null : (DecimalFormat)format.clone(), 
+                                    string,
+                                    locale == null ? null : (Locale)locale.clone());
         }
 
         @Override
@@ -759,7 +763,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
         
         @Override
         public DataType<Long> clone() {
-            return new ARXInteger((DecimalFormat)format.clone(), string, (Locale)locale.clone());
+            return new ARXInteger(  format == null ? null : (DecimalFormat)format.clone(), 
+                                    string,
+                                    locale == null ? null : (Locale)locale.clone());
         }
 
         @Override
@@ -1058,7 +1064,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
 
         @Override
         public DataType<String> clone() {
-            return new ARXOrderedString(new HashMap<String, Integer>(order));
+            return new ARXOrderedString(order == null ? null : new HashMap<String, Integer>(order));
         }
         
         @Override
