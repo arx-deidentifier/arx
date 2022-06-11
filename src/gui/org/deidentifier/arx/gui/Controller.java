@@ -1380,7 +1380,6 @@ public class Controller implements IView {
                 if (!proceed) {
                     return;
                 }
-                
             }
             
             // Finally
