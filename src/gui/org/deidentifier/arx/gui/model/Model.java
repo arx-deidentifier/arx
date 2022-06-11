@@ -522,6 +522,9 @@ public class Model implements Serializable {
                 config.addCriterion(new Inclusion(subset));
             }            
         }
+        
+        // Heuristic search limit
+        config.setHeuristicSearchThreshold(this.getHeuristicSearchThreshold());
     }
     
     /**
