@@ -199,11 +199,13 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         @Override
         public String toString(){
             StringBuilder b = new StringBuilder();
-            b.append("Level[height="+level+"]\n");
-            for (int i=0, length=list.size(); i<length; i++){
+            b.append("Level[height=" + level + "]\n");
+            for (int i = 0, length = list.size(); i < length; i++) {
                 Group<U> fanout = list.get(i);
                 b.append("   ").append(fanout.toString());
-                if (i<length-1) b.append("\n");
+                if (i < length - 1) {
+                    b.append("\n");
+                }
             }
             return b.toString();
         }
@@ -284,15 +286,15 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
 
         // Add input data
         String[][] result = new String[data.length][abstractGroups.length + 1];
-        for (int i=0; i<result.length; i++) {
+        for (int i = 0; i < result.length; i++) {
             result[i] = new String[abstractGroups.length + 1];
             result[i][0] = data[i];
         }
         
         // Add levels
-        for (int i=0; i<result[0].length - 1; i++){
+        for (int i = 0; i < result[0].length - 1; i++) {
             Map<String, Map<AbstractGroup, String>> multiplicities = new HashMap<String, Map<AbstractGroup, String>>();
-            for (int j=0; j<result.length; j++){
+            for (int j = 0; j < result.length; j++) {
                 result[j][i + 1] = getLabel(multiplicities, abstractGroups[i][j]);
             }
         }
@@ -378,13 +380,13 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         int max = 0;
         for (Entry<Integer, Level<T>> level : this.groups.entrySet()) {
             if (level.getValue().getGroups().isEmpty()) {
-                if (level.getKey() < this.groups.size()-1) {
-                    return "No group specified on level "+level.getKey();
+                if (level.getKey() < this.groups.size() - 1) {
+                    return "No group specified on level " + level.getKey();
                 }
             }
             max = Math.max(level.getKey(), max);
         }
-        for (int i=0; i<max; i++){
+        for (int i = 0; i < max; i++) {
             if (!this.groups.containsKey(i)) {
                 return "Missing specification for level "+i;
             } else if (this.groups.get(i).getGroups().isEmpty()) {
@@ -412,10 +414,10 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         // TODO: This assumes that input data does not contain duplicates
         int[] result = new int[this.abstractGroups.length + 1];
-        result[0] = data.length; 
-        for (int i=0; i<result.length - 1; i++){
+        result[0] = data.length;
+        for (int i = 0; i < result.length - 1; i++) {
             Set<AbstractGroup> set = new HashSet<AbstractGroup>();
-            for (int j=0; j<this.abstractGroups[i].length; j++){
+            for (int j = 0; j < this.abstractGroups[i].length; j++) {
                 set.add(abstractGroups[i][j]);
             }
             result[i + 1] = set.size();
@@ -454,7 +456,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             if (storedLabel != null) {
                 return storedLabel;
             } else {
-                label +="-"+map.size();
+                label += "-" + map.size();
                 map.put(group, label);
                 return label;
             }

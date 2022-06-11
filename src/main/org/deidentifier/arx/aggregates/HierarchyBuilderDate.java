@@ -449,7 +449,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         int[] sizes = new int[this.result[0].length];
         for (int i=0; i < sizes.length; i++){
             Set<String> set = new HashSet<String>();
-            for (int j=0; j<this.result.length; j++) {
+            for (int j = 0; j < this.result.length; j++) {
                 set.add(result[j][i]);
             }
             sizes[i] = set.size();

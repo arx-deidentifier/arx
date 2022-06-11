@@ -449,7 +449,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         } catch (Exception e) {
             throw new IOException(e);
         } finally {
-            if (ois != null) ois.close();
+            if (ois != null) {
+                ois.close();
+            }
         }
     }
     
@@ -605,11 +607,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         if (intervals.isEmpty()) {
             return "No intervals specified";
         }
-        
-        for (int i=1; i<intervals.size(); i++){
-            Interval<T> interval1 = intervals.get(i-1);
+
+        for (int i = 1; i < intervals.size(); i++) {
+            Interval<T> interval1 = intervals.get(i - 1);
             Interval<T> interval2 = intervals.get(i);
-            
+
             if (!interval1.getMax().equals(interval2.getMin())) {
                 return "Gap between " + interval1 + " and " + interval2;
             }
@@ -767,7 +769,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         T value = type.subtract(tValue, offset);
         Interval<T> interval = null;
 
-        for (int j=0; j<intervals.size(); j++) {
+        for (int j = 0; j < intervals.size(); j++) {
             Interval<T> i = intervals.get(j);
             if (type.compare(i.min, value) <= 0 &&
                 type.compare(i.max, value) > 0) {
@@ -893,7 +895,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
 
         // Builder inner nodes
-        while (nodes.size()>1) {
+        while (nodes.size() > 1) {
             List<IndexNode> current = (List<IndexNode>)nodes.clone();
             nodes.clear();
             for (int i=0, len = current.size(); i < len; i+=INDEX_FANOUT) {
@@ -935,7 +937,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         
         // Create first column
         AbstractGroup[] first = new AbstractGroup[data.length];
-        for (int i=0; i<data.length; i++){
+        for (int i = 0; i < data.length; i++) {
             T value = type.parse(data[i]);
             Interval<T> interval;
             
@@ -971,7 +973,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         // Create other columns
         List<Group<T>> groups = new ArrayList<Group<T>>();
         if (!super.getLevels().isEmpty()) groups = super.getLevels().get(0).getGroups();
-        if (cache.size()>1 && !groups.isEmpty()) {
+        if (cache.size() > 1 && !groups.isEmpty()) {
 
             // Prepare
             List<Interval<T>> newIntervals = new ArrayList<Interval<T>>();
@@ -1014,7 +1016,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 builder.addInterval(interval.min, interval.max, interval.function);
             }
 
-            for (int i=1; i<super.getLevels().size(); i++){
+            for (int i = 1; i < super.getLevels().size(); i++) {
                 for (Group<T> sgroup : super.getLevel(i).getGroups()) {
                     builder.getLevel(i-1).addGroup(sgroup.getSize(), sgroup.getFunction());
                 }
@@ -1027,7 +1029,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 result.add(column);
             }
         } else {
-            if (cache.size()>1) {
+            if (cache.size() > 1) {
                 AbstractGroup[] column = new AbstractGroup[data.length];
                 @SuppressWarnings("serial")
                 AbstractGroup element = new AbstractGroup(DataType.ANY_VALUE) {};
