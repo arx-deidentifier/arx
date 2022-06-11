@@ -499,22 +499,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public String isHierarchyComplete(Hierarchy hierarchy, String attribute) {
-        return isHierarchyComplete(hierarchy.getHierarchy(), attribute);
-    }
-    
-    /**
-     * Checks whether the hierarchy covers all values of the attribute. Returns an
-     * example of a missing value if the check fails, <code>null</code> if the check passes.
-     * @param hierarchy
-     * @param attribute
-     * @return
-     */
-    public String isHierarchyComplete(String[][] hierarchy, String attribute) {
-
         DataHandle handle = getInput().getHandle();
         int index = handle.getColumnIndexOf(attribute);
         Set<String> values = new HashSet<String>(Arrays.asList(handle.getDistinctValues(index)));
-        for (String[] row : hierarchy) {
+        for (String[] row : hierarchy.getHierarchy()) {
             if (row != null && row.length > 0) {
                 values.remove(row[0]);
             }
