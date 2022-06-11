@@ -16,10 +16,12 @@
  */
 package org.deidentifier.arx;
 
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 
@@ -158,6 +160,50 @@ public class DataHandleSubset extends DataHandle {
     @Override
     public boolean replace(int column, String original, String replacement) {
         throw new UnsupportedOperationException("This operation is not supported by handles for data subsets");
+    }
+
+    @Override
+    public Iterator<String[]> shuffledIterator() {
+
+        checkReleased();
+
+        // Shuffle rows
+        final int[] indices = new int[subset.getArray().length];
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = i;
+        }
+        ArrayUtils.shuffle(indices, new SecureRandom());
+        
+        // Return iterator
+        return new Iterator<String[]>() {
+
+            int index = -1;
+
+            @Override
+            public boolean hasNext() {
+                return (index < subset.getArray().length);
+            }
+
+            @Override
+            public String[] next() {
+                if (index == -1) {
+                    index++;
+                    return header;
+                } else {
+                    final String[] result = new String[header.length];
+                    for (int col = 0; col < result.length; col++) {
+                        result[col] = getValue(indices[index], col);
+                    }
+                    index++;
+                    return result;
+                }
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Remove is unsupported!");
+            }
+        };
     }
 
     @Override

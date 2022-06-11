@@ -616,7 +616,7 @@ public abstract class DataHandle {
      * @return the iterator
      */
     public abstract Iterator<String[]> iterator();
-
+    
     /**
      * Releases this handle and all associated resources. If a input handle is released all associated results are released
      * as well.
@@ -774,6 +774,13 @@ public abstract class DataHandle {
         final CSVDataOutput output = new CSVDataOutput(path, config);
         output.write(iterator());
     }
+
+    /**
+     * Returns an iterator over the data in a random order.
+     *
+     * @return the iterator
+     */
+    public abstract Iterator<String[]> shuffledIterator();
 
     /**
      * Sorts the dataset according to the given columns. Will sort input and
