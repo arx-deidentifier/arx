@@ -1109,7 +1109,7 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), "*.pdf"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName(), "*.pdf"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
@@ -1223,7 +1223,7 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), "*.csv"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName() + "-anonymized", "*.csv"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
@@ -1270,7 +1270,7 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), "*.csv"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName() + "_hierarchy_" + model.getSelectedAttribute(), "*.csv"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
@@ -1475,7 +1475,7 @@ public class Controller implements IView {
         }
 
         // Check
-        String path = actionShowSaveFileDialog(main.getShell(), "*.deid"); //$NON-NLS-1$
+        String path = actionShowSaveFileDialog(main.getShell(), model.getName(), "*.deid"); //$NON-NLS-1$
         if (path == null) {
             return;
         }
@@ -1894,7 +1894,19 @@ public class Controller implements IView {
      * @return
      */
     public String actionShowSaveFileDialog(final Shell shell, String filter) {
-        return main.showSaveFileDialog(shell, filter);
+        return main.showSaveFileDialog(shell, null, filter);
+    }
+    
+    /**
+     * Internal method for showing a "save file" dialog.
+     *
+     * @param shell
+     * @param nameHint - can be null
+     * @param filter
+     * @return
+     */
+    public String actionShowSaveFileDialog(final Shell shell, String nameHint, String filter) {
+        return main.showSaveFileDialog(shell, nameHint, filter);
     }
 
     /**
