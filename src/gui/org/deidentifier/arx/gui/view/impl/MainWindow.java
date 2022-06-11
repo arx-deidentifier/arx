@@ -112,6 +112,8 @@ public class MainWindow implements IView {
     private final ComponentTitledFolder root;
     /** View */
     private final LayoutExplore         layoutExplore;
+    /** View */
+    private DialogHelp                  help;
 
     /**
      * Creates a new instance.
@@ -518,12 +520,35 @@ public class MainWindow implements IView {
     /**
      * Shows a help dialog.
      *
+     * @param modal
      * @param id
      */
-    public void showHelpDialog(String id) {
+    public void showHelpDialog(boolean modal, String id) {
     	try {
-    	    DialogHelp dialog = new DialogHelp(shell, controller, id);
-    	    dialog.open();
+    	    
+    	    // Close dialog if open and settings changed    	    
+    	    if (help != null && help.isVisible()) {
+    	        if ((modal  && !help.isModal()) ||
+    	            (!modal && help.isModal())) {
+                    help.close();
+    	        }
+    	    }
+    	    
+    	    // Non-modal help
+    	    if (!modal) {
+    	        if (help == null || !help.isVisible()) {
+    	            help = new DialogHelp(shell, controller, false, id);
+    	            help.open();
+    	        } else {
+    	            help.navigateTo(id);
+    	        }
+    	    
+    	    // Modal help
+            } else {
+                DialogHelp dialog = new DialogHelp(shell, controller, true, id);
+                dialog.open();   
+            }
+    	    
     	} catch (Exception e) {
     		this.showErrorDialog(Resources.getMessage("MainWindow.12"), e); //$NON-NLS-1$
     	}

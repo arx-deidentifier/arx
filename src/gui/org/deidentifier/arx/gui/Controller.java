@@ -1732,7 +1732,7 @@ public class Controller implements IView {
      * @param id
      */
     public void actionShowHelpDialog(String id) {
-        main.showHelpDialog(id);
+        main.showHelpDialog(model.isHelpDialogModal(), id);
     }
     /**
      * Shows an info dialog.
