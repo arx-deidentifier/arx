@@ -1230,10 +1230,15 @@ public class Controller implements IView {
         if (!file.endsWith(".csv")) { //$NON-NLS-1$
             file = file + ".csv"; //$NON-NLS-1$
         }
+        
+        // Ask whether to shuffle the data
+        boolean shuffle = this.actionShowQuestionDialog(Resources.getMessage("Controller.162"),  //$NON-NLS-1$
+                                                        Resources.getMessage("Controller.163")); //$NON-NLS-1$
 
         // Export
         final WorkerExport worker = new WorkerExport(file,
                                                      model.getCSVSyntax(),
+                                                     shuffle,
                                                      model.getOutput(),
                                                      model.getOutputConfig().getConfig(),
                                                      model.getInputBytes());
