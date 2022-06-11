@@ -1370,7 +1370,7 @@ public class Controller implements IView {
             
             // Check hierarchy
             String attr = model.getSelectedAttribute();
-            String missingValue = actionCheckHierarchy(hierarchy, attr);
+            String missingValue = model.getInputConfig().isHierarchyComplete(hierarchy, attr);
             if (missingValue != null) {
                 
                 // Ask whether to proceed
@@ -2118,30 +2118,6 @@ public class Controller implements IView {
                     listener.update(event);
                 }
             }
-        }
-    }
-
-    /**
-     * Checks whether the hierarchy covers all values of the attribute. Returns an
-     * example of a missing value if the check fails, <code>null</code> if the check passes.
-     * @param hierarchy
-     * @param attribute
-     * @return
-     */
-    private String actionCheckHierarchy(Hierarchy hierarchy, String attribute) {
-
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        int index = handle.getColumnIndexOf(attribute);
-        Set<String> values = new HashSet<String>(Arrays.asList(handle.getDistinctValues(index)));
-        for (String[] row : hierarchy.getHierarchy()) {
-            if (row != null && row.length > 0) {
-                values.remove(row[0]);
-            }
-        }
-        if (!values.isEmpty()) {
-            return values.iterator().next();
-        } else {
-            return null;
         }
     }
 

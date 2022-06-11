@@ -18,7 +18,9 @@
 package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +30,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -906,4 +909,27 @@ public class ModelConfiguration implements Serializable, Cloneable {
         modified = true;
     }
 
+    /**
+     * Checks whether the hierarchy covers all values of the attribute. Returns an
+     * example of a missing value if the check fails, <code>null</code> if the check passes.
+     * @param hierarchy
+     * @param attribute
+     * @return
+     */
+    public String isHierarchyComplete(Hierarchy hierarchy, String attribute) {
+
+        DataHandle handle = getInput().getHandle();
+        int index = handle.getColumnIndexOf(attribute);
+        Set<String> values = new HashSet<String>(Arrays.asList(handle.getDistinctValues(index)));
+        for (String[] row : hierarchy.getHierarchy()) {
+            if (row != null && row.length > 0) {
+                values.remove(row[0]);
+            }
+        }
+        if (!values.isEmpty()) {
+            return values.iterator().next();
+        } else {
+            return null;
+        }
+    }
 }
