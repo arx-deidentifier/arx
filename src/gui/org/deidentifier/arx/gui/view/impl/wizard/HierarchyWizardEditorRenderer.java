@@ -193,7 +193,7 @@ public class HierarchyWizardEditorRenderer<T> {
     private final List<List<RenderedGroup<T>>>     renderedGroups    = new ArrayList<List<RenderedGroup<T>>>();
     
     /** Var. */
-    private final HierarchyWizardEditorLayout<T> layout;
+    private final HierarchyWizardEditorLayout<T>   layout;
     
     /** Var. */
     private final HierarchyWizardModelGrouping<T>  model;
