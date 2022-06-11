@@ -1364,8 +1364,27 @@ public class Controller implements IView {
             final char separator = dialog.getSeparator();
             final Charset charset = dialog.getCharset();
             final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
+            if (hierarchy == null) {
+                return;
+            }
+            
+            // Check hierarchy
+            String attr = model.getSelectedAttribute();
+            String missingValue = actionCheckHierarchy(hierarchy, attr);
+            if (missingValue != null) {
+                
+                // Ask whether to proceed
+                boolean proceed = actionShowQuestionDialog(Resources.getMessage("Controller.160"), //$NON-NLS-1$
+                                                           String.format(Resources.getMessage("Controller.161"), missingValue)); //$NON-NLS-1$
+                
+                if (!proceed) {
+                    return;
+                }
+                
+            }
+            
+            // Finally
             if (hierarchy != null) {
-                String attr = model.getSelectedAttribute();
                 model.getInputConfig().removeHierarchyBuilder(attr);
                 model.getInputConfig().setMaximumGeneralization(attr, null);
                 model.getInputConfig().setMinimumGeneralization(attr, null);
@@ -1648,7 +1667,7 @@ public class Controller implements IView {
     public void actionShowAuditTrail() {
         main.showAuditTrail(model.getAuditTrail());
     }
-    
+
     /**
      * Shows an input dialog for selecting a charset.
      * @return
@@ -1663,7 +1682,7 @@ public class Controller implements IView {
         });
         return result[0];
     }
-
+    
     /**
      * Shows a dialog for configuring classifiers
      * @param config 
@@ -1704,7 +1723,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, values);
     }
-    
+
     /**
      * Shows a dialog for selecting a format string for a data type.
      *
@@ -1725,7 +1744,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
-
+    
     /**
      * Shows a help dialog.
      *
@@ -1734,6 +1753,7 @@ public class Controller implements IView {
     public void actionShowHelpDialog(String id) {
         main.showHelpDialog(model.isHelpDialogModal(), id);
     }
+
     /**
      * Shows an info dialog.
      *
@@ -1744,7 +1764,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1831,6 +1850,7 @@ public class Controller implements IView {
 
         return main.showOrderValuesDialog(shell, title, text, type, locale, values);
     }
+
     /**
      * Shows a progress dialog.
      *
@@ -1841,7 +1861,6 @@ public class Controller implements IView {
                                          final Worker<?> worker) {
         main.showProgressDialog(text, worker);
     }
-    
     /**
      * Shows a question dialog.
      *
@@ -1855,7 +1874,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
-
+    
     /**
      * Shows a question dialog.
      *
@@ -1952,7 +1971,7 @@ public class Controller implements IView {
                               ModelPart.RESEARCH_SUBSET,
                               empty));
     }
-    
+
     /**
      * Creates a subset by executing a query.
      */
@@ -1969,7 +1988,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Creates a subset via random sampling
      */
@@ -2100,6 +2119,30 @@ public class Controller implements IView {
                     listener.update(event);
                 }
             }
+        }
+    }
+
+    /**
+     * Checks whether the hierarchy covers all values of the attribute. Returns an
+     * example of a missing value if the check fails, <code>null</code> if the check passes.
+     * @param hierarchy
+     * @param attribute
+     * @return
+     */
+    private String actionCheckHierarchy(Hierarchy hierarchy, String attribute) {
+
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(attribute);
+        Set<String> values = new HashSet<String>(Arrays.asList(handle.getDistinctValues(index)));
+        for (String[] row : hierarchy.getHierarchy()) {
+            if (row != null && row.length > 0) {
+                values.remove(row[0]);
+            }
+        }
+        if (!values.isEmpty()) {
+            return values.iterator().next();
+        } else {
+            return null;
         }
     }
 
