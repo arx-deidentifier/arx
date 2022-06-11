@@ -277,7 +277,7 @@ public class DialogProperties implements IDialog {
         
         window.addGroup(Resources.getMessage("DialogProperties.9")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.131"), 0, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.131"), 1, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getHeuristicSearchThreshold(); }
             protected void setValue(Object t) { model.setHeuristicSearchThreshold((Integer)t); }});
 
