@@ -88,7 +88,6 @@ public class ViewAttributeList implements IView {
 
     /** Resource */
     private final Image      IMAGE_ENABLED;
-
     /** Resource */
     private final Image      IMAGE_DISABLED;
 
@@ -96,9 +95,9 @@ public class ViewAttributeList implements IView {
     private final Controller controller;
     /** Model */
     private Model            model;
+    
     /** Model */
     private String[]         dataTypes;
-
     /** Model */
     private List<String>     attributes = new ArrayList<>();
 
