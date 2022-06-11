@@ -99,7 +99,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         /**
-         * 
+         * Convert to string.
          *
          * @param prefix
          * @return
@@ -226,6 +226,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         /**
+         * Returns the function.
+         * 
          * @return the function
          */
         public AggregateFunction<T> getFunction() {
@@ -233,6 +235,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
 
         /**
+         * Returns the maximum.
+         * 
          * @return the max (inclusive)
          */
         public T getMax() {
@@ -240,6 +244,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
 
         /**
+         * Returns the minimum.
+         * 
          * @return the min (exclusive)
          */
         public T getMin() {

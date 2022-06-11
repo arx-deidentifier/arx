@@ -104,7 +104,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
     }
     
-    /**  TODO */
+    /** SVUID */
     private static final long serialVersionUID = -2749758635401073668L;
     
     /**

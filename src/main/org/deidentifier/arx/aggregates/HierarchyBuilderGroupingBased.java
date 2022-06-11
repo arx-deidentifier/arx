@@ -46,10 +46,10 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     public static class Group<U> implements Serializable {
         
-        /**  TODO */
+        /** SVUID */
         private static final long serialVersionUID = -5767501048737045793L;
         
-        /** Fanout. */
+        /** Size of group. */
         private final int size;
         
         /** Aggregate function. */
@@ -73,6 +73,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
+         * Returns the function.
+         * 
          * @return the function
          */
         public AggregateFunction<U> getFunction() {
@@ -80,6 +82,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
+         * Returns the size.
+         * 
          * @return the size
          */
         public int getSize() {
@@ -100,7 +104,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     public static class Level<U> implements Serializable { // NO_UCD
         
-        /**  TODO */
+        /** SVUID */
         private static final long serialVersionUID = 1410005675926162598L;
         
         /** Level. */
@@ -185,6 +189,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
+         * Returns the level
          * @return the level
          */
         public int getLevel() {
@@ -211,15 +216,14 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     protected abstract static class AbstractGroup implements Serializable {
         
-        /**  TODO */
+        /** SVUID */
         private static final long serialVersionUID = -7657969446040078411L;
         
-        /**  TODO */
+        /** Label */
         private String label;
         
         /**
-         * 
-         *
+         * Creates a new group
          * @param label
          */
         protected AbstractGroup(String label){
@@ -227,8 +231,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
         
         /**
-         * 
-         *
+         * Returns the label
          * @return
          */
         protected String getLabel(){
@@ -236,7 +239,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
     }
     
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 3208791665131141362L;
     
     /** The data array. */
