@@ -1364,7 +1364,7 @@ public class Controller implements IView {
             final char separator = dialog.getSeparator();
             final Charset charset = dialog.getCharset();
             final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
-            if (hierarchy == null) {
+            if (hierarchy == null || hierarchy.getHierarchy() == null) {
                 return;
             }
             
