@@ -59,7 +59,7 @@ public class FLASHStrategy implements Comparator<Integer> {
 
         // Check
         if (solutionSpace.getSize().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
-            throw new IllegalArgumentException("Solution space is too large to execute the optimal algorithm. Please choose another algorithm.");
+            throw new IllegalArgumentException("Solution space is too large (more than 2^31-1 elements) to execute the optimal algorithm. Please choose another algorithm.");
         }
         
         // Store
