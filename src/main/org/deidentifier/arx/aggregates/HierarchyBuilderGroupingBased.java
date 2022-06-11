@@ -299,7 +299,6 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             }
         }
         
-        
         Hierarchy h = Hierarchy.create(result);
         
         this.prepared = false;
