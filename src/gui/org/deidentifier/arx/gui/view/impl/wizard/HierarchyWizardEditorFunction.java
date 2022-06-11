@@ -120,7 +120,6 @@ public class HierarchyWizardEditorFunction<T> {
         this.createEntry(AggregateFunction.forType(type).createArithmeticMeanOfBoundsFunction());
         this.createEntry(AggregateFunction.forType(type).createGeometricMeanFunction());
         this.createEntry(AggregateFunction.forType(type).createGeometricMeanOfBoundsFunction());
-        
 
         createLabel(composite, Resources.getMessage("HierarchyWizardEditorFunction.3")); //$NON-NLS-1$
         this.editor1 = new EditorSelection(composite, labels.toArray(new String[labels.size()])) {
