@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,13 @@ package org.deidentifier.arx.gui.view.impl.define;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXOrderedString;
@@ -87,23 +90,24 @@ public class ViewAttributeList implements IView {
     }
 
     /** Resource */
-    private final Image      IMAGE_ENABLED;
-
+    private final Image         IMAGE_ENABLED;
     /** Resource */
-    private final Image      IMAGE_DISABLED;
+    private final Image         IMAGE_DISABLED;
 
     /** Controller */
-    private final Controller controller;
+    private final Controller    controller;
     /** Model */
-    private Model            model;
-    /** Model */
-    private String[]         dataTypes;
+    private Model               model;
 
     /** Model */
-    private List<String>     attributes = new ArrayList<>();
+    private String[]            dataTypes;
+    /** Model */
+    private List<String>        attributes           = new ArrayList<>();
+    /** Model */
+    private Map<String, String> hierarchyStatusCache = new HashMap<>();
 
     /** View */
-    private PageableTable    table;
+    private PageableTable       table;
 
     /**
      * Creates a new instance.
@@ -126,6 +130,7 @@ public class ViewAttributeList implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
+        this.controller.addListener(ModelPart.HIERARCHY, this);
         this.dataTypes = getDataTypes();
         
         // Create group
@@ -141,6 +146,7 @@ public class ViewAttributeList implements IView {
     @Override
     public void reset() {
         this.attributes = null;
+        this.hierarchyStatusCache.clear();
         this.model = null;
         this.table.setCurrentPage(0);
         this.refreshTable();
@@ -165,6 +171,13 @@ public class ViewAttributeList implements IView {
         } else if (event.part == ModelPart.DATA_TYPE) {
             if (!attributes.isEmpty()) {
             	this.refreshTable();
+            }
+        } else if (event.part == ModelPart.HIERARCHY) {
+            if (!attributes.isEmpty()) {
+                // Purge from cache
+                hierarchyStatusCache.remove(model.getSelectedAttribute());
+                // Update
+                this.refreshTable();
             }
         }
     }
@@ -317,6 +330,18 @@ public class ViewAttributeList implements IView {
             }
         });
 
+        // Column: hierarchy
+        this.createColumn(table, Resources.getMessage("ViewAttributeList.4"), //$NON-NLS-1$
+                          30, new ColumnLabelProvider() {
+            @Override
+            public String getText(Object element) {
+                if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) {
+                    return null;
+                }
+                return getHierarchyStatus((String)element);
+            }
+        });
+        
         // Column: target
         this.createColumn(table, Resources.getMessage("ViewAttributeList.3"), //$NON-NLS-1$
                           30, new ColumnLabelProvider() {
@@ -472,7 +497,7 @@ public class ViewAttributeList implements IView {
             return Resources.getMessage("ViewAttributeDefinition.8"); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Returns the labels of all available data types.
      *
@@ -484,6 +509,50 @@ public class ViewAttributeList implements IView {
             list.add(desc.getLabel());
         }
         return list.toArray(new String[list.size()]);
+    }
+    
+    /**
+     * Returns the hierarchy status of the object
+     * @param attribute
+     * @return
+     */
+    private String getHierarchyStatus(String attribute) {
+        
+        // Check cache
+        String result = hierarchyStatusCache.get(attribute);
+        if (result != null) {
+            return result;
+        }
+        
+        // Get hierarchy
+        Hierarchy hierarchy = model.getInputConfig().getHierarchy(attribute);
+        
+        // No hierarchy
+        if (hierarchy == null || 
+            hierarchy.getHierarchy() == null ||
+            hierarchy.getHierarchy()[0] == null || 
+            hierarchy.getHierarchy()[0].length == 0) {
+            result = Resources.getMessage("ViewAttributeList.5"); //$NON-NLS-1$
+            
+        // Hierarchy present
+        } else {
+            
+            // Get height
+            int height = hierarchy.getHierarchy()[0].length;
+
+            // Complete hierarchy
+            if (model.getInputConfig().isHierarchyComplete(hierarchy, attribute) == null) {
+                result = String.format(Resources.getMessage("ViewAttributeList.6"), height); //$NON-NLS-1$
+            
+            // Incomplete hierarchy
+            } else {
+                result = String.format(Resources.getMessage("ViewAttributeList.7"), height); //$NON-NLS-1$   
+            }
+        }
+
+        // Store and return
+        hierarchyStatusCache.put(attribute, result);
+        return result;
     }
 
     /**
@@ -581,6 +650,7 @@ public class ViewAttributeList implements IView {
         }
         
         // Refresh
+        this.hierarchyStatusCache.clear();
         this.table.setCurrentPage(0);
         this.refreshTable();
         SWTUtil.enable(this.table);

@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
@@ -99,7 +101,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         /**
-         * 
+         * Convert to string.
          *
          * @param prefix
          * @return
@@ -226,6 +228,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         /**
+         * Returns the function.
+         * 
          * @return the function
          */
         public AggregateFunction<T> getFunction() {
@@ -233,6 +237,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
 
         /**
+         * Returns the maximum.
+         * 
          * @return the max (inclusive)
          */
         public T getMax() {
@@ -240,10 +246,28 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
 
         /**
+         * Returns the minimum.
+         * 
          * @return the min (exclusive)
          */
         public T getMin() {
             return min;
+        }
+
+        /**
+         * Returns an instance shifted by the given offset
+         * @param offset
+         * @param type
+         * @return
+         */
+        @SuppressWarnings("unchecked")
+        public Interval<T> getShiftedInstance(T offset, DataTypeWithRatioScale<T> type) {
+            return new Interval<T>(this.builder,
+                                   (DataType<T>) type,
+                                   offset == null ? this.min : type.add(this.min, offset),
+                                   offset == null ? this.max : type.add(this.max, offset),
+                                   function);
+
         }
 
         @Override
@@ -255,7 +279,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             result = prime * result + ((lower == null) ? 0 : lower.hashCode());
             return result;
         }
-
+        
         /**
          * Is this an interval for null values
          * @return
@@ -282,7 +306,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             }
             return lower;
         }
-        
+
         @Override
         public String toString(){
             DataType<T> type = (DataType<T>)builder.getDataType();
@@ -334,6 +358,15 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
 
         /**
+         * Bottom/top coding will start from this value.
+         * 
+         * @return
+         */
+        public U getBottomTopCodingFrom() {
+            return snapBound;
+        }
+
+        /**
          * If a value is discovered which is smaller/larger than this value
          * an exception will be raised.
          * 
@@ -352,18 +385,18 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return repeatBound;
         }
 
-        /**
-         * Bottom/top coding will start from this value.
-         * 
-         * @return
-         */
-        public U getBottomTopCodingFrom() {
-            return snapBound;
-        }
-
         @Override
         public String toString() {
             return "Range [snap=" + repeatBound + ", coding=" + snapBound + ", extreme=" + labelBound + "]";
+        }
+
+        /**
+         * Bottom/top coding will start from this value.
+         * 
+         * @param bottomTopCodingValue
+         */
+        private void setBottomTopCodingFrom(U bottomTopCodingValue) {
+            this.snapBound = bottomTopCodingValue;
         }
 
         /**
@@ -383,15 +416,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
          */
         private void setSnapFrom(U snapValue) {
             this.repeatBound = snapValue;
-        }
-
-        /**
-         * Bottom/top coding will start from this value.
-         * 
-         * @param bottomTopCodingValue
-         */
-        private void setBottomTopCodingFrom(U bottomTopCodingValue) {
-            this.snapBound = bottomTopCodingValue;
         }
     }
 
@@ -443,7 +467,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         } catch (Exception e) {
             throw new IOException(e);
         } finally {
-            if (ois != null) ois.close();
+            if (ois != null) {
+                ois.close();
+            }
         }
     }
     
@@ -599,11 +625,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         if (intervals.isEmpty()) {
             return "No intervals specified";
         }
-        
-        for (int i=1; i<intervals.size(); i++){
-            Interval<T> interval1 = intervals.get(i-1);
+
+        for (int i = 1; i < intervals.size(); i++) {
+            Interval<T> interval1 = intervals.get(i - 1);
             Interval<T> interval2 = intervals.get(i);
-            
+
             if (!interval1.getMax().equals(interval2.getMin())) {
                 return "Gap between " + interval1 + " and " + interval2;
             }
@@ -674,10 +700,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param interval
      * @return
      */
-    private AbstractGroup getGroup(Map<AbstractGroup, AbstractGroup> cache, Interval<T> interval) {
+    @SuppressWarnings("unchecked")
+    private Interval<T> getGroup(Map<AbstractGroup, AbstractGroup> cache, Interval<T> interval) {
         AbstractGroup cached = cache.get(interval);
         if (cached != null) {
-            return cached;
+            return (Interval<T>)cached;
         } else {
             cache.put(interval, interval);
             return interval;
@@ -761,7 +788,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         T value = type.subtract(tValue, offset);
         Interval<T> interval = null;
 
-        for (int j=0; j<intervals.size(); j++) {
+        for (int j = 0; j < intervals.size(); j++) {
             Interval<T> i = intervals.get(j);
             if (type.compare(i.min, value) <= 0 &&
                 type.compare(i.max, value) > 0) {
@@ -865,29 +892,28 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             throw new IllegalArgumentException(valid);
         }
         
-        // Create adjustments
-        Range<T>[] ranges = getAdjustedRanges();
-        Range<T> tempLower = ranges[0];
-        Range<T> tempUpper = ranges[1];
+        // *******************************************************************************
+        // Step 1: Build an index for efficiently mapping a value to its matching interval
+        // *******************************************************************************
         
         // Build leaf level index
         ArrayList<IndexNode> nodes = new ArrayList<IndexNode>();
-        for (int i=0, len = intervals.size(); i < len; i+=INDEX_FANOUT) {
+        for (int i = 0, len = intervals.size(); i < len; i += INDEX_FANOUT) {
             int min = i;
-            int max = Math.min(i+INDEX_FANOUT-1, len-1);
-            
+            int max = Math.min(i + INDEX_FANOUT - 1, len - 1);
+
             List<Interval<T>> leafs = new ArrayList<Interval<T>>();
-            for (int j=min; j<=max; j++) {
+            for (int j = min; j <= max; j++) {
                 leafs.add(intervals.get(j));
             }
 
-            nodes.add(new IndexNode(intervals.get(min).min, 
+            nodes.add(new IndexNode(intervals.get(min).min,
                                     intervals.get(max).max,
                                     leafs.toArray(new Interval[leafs.size()])));
         }
-
+        
         // Builder inner nodes
-        while (nodes.size()>1) {
+        while (nodes.size() > 1) {
             List<IndexNode> current = (List<IndexNode>)nodes.clone();
             nodes.clear();
             for (int i=0, len = current.size(); i < len; i+=INDEX_FANOUT) {
@@ -903,15 +929,26 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                                         temp.toArray(new HierarchyBuilderIntervalBased.IndexNode[temp.size()])));
             }
         }
+
+        // ****************************************************
+        // Step 2: Prepare structures holding relevant data
+        // ****************************************************
         
         // Prepare
         String[] data = getData();
-        List<AbstractGroup[]> result = new ArrayList<AbstractGroup[]>();
         IndexNode index = nodes.get(0);
-        
-        // Prepare
+        List<AbstractGroup[]> result = new ArrayList<AbstractGroup[]>();
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
         Map<AbstractGroup, AbstractGroup> cache = new HashMap<AbstractGroup, AbstractGroup>();
+        
+        // ****************************************************
+        // Step 3: Calculate relevant ranges (snap, repeat etc.
+        // ****************************************************
+        
+        // Create adjustments
+        Range<T>[] ranges = getAdjustedRanges();
+        Range<T> tempLower = ranges[0];
+        Range<T> tempUpper = ranges[1];
         
         // Create snap intervals
         Interval<T> lowerSnap = getInterval(index, type, tempLower.repeatBound);
@@ -926,35 +963,56 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             lowerSnap = new Interval<T>(this, getDataType(), lowerSnap.min, upperSnap.max, lowerSnap.function);
             upperSnap = lowerSnap;
         }
-        
-        // Create first column
-        AbstractGroup[] first = new AbstractGroup[data.length];
-        for (int i=0; i<data.length; i++){
+
+        // ****************************************************
+        // Step 4: Create first column of hierarchy
+        // ****************************************************
+        Interval<T>[] first = new Interval[data.length];
+        for (int i = 0; i < data.length; i++) {
+            
+            // Step 4.1 Parse value
             T value = type.parse(data[i]);
             Interval<T> interval;
             
+            // Step 4.2 Empty value
             if (value == null) {
                 interval = new Interval<T>(this);
+                
+            // Step 4.3 Error if < lower
             } else if (type.compare(value, tempLower.labelBound) < 0) {
                 throw new IllegalArgumentException("Data item " + type.format(value) + " is < minim value (" + type.format(tempLower.labelBound) + ")");
+                
+            // Step 4.4 Bottom coding    
             } else if (type.compare(value, tempLower.snapBound) < 0) {
                 interval = new Interval<T>(this, true, tempLower.snapBound);
+                
+            // Step 4.5 Error if > upper
             } else if (type.compare(value, tempUpper.labelBound) >= 0) {
                 throw new IllegalArgumentException("Data item " + type.format(value)+ " is >= maximum value (" + type.format(tempUpper.labelBound) + ")");
+                
+            // Step 4.6 Top coding
             } else if (type.compare(value, tempUpper.snapBound) >= 0) {
                 interval = new Interval<T>(this, false, tempUpper.snapBound);
+            
+            // Step 4.7 Find interval using index
             } else {
                 interval = getInterval(index, type, value);    
             }
             
+            // If found
             if (interval.min != null && interval.max != null){
+                
+                // Step 4.8 Snap to lower
                 if (type.compare(interval.min, lowerSnap.max) < 0){
                     interval = lowerSnap;
+                    
+                // Step 4.9 Snap to upper
                 } else if (type.compare(interval.max, upperSnap.min) > 0){
                     interval = upperSnap;
                 }
             }
             
+            // Make sure that identical intervals are represented by the same object
             first[i] = getGroup(cache, interval);
         }
         result.add(first);
@@ -962,44 +1020,122 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         // Clean
         index = null;
         
+        // ****************************************************
+        // Step 5: Prepare recursion to generate other columns
+        // ****************************************************
+        
         // Create other columns
         List<Group<T>> groups = new ArrayList<Group<T>>();
         if (!super.getLevels().isEmpty()) groups = super.getLevels().get(0).getGroups();
-        if (cache.size()>1 && !groups.isEmpty()) {
+        if (cache.size() > 1 && !groups.isEmpty()) {
 
             // Prepare
-            List<Interval<T>> newIntervals = new ArrayList<Interval<T>>();
-            int intervalIndex = 0;
-            int multiplier = 0;
-            T width = type.subtract(intervals.get(intervals.size() - 1).max, intervals.get(0).min);
-
-            // Merge intervals
+            List<Interval<T>> newIntervals = new ArrayList<>();
+            
+            // Calculate number of intervals grouped together
+            int numGroupedIntervals = 0;
             for (Group<T> group : groups) {
-                
-                // Find min and max
-                T min = null;
-                T max = null;
-                for (int i = 0; i < group.getSize(); i++) {
-                    Interval<T> current = intervals.get(intervalIndex++);
-                    T offset = type.multiply(width, multiplier);
-                    T cMin = type.add(current.min, offset);
-                    T cMax = type.add(current.max, offset);
-                    if (min == null || type.compare(min, cMin) > 0) {
-                        min = cMin;
-                    }
-                    if (max == null || type.compare(max, cMax) < 0) {
-                        max = cMax;
-                    }
-                    if (intervalIndex == intervals.size()) {
-                        intervalIndex = 0;
-                        multiplier++;
-                    }
-                }
-
-                // Add interval
-                newIntervals.add(new Interval<T>(this, getDataType(), min, max, group.getFunction()));
+                numGroupedIntervals += group.getSize();
             }
             
+            // ---------------------------------------------------------------------------------
+            // Case 1: More grouped intervals or same number of grouped intervals than intervals
+            // ---------------------------------------------------------------------------------
+            if (numGroupedIntervals >= intervals.size()) {
+            
+                // In this case we need to shift intervals to cover the complete range
+                T width = type.subtract(intervals.get(intervals.size() - 1).max, intervals.get(0).min);
+                T offset = null;
+                
+                // Indices
+                int iInterval = 0; // Index into intervals
+                for (Group<T> group : groups) { // For each group
+                    
+                    // Collect intervals to merge for this group
+                    Set<Interval<T>> toMerge = new HashSet<>();
+                    while (toMerge.size() < group.getSize()) {
+                        
+                        // Add interval
+                        toMerge.add(intervals.get(iInterval).getShiftedInstance(offset, type));
+                        
+                        // Next interval round robin
+                        iInterval++;
+                        if (iInterval == intervals.size()) {
+                            iInterval = 0;
+                            offset = offset == null ? width : type.add(offset, width);
+                        }
+                    }
+                    
+                    // Merge intervals
+                    if (!toMerge.isEmpty()) {                    
+                        T min = null;
+                        T max = null;
+                        for (Interval<T> interval : toMerge) {
+                            if (min == null || type.compare(min, interval.min) > 0) {
+                                min = interval.min;
+                            }
+                            if (max == null || type.compare(max, interval.max) < 0) {
+                                max = interval.max;
+                            }
+                        }
+                        
+                        // Add merged interval
+                        newIntervals.add(new Interval<T>(this, getDataType(), min, max, group.getFunction()));
+                    }
+                }
+            
+            // ---------------------------------------------
+            // Case 2: Less grouped intervals than intervals
+            // ---------------------------------------------
+            } else {
+                
+                // Index into intervals
+                int iInterval = 0;
+                
+                // Until we have processed all intervals
+                while (iInterval < intervals.size()) {
+                    
+                    // For each group
+                    for (Group<T> group : groups) {
+                        
+                        // Collect intervals to merge for this group
+                        Set<Interval<T>> toMerge = new HashSet<>();
+                        while (toMerge.size() < group.getSize()) {
+                            
+                            // Add interval
+                            toMerge.add(intervals.get(iInterval));
+                            
+                            // Next interval
+                            iInterval++;
+                            if (iInterval == intervals.size()) {
+                                break;
+                            }
+                        }
+                        
+                        // Merge intervals
+                        if (!toMerge.isEmpty()) {                    
+                            T min = null;
+                            T max = null;
+                            for (Interval<T> interval : toMerge) {
+                                if (min == null || type.compare(min, interval.min) > 0) {
+                                    min = interval.min;
+                                }
+                                if (max == null || type.compare(max, interval.max) < 0) {
+                                    max = interval.max;
+                                }
+                            }
+                            
+                            // Add merged interval
+                            newIntervals.add(new Interval<T>(this, getDataType(), min, max, group.getFunction()));
+                        }
+                    }
+                }
+            }
+            
+            // ****************************************************
+            // Step 6: Recursive call to separate builder
+            // ****************************************************
+
             // Compute next column
             HierarchyBuilderIntervalBased<T> builder = new HierarchyBuilderIntervalBased<T>(getDataType(),
                                                                                             tempLower,
@@ -1008,7 +1144,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 builder.addInterval(interval.min, interval.max, interval.function);
             }
 
-            for (int i=1; i<super.getLevels().size(); i++){
+            for (int i = 1; i < super.getLevels().size(); i++) {
                 for (Group<T> sgroup : super.getLevel(i).getGroups()) {
                     builder.getLevel(i-1).addGroup(sgroup.getSize(), sgroup.getFunction());
                 }
@@ -1016,12 +1152,19 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             
             // Copy data
             builder.prepare(data);
+
+            // ****************************************************
+            // Step 7: Copy data over
+            // ****************************************************
             AbstractGroup[][] columns = builder.getPreparedGroups();
             for (AbstractGroup[] column : columns) {
                 result.add(column);
             }
+        
+        // Add stars if out of levels but still no root node
         } else {
-            if (cache.size()>1) {
+            
+            if (cache.size() > 1) {
                 AbstractGroup[] column = new AbstractGroup[data.length];
                 @SuppressWarnings("serial")
                 AbstractGroup element = new AbstractGroup(DataType.ANY_VALUE) {};
