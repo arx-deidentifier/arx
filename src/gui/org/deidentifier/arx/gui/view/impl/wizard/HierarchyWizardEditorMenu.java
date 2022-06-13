@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -36,29 +35,29 @@ import org.eclipse.swt.widgets.MenuItem;
 public class HierarchyWizardEditorMenu<T> {
 
     /** Var. */
-    private final Composite         composite;
-    
+    private final Composite                       composite;
+
     /** Var. */
-    private final Menu              menu;
-    
+    private final Menu                            menu;
+
     /** Var. */
-    private final MenuItem          addBefore;
-    
+    private final MenuItem                        addBefore;
+
     /** Var. */
-    private final MenuItem          addAfter;
-    
+    private final MenuItem                        addAfter;
+
     /** Var. */
-    private final MenuItem          mergeUp;
-    
+    private final MenuItem                        mergeUp;
+
     /** Var. */
-    private final MenuItem          mergeDown;
-    
+    private final MenuItem                        mergeDown;
+
     /** Var. */
-    private final MenuItem          remove;
-    
+    private final MenuItem                        remove;
+
     /** Var. */
-    private final MenuItem          addRight;
-    
+    private final MenuItem                        addRight;
+
     /** Var. */
     private final HierarchyWizardModelGrouping<T> model;
 
@@ -69,7 +68,7 @@ public class HierarchyWizardEditorMenu<T> {
      * @param model
      */
     public HierarchyWizardEditorMenu(final Composite composite, 
-                               final HierarchyWizardModelGrouping<T> model) {
+                                     final HierarchyWizardModelGrouping<T> model) {
         
         this.model = model;
         this.composite = composite;
@@ -77,60 +76,78 @@ public class HierarchyWizardEditorMenu<T> {
         this.menu = new Menu(composite);
         this.remove = new MenuItem(menu, SWT.NONE);
         this.remove.setText(Resources.getMessage("HierarchyWizardEditorMenu.0")); //$NON-NLS-1$
-        this.remove.addSelectionListener(new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                model.remove(model.getSelectedElement());
-            }
-        });
         
         new MenuItem(menu, SWT.SEPARATOR);
         
         this.addBefore = new MenuItem(menu, SWT.NONE);
         this.addBefore.setText(Resources.getMessage("HierarchyWizardEditorMenu.1")); //$NON-NLS-1$
-        this.addBefore.addSelectionListener(new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                model.addBefore(model.getSelectedElement());
-            }
-        });
         
         this.addAfter = new MenuItem(menu, SWT.NONE);
         this.addAfter.setText(Resources.getMessage("HierarchyWizardEditorMenu.2")); //$NON-NLS-1$
-        this.addAfter.addSelectionListener(new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                model.addAfter(model.getSelectedElement());
-            }
-        });
 
         new MenuItem(menu, SWT.SEPARATOR);
         
         this.mergeDown = new MenuItem(menu, SWT.NONE);
         this.mergeDown.setText(Resources.getMessage("HierarchyWizardEditorMenu.3")); //$NON-NLS-1$
-        this.mergeDown.addSelectionListener(new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                model.mergeDown(model.getSelectedElement());
-            }
-        });
         
         this.mergeUp = new MenuItem(menu, SWT.NONE);
         this.mergeUp.setText(Resources.getMessage("HierarchyWizardEditorMenu.4")); //$NON-NLS-1$
-        this.mergeUp.addSelectionListener(new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                model.mergeUp(model.getSelectedElement());
-            }
-        });
         
         new MenuItem(menu, SWT.SEPARATOR);
         
         this.addRight = new MenuItem(menu, SWT.NONE);
-        this.addRight.setText(Resources.getMessage("HierarchyWizardEditorMenu.5")); //$NON-NLS-1$
-        this.addRight.addSelectionListener(new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                model.addRight(model.getSelectedElement());
-            }
-        });
-        
+        this.addRight.setText(Resources.getMessage("HierarchyWizardEditorMenu.5")); //$NON-NLS-1$        
     }
     
+    /**
+     * Add selection listener
+     * @param listener
+     */
+    public void addAddAfterListener(SelectionListener listener) {
+        this.addAfter.addSelectionListener(listener);
+    }
+    
+
+    /**
+     * Add selection listener
+     * @param listener
+     */
+    public void addAddBeforeListener(SelectionListener listener) {
+        this.addBefore.addSelectionListener(listener);
+    }
+
+    /**
+     * Add selection listener
+     * @param listener
+     */
+    public void addAddRightListener(SelectionListener listener) {
+        this.addRight.addSelectionListener(listener);
+    }
+
+    /**
+     * Add selection listener
+     * @param listener
+     */
+    public void addMergeDownListener(SelectionListener listener) {
+        this.mergeDown.addSelectionListener(listener);
+    }
+
+    /**
+     * Add selection listener
+     * @param listener
+     */
+    public void addMergeUpListener(SelectionListener listener) {
+        this.mergeUp.addSelectionListener(listener);
+    }
+    
+    /**
+     * Add selection listener
+     * @param listener
+     */
+    public void addRemoveListener(SelectionListener listener) {
+        this.remove.addSelectionListener(listener);
+    }
+
     /**
      * 
      *

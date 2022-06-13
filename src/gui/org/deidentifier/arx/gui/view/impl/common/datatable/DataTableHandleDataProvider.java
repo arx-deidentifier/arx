@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class DataTableHandleDataProvider implements IDataProvider {
         } else if (arg0 == 0) {
             // Remap row index for subset if in subset view
             if (data instanceof DataHandleSubset){
-                int[] subset = ((DataHandleSubset)data).getSubset();
+                int[] subset = ((DataHandleSubset)data).getSubset().getArray();
                 arg1 = subset[arg1];
             }
             return rows.contains(arg1);

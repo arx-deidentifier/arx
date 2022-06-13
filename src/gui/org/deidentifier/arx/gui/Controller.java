@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1109,7 +1109,7 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), "*.pdf"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName(), "*.pdf"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
@@ -1223,17 +1223,22 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), "*.csv"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName() + "-anonymized", "*.csv"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
         if (!file.endsWith(".csv")) { //$NON-NLS-1$
             file = file + ".csv"; //$NON-NLS-1$
         }
+        
+        // Ask whether to shuffle the data
+        boolean shuffle = this.actionShowQuestionDialog(Resources.getMessage("Controller.162"),  //$NON-NLS-1$
+                                                        Resources.getMessage("Controller.163")); //$NON-NLS-1$
 
         // Export
         final WorkerExport worker = new WorkerExport(file,
                                                      model.getCSVSyntax(),
+                                                     shuffle,
                                                      model.getOutput(),
                                                      model.getOutputConfig().getConfig(),
                                                      model.getInputBytes());
@@ -1270,7 +1275,7 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), "*.csv"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName() + "_hierarchy_" + model.getSelectedAttribute(), "*.csv"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
@@ -1364,8 +1369,26 @@ public class Controller implements IView {
             final char separator = dialog.getSeparator();
             final Charset charset = dialog.getCharset();
             final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
+            if (hierarchy == null || hierarchy.getHierarchy() == null) {
+                return;
+            }
+            
+            // Check hierarchy
+            String attr = model.getSelectedAttribute();
+            String missingValue = model.getInputConfig().isHierarchyComplete(hierarchy, attr);
+            if (missingValue != null) {
+                
+                // Ask whether to proceed
+                boolean proceed = actionShowQuestionDialog(Resources.getMessage("Controller.160"), //$NON-NLS-1$
+                                                           String.format(Resources.getMessage("Controller.161"), missingValue)); //$NON-NLS-1$
+                
+                if (!proceed) {
+                    return;
+                }
+            }
+            
+            // Finally
             if (hierarchy != null) {
-                String attr = model.getSelectedAttribute();
                 model.getInputConfig().removeHierarchyBuilder(attr);
                 model.getInputConfig().setMaximumGeneralization(attr, null);
                 model.getInputConfig().setMinimumGeneralization(attr, null);
@@ -1457,7 +1480,7 @@ public class Controller implements IView {
         }
 
         // Check
-        String path = actionShowSaveFileDialog(main.getShell(), "*.deid"); //$NON-NLS-1$
+        String path = actionShowSaveFileDialog(main.getShell(), model.getName(), "*.deid"); //$NON-NLS-1$
         if (path == null) {
             return;
         }
@@ -1648,7 +1671,7 @@ public class Controller implements IView {
     public void actionShowAuditTrail() {
         main.showAuditTrail(model.getAuditTrail());
     }
-    
+
     /**
      * Shows an input dialog for selecting a charset.
      * @return
@@ -1663,7 +1686,7 @@ public class Controller implements IView {
         });
         return result[0];
     }
-
+    
     /**
      * Shows a dialog for configuring classifiers
      * @param config 
@@ -1704,7 +1727,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, values);
     }
-    
+
     /**
      * Shows a dialog for selecting a format string for a data type.
      *
@@ -1725,15 +1748,16 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
-
+    
     /**
      * Shows a help dialog.
      *
      * @param id
      */
     public void actionShowHelpDialog(String id) {
-        main.showHelpDialog(id);
+        main.showHelpDialog(model.isHelpDialogModal(), id);
     }
+
     /**
      * Shows an info dialog.
      *
@@ -1744,7 +1768,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1831,6 +1854,7 @@ public class Controller implements IView {
 
         return main.showOrderValuesDialog(shell, title, text, type, locale, values);
     }
+
     /**
      * Shows a progress dialog.
      *
@@ -1841,7 +1865,6 @@ public class Controller implements IView {
                                          final Worker<?> worker) {
         main.showProgressDialog(text, worker);
     }
-    
     /**
      * Shows a question dialog.
      *
@@ -1855,7 +1878,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
-
+    
     /**
      * Shows a question dialog.
      *
@@ -1876,7 +1899,19 @@ public class Controller implements IView {
      * @return
      */
     public String actionShowSaveFileDialog(final Shell shell, String filter) {
-        return main.showSaveFileDialog(shell, filter);
+        return main.showSaveFileDialog(shell, null, filter);
+    }
+    
+    /**
+     * Internal method for showing a "save file" dialog.
+     *
+     * @param shell
+     * @param nameHint - can be null
+     * @param filter
+     * @return
+     */
+    public String actionShowSaveFileDialog(final Shell shell, String nameHint, String filter) {
+        return main.showSaveFileDialog(shell, nameHint, filter);
     }
 
     /**
@@ -1952,7 +1987,7 @@ public class Controller implements IView {
                               ModelPart.RESEARCH_SUBSET,
                               empty));
     }
-    
+
     /**
      * Creates a subset by executing a query.
      */
@@ -1969,7 +2004,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Creates a subset via random sampling
      */

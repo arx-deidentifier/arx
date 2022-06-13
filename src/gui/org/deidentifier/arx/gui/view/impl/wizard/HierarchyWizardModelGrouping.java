@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -263,7 +263,9 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             int index= intervals.indexOf(selected);
             if (index != -1){
                 T bound = ((HierarchyWizardGroupingInterval<T>)selected).max;
-                intervals.add(index + 1, new HierarchyWizardGroupingInterval<T>(bound, bound, this.function));
+                HierarchyWizardGroupingInterval<T> interval = new HierarchyWizardGroupingInterval<T>(bound, bound, this.function);
+                intervals.add(index + 1, interval);
+                this.setSelectedElement(interval);
                 update();
                 return;
             }
@@ -271,12 +273,15 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             for (List<HierarchyWizardGroupingGroup<T>> list : groups){
                 int index= list.indexOf(selected);
                 if (index != -1){
-                    list.add(index + 1, new HierarchyWizardGroupingGroup<T>(1, this.function));
+                    HierarchyWizardGroupingGroup<T> group = new HierarchyWizardGroupingGroup<T>(1, this.function);
+                    list.add(index + 1, group);
+                    this.setSelectedElement(group);
                     update();
                     return;
                 }
             }
         }
+        return;
     }
 
     /**
@@ -290,7 +295,9 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             int index= intervals.indexOf(selected);
             if (index != -1){
                 T bound = ((HierarchyWizardGroupingInterval<T>)selected).min;
-                intervals.add(index, new HierarchyWizardGroupingInterval<T>(bound, bound, this.function));
+                HierarchyWizardGroupingInterval<T> interval = new HierarchyWizardGroupingInterval<T>(bound, bound, this.function);
+                intervals.add(index, interval);
+                this.setSelectedElement(interval);
                 update();
                 return;
             }
@@ -298,7 +305,9 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             for (List<HierarchyWizardGroupingGroup<T>> list : groups){
                 int index= list.indexOf(selected);
                 if (index != -1){
-                    list.add(index, new HierarchyWizardGroupingGroup<T>(1, this.function));
+                    HierarchyWizardGroupingGroup<T> group = new HierarchyWizardGroupingGroup<T>(1, this.function);
+                    list.add(index, group);
+                    this.setSelectedElement(group);
                     update();
                     return;
                 }
@@ -323,7 +332,9 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
         
         List<HierarchyWizardGroupingGroup<T>> list = new ArrayList<HierarchyWizardGroupingGroup<T>>();
         groups.add(index, list);
-        list.add(new HierarchyWizardGroupingGroup<T>(1, function));
+        HierarchyWizardGroupingGroup<T> group = new HierarchyWizardGroupingGroup<T>(1, function);
+        list.add(group);
+        this.setSelectedElement(group);
         update();
     }
 
@@ -422,11 +433,13 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             int index = intervals.indexOf(selected);
             if (index != -1) {
                 AggregateFunction<T> function = intervals.get(index).function;
-                T min = intervals.get(index-1).min;
+                T min = intervals.get(index - 1).min;
                 T max = intervals.get(index).max;
-                intervals.remove(index-1);
-                intervals.remove(index-1);
-                intervals.add(index-1, new HierarchyWizardGroupingInterval<T>(min, max, function));
+                intervals.remove(index - 1);
+                intervals.remove(index - 1);
+                HierarchyWizardGroupingInterval<T> interval = new HierarchyWizardGroupingInterval<T>(min, max, function);
+                intervals.add(index - 1, interval);
+                this.setSelectedElement(interval);
                 update();
             }
         }
@@ -446,7 +459,9 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
                 T max = intervals.get(index+1).max;
                 intervals.remove(index);
                 intervals.remove(index);
-                intervals.add(index, new HierarchyWizardGroupingInterval<T>(min, max, function));
+                HierarchyWizardGroupingInterval<T> interval = new HierarchyWizardGroupingInterval<T>(min, max, function);
+                intervals.add(index, interval);
+                this.setSelectedElement(interval);
                 update();
             }
         }

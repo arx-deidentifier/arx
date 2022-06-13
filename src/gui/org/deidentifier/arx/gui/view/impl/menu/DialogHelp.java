@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import de.linearbits.swt.simplebrowser.HTMLBrowser;
 public class DialogHelp extends TitleAreaDialog implements IDialog {
 
     /** View */
-    private String           id;
+    private String           initialID;
 
     /** View */
     private HTMLBrowser      browser;
@@ -73,12 +73,20 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
      *
      * @param parentShell
      * @param controller
+     * @param modal
      * @param id
      */
-    public DialogHelp(final Shell parentShell, final Controller controller, final String id) {
-        super(parentShell);
-        this.id = id;
+    public DialogHelp(final Shell parentShell, 
+                      final Controller controller, 
+                      final boolean modal,
+                      final String id) {
+        super(modal ? parentShell : null);
+        this.initialID = id;
         this.image = controller.getResources().getManagedImage("logo_small.png"); //$NON-NLS-1$
+        if (!modal) {
+            this.setShellStyle((getShellStyle() | SWT.RESIZE | SWT.MODELESS) &
+                               (~SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL | SWT.ON_TOP));
+        }
     }
 
     @Override
@@ -86,6 +94,33 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return super.close();
     }
 
+    /**
+     * Returns whether the dialog is modal
+     * @return
+     */
+    public boolean isModal() {
+        return super.getParentShell() != null;
+    }
+    
+    /**
+     * Returns whether the dialog is visible
+     * @return
+     */
+    public boolean isVisible() {
+        return super.getShell() != null && super.getShell().isVisible();
+    }
+    
+    /**
+     * Navigate to a certain help entry
+     * @param id
+     */
+    public void navigateTo(String id) {
+        int index = id == null ? 0 : config.getIndexForId(id);
+        list.select(index);
+        list.showSelection();
+        try{browser.setUrl(getUrlOf(index));} catch (Exception e){}
+    }
+    
     /**
      * Returns the index of a url.
      *
@@ -95,13 +130,13 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     private int getIndexOf(String location) {
         return config.getIndexForUrl(location);
     }
-    
+
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
-    
+
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -118,7 +153,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
             }
         });
     }
-
+    
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
@@ -127,7 +162,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         if (image!=null) setTitleImage(image); //$NON-NLS-1$
         return contents;
     }
-
+    
     @Override
     protected Control createDialogArea(final Composite parent) {
         
@@ -187,11 +222,10 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
             }
         });
         
-        // Init
-        int index = id == null ? 0 : config.getIndexForId(id);
-        list.select(index);
-        list.showSelection();
-        try{browser.setUrl(getUrlOf(index));} catch (Exception e){}
+        // Navigate
+        navigateTo(initialID);
+        
+        // Done
         return parent;
     }
     

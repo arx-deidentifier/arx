@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -105,15 +107,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
             @Override public void mouseUp(MouseEvent arg0) {
                 
                 if (HierarchyWizardEditor.this.model.getRenderer().select(arg0.x, arg0.y)){
-                    HierarchyWizardEditor.this.model.updateUI(HierarchyWizardEditor.this);
-                    canvascomposite.redraw();
-                    Object selected = HierarchyWizardEditor.this.model.getSelectedElement();
-                    if (selected instanceof HierarchyWizardGroupingInterval){
-                        if (HierarchyWizardEditor.this.model.isShowIntervals()) folder.setSelection(2);
-                    } else if (selected instanceof HierarchyWizardGroupingGroup){
-                        if (HierarchyWizardEditor.this.model.isShowIntervals()) folder.setSelection(3);
-                        else folder.setSelection(1);
-                    }
+                    updateSelectedElement();
                 }
 
                 if ((arg0.stateMask & SWT.BUTTON3) != 0 && HierarchyWizardEditor.this.model.getSelectedElement() != null){
@@ -123,6 +117,42 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         });
         
         this.menu = new HierarchyWizardEditorMenu<T>(canvascomposite, model);
+        this.menu.addAddRightListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                model.addRight(model.getSelectedElement());
+                updateSelectedElement();
+            }
+        });
+        this.menu.addMergeUpListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                model.mergeUp(model.getSelectedElement());
+                updateSelectedElement();
+            }
+        });
+        this.menu.addAddAfterListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                model.addAfter(model.getSelectedElement());
+                updateSelectedElement();
+            }
+        });
+        this.menu.addRemoveListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                model.remove(model.getSelectedElement());
+                updateSelectedElement();
+            }
+        });
+        this.menu.addAddBeforeListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                model.addBefore(model.getSelectedElement());
+                updateSelectedElement();
+            }
+        });
+        this.menu.addMergeDownListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                model.mergeDown(model.getSelectedElement());
+                updateSelectedElement();
+            }
+        });
         
         this.folder = new CTabFolder(composite, SWT.BORDER);
         this.folder.setSimple(false);
@@ -152,6 +182,21 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         this.composite.setLayoutData(object);
     }
 
+    /**
+     * Update to show the selected element
+     */
+    public void updateSelectedElement() {
+        HierarchyWizardEditor.this.model.updateUI(HierarchyWizardEditor.this);
+        canvascomposite.redraw();
+        Object selected = HierarchyWizardEditor.this.model.getSelectedElement();
+        if (selected instanceof HierarchyWizardGroupingInterval){
+            if (HierarchyWizardEditor.this.model.isShowIntervals()) folder.setSelection(2);
+        } else if (selected instanceof HierarchyWizardGroupingGroup){
+            if (HierarchyWizardEditor.this.model.isShowIntervals()) folder.setSelection(3);
+            else folder.setSelection(1);
+        }
+    }
+    
     @Override
     public void update() {
         this.canvascomposite.redraw();

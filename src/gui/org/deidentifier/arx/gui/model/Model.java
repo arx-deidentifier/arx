@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -306,11 +306,15 @@ public class Model implements Serializable {
 
     /* *****************************************
      * Information about the last anonymization process
-     * *****************************************
-     */
+     * ******************************************/
     /** Statistics about the last optimization process */
     private ARXProcessStatistics                          optimizationStatistics          = null;
 
+    /* ******************************************
+     * Help dialog
+     * ******************************************/
+    private Boolean helpDialogModal;
+    
     /**
      * Creates a new instance.
      *
@@ -522,6 +526,9 @@ public class Model implements Serializable {
                 config.addCriterion(new Inclusion(subset));
             }            
         }
+        
+        // Heuristic search limit
+        config.setHeuristicSearchThreshold(this.getHeuristicSearchThreshold());
     }
     
     /**
@@ -1294,6 +1301,17 @@ public class Model implements Serializable {
     }
 
     /**
+     * Returns whether the help dialog is modal
+     * @return
+     */
+    public boolean isHelpDialogModal() {
+        if (this.helpDialogModal == null) {
+            this.helpDialogModal = true;
+        }
+        return this.helpDialogModal;
+    }
+
+    /**
      * Returns whether this project is modified.
      *
      * @return
@@ -1364,7 +1382,7 @@ public class Model implements Serializable {
         this.selectedClassValue = null;
         this.selectedAttribute = null;
     }
-
+    
     /**
      * Returns the last two selected attributes.
      */
@@ -1375,7 +1393,7 @@ public class Model implements Serializable {
         pair[0] = null;
         pair[1] = null;
     }
-    
+
     /**
      * Resets the configuration of the privacy criteria.
      */
@@ -1405,7 +1423,7 @@ public class Model implements Serializable {
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
     }
-
+    
     /**
      * Sets the anonymizer.
      *
@@ -1433,7 +1451,7 @@ public class Model implements Serializable {
         this.debugEnabled = value;
         this.setModified();
     }
-    
+
     /**
      * Sets the project description.
      *
@@ -1473,6 +1491,14 @@ public class Model implements Serializable {
     }
 
     /**
+     * Set whether the help dialog is modal
+     * @param modal
+     */
+    public void setHelpDialogModal(boolean modal) {
+        this.helpDialogModal = modal;
+    }
+
+    /**
      * @param heuristicSearchStepLimit the heuristicSearchStepLimit to set
      */
     public void setHeuristicSearchStepLimit(Integer heuristicSearchStepLimit) {
@@ -1492,7 +1518,7 @@ public class Model implements Serializable {
     public void setHeuristicSearchTimeLimit(Integer heuristicSearchTimeLimit) {
         this.heuristicSearchTimeLimit = heuristicSearchTimeLimit;
     }
-
+    
     /**
      * Sets the according parameter.
      *
@@ -1502,7 +1528,7 @@ public class Model implements Serializable {
         this.historySize = historySize;
         setModified();
     }
-
+    
     /**
      * Sets the according parameter.
      *
@@ -1522,7 +1548,7 @@ public class Model implements Serializable {
         setModified();
         this.inputBytes = inputBytes;
     }
-    
+
     /**
      * Sets the input config.
      *
@@ -1531,7 +1557,7 @@ public class Model implements Serializable {
     public void setInputConfig(final ModelConfiguration config) {
         this.inputConfig = config;
     }
-    
+
     /**
      * Sets the project locale.
      *
@@ -1577,7 +1603,7 @@ public class Model implements Serializable {
     public void setModified() {
         modified = true;
     }
-
+    
     /**
      * Sets the project name.
      *
@@ -1587,7 +1613,7 @@ public class Model implements Serializable {
         this.name = name;
         setModified();
     }
-
+    
     /**
      * Sets a filter.
      *
@@ -1614,7 +1640,7 @@ public class Model implements Serializable {
         }
         setModified();
     }
-    
+
     /**
      * Sets the current output, deserialized from a project
      *
@@ -1656,7 +1682,7 @@ public class Model implements Serializable {
     public void setPath(final String path) {
         this.path = path;
     }
-    
+
     /**
      * @param perspective the perspective to set
      */
@@ -1737,7 +1763,7 @@ public class Model implements Serializable {
     public void setSelectedClassValue(final String classValue) {
         selectedClassValue = classValue;
     }
-
+    
     /**
      * Sets a set of selected attributes
      * @param set
@@ -1746,7 +1772,7 @@ public class Model implements Serializable {
         this.selectedFeatures = set;
         this.setModified();
     }
-
+    
     /**
      * Sets the selected node.
      *
@@ -1756,7 +1782,7 @@ public class Model implements Serializable {
         selectedNode = node;
         setModified();
     }
-    
+
     /**
      * Sets a set of quasi identifiers selected for risk analysis
      * @param set
@@ -1765,7 +1791,7 @@ public class Model implements Serializable {
         this.selectedQuasiIdentifiers = set;
         this.setModified();
     }
-    
+
     /**
      * 
      *
@@ -1775,7 +1801,7 @@ public class Model implements Serializable {
         snapshotSizeDataset = snapshotSize;
         setModified();
     }
-
+    
     /**
      * Sets the according parameter.
      *
@@ -1785,7 +1811,7 @@ public class Model implements Serializable {
         setModified();
         snapshotSizeSnapshot = snapshotSize;
     }
-
+    
     /**
      * Sets how the subset was defined.
      */
@@ -1794,7 +1820,7 @@ public class Model implements Serializable {
             this.subsetOrigin += Resources.getMessage("Model.2"); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Sets how the subset was defined.
      *
@@ -1803,7 +1829,7 @@ public class Model implements Serializable {
     public void setSubsetOrigin(String origin){
         this.subsetOrigin = origin;
     }
-    
+
     /**
      * Sets the execution time of the last anonymization process.
      *
@@ -1828,7 +1854,7 @@ public class Model implements Serializable {
         }
         getClassificationModel().setUnmodified();
     }
-
+    
     /**
      * Sets whether functional hierarchies should be used during anonymization to estimate utility
      * @param useFunctionalHierarchies
@@ -1844,8 +1870,8 @@ public class Model implements Serializable {
     public void setUseListwiseDeletion(boolean useListwiseDeletion) {
         this.useListwiseDeletion = useListwiseDeletion;
     }
-    
-    /**
+
+	/**
      * Sets the view configuration.
      *
      * @param viewConfig
@@ -1863,8 +1889,8 @@ public class Model implements Serializable {
         this.showVisualization = value;
         this.setModified();
     }
-
-	/**
+    
+    /**
      * Converts attributes into an array ordered by occurrence in the dataset
      * @param set
      * @return

@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@
 package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +30,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -489,6 +492,29 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Checks whether the hierarchy covers all values of the attribute. Returns an
+     * example of a missing value if the check fails, <code>null</code> if the check passes.
+     * @param hierarchy
+     * @param attribute
+     * @return
+     */
+    public String isHierarchyComplete(Hierarchy hierarchy, String attribute) {
+        DataHandle handle = getInput().getHandle();
+        int index = handle.getColumnIndexOf(attribute);
+        Set<String> values = new HashSet<String>(Arrays.asList(handle.getDistinctValues(index)));
+        for (String[] row : hierarchy.getHierarchy()) {
+            if (row != null && row.length > 0) {
+                values.remove(row[0]);
+            }
+        }
+        if (!values.isEmpty()) {
+            return values.iterator().next();
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Has the config been modified.
      *
      * @return
@@ -531,7 +557,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.hierarchies.remove(attribute);
         this.setModified();
     }
-    
+
     /**
      * Removes the builder for the given attribute.
      *
@@ -542,7 +568,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         hierarchyBuilders.remove(attr);
     }
-    
+
     /**
      * @param adversaryCost the adversaryCost to set
      */
@@ -571,7 +597,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setAlgorithm(algorithm);
     }
-
+    
     /**
      * @param type
      * @param enabled
@@ -581,7 +607,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setAttributeTypeSuppressed(type, enabled);
     }
-
+    
     /**
      * Sets the according attribute weight.
      *
@@ -602,7 +628,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setGeneticAlgorithmCrossoverFraction(geneticAlgorithmCrossoverFraction);
     }
-    
+
     /**
      * Deterministic execution
      * 
@@ -612,7 +638,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setGeneticAlgorithmDeterministic(geneticAlgorithmDeterministic);
     }
-    
+
     /**
      * Sets the size of the elite group
      * 
@@ -632,7 +658,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setGeneticAlgorithmImmigrationFraction(geneticAlgorithmImmigrationFraction);
     }
-
+    
     /**
      * Sets the immigration interval
      * 
@@ -661,7 +687,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setGeneticAlgorithmMutationProbability(geneticAlgorithmMutationProbability);
     }
-
+    
     /**
      * Sets the production fraction
      * @param geneticAlgorithmProductionFraction
@@ -732,7 +758,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         hierarchyBuilders.put(attr, builder);
     }
-    
+
+
     /**
      * @param data
      *            the input to set
@@ -741,7 +768,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         input = data;
     }
-    
+
     /**
      * Maximum generalization.
      *
@@ -755,8 +782,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.max.put(attribute, max);
     }
-
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -780,7 +806,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.microAggregationFunctions.put(attribute, microaggregation);
         this.setModified();
     }
-    
+
     /**
      * Determines whether or not to ignore missing data
      * 
@@ -905,5 +931,4 @@ public class ModelConfiguration implements Serializable, Cloneable {
     private void setModified() {
         modified = true;
     }
-
 }

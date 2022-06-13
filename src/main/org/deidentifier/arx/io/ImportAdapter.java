@@ -1,5 +1,5 @@
 /*
- * ARX: Powerful Data Anonymization
+ * ARX Data Anonymization Tool
  * Copyright 2014 - 2015 Karol Babioch, Fabian Prasser, Florian Kohlmayer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

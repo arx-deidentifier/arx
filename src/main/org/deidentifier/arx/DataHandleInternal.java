@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -196,6 +196,20 @@ public class DataHandleInternal {
     }
   
     /**
+     * Return the subset, if any
+     * @return
+     */
+    public DataSubset getSubset() {
+        DataHandle view = handle.getView();
+        if (view instanceof DataHandleSubset && handle.getNumRows() != view.getNumRows()) {
+            DataHandleSubset subset = (DataHandleSubset)view;
+            return subset.getSubset();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Returns the superset, if this handle is a subset
      * @return
      */
@@ -206,7 +220,7 @@ public class DataHandleInternal {
             return new DataHandleInternal(((DataHandleSubset)handle).getSource());
         }
     }
-
+    
     /**
      * Method
      * @param row
@@ -216,14 +230,14 @@ public class DataHandleInternal {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-    
+
     /**
      * Gets the value
      */
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-
+    
     /**
      * Returns the internal id of the given value
      * @param column
@@ -268,6 +282,17 @@ public class DataHandleInternal {
     }
 
     /**
+     * Returns whether this is an outlier regarding the given columns. If no columns have been
+     * specified, <code>true</code> will be returned.
+     * @param row
+     * @param columns
+     * @return
+     */
+    public boolean isOutlier(int row, int[] columns) {
+        return this.handle.internalIsOutlier(row, columns);
+    }
+
+    /**
      * Returns whether this is an output handle
      * @return
      */
@@ -277,16 +302,5 @@ public class DataHandleInternal {
         } else {
             return this.handle instanceof DataHandleOutput;
         }
-    }
-
-    /**
-     * Returns whether this is an outlier regarding the given columns. If no columns have been
-     * specified, <code>true</code> will be returned.
-     * @param row
-     * @param columns
-     * @return
-     */
-    public boolean isOutlier(int row, int[] columns) {
-        return this.handle.internalIsOutlier(row, columns);
     }
 }

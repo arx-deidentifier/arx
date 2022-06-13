@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Prasser"
+    given-names: "Fabian"
+    orcid: "https://orcid.org/0000-0003-3172-3095"
+  - family-names: "Eicher"
+    given-names: "Johanna"
+    orcid: "https://orcid.org/0000-0003-4871-0282"
+  - family-names: "Spengler"
+    given-names: "Helmut"
+    orcid: "https://orcid.org/0000-0002-1389-3755"
+  - family-names: "Bild"
+    given-names: "Raffael"
+    orcid: "https://orcid.org/0000-0002-7398-5598"
+  - family-names: "Kuhn"
+    given-names: "Klaus A"
+    orcid: "https://orcid.org/0000-0003-2575-8507"
+  doi: "10.1002/spe.2812"
+  journal: "Software: Practice and Experience"
+  month: 6
+  start: 1277
+  end: 1304
+  title: "Flexible data anonymization using ARX - Current status and challenges ahead"
+  issue: 7
+  volume: 50
+  year: 2020
