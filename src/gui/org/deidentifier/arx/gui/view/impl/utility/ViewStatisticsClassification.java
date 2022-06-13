@@ -138,7 +138,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                                         final Controller controller,
                                         final ModelPart part) {
 
-        super(parent, controller, part, null, false);
+        super(parent, controller, part, null, false, false);
         this.manager = new AnalysisManager(parent.getDisplay());
         this.isOutput = part != ModelPart.INPUT;
         this.rocCurves = new HashMap<>();

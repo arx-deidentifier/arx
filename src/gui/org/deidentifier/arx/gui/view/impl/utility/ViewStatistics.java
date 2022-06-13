@@ -72,6 +72,9 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     /** Parent */
     private final Composite       parent;
 
+    /** Needs updates to include suppressed or null*/
+    private final boolean         dynamicallyIncludesSuppressedOrNull;
+
 	/**
      * Creates a new instance.
      *
@@ -80,12 +83,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @param target
      * @param reset
      * @param dependsOnAttribute
+     * @param dynamicallyIncludesSuppressedOrNull
      */
     public ViewStatistics( final Composite parent,
                            final Controller controller,
                            final ModelPart target,
                            final ModelPart reset,
-                           final boolean dependsOnAttribute) {
+                           final boolean dependsOnAttribute,
+                           final boolean dynamicallyIncludesSuppressedOrNull) {
 
         // Register
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
@@ -96,6 +101,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
+        controller.addListener(ModelPart.SHOW_SPECIAL_VALUES, this);
         controller.addListener(target, this);
         if (reset != null) {
             controller.addListener(reset, this);
@@ -106,6 +112,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         this.reset = reset;
         this.target = target;
         this.dependsOnAttribute = dependsOnAttribute;
+        this.dynamicallyIncludesSuppressedOrNull = dynamicallyIncludesSuppressedOrNull;
         this.parent = parent;
 
         // Create controls
@@ -196,6 +203,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         // Invalidate
         if (event.part == ModelPart.SELECTED_ATTRIBUTE || event.part == ModelPart.ATTRIBUTE_VALUE) {
             if (dependsOnAttribute) {
+                this.triggerUpdate();
+                return;
+            }
+        }
+
+        // Invalidate
+        if (event.part == ModelPart.SHOW_SPECIAL_VALUES) {
+            if (dynamicallyIncludesSuppressedOrNull) {
                 this.triggerUpdate();
                 return;
             }
