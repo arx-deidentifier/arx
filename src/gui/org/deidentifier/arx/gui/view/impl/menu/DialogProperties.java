@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,7 @@ public class DialogProperties implements IDialog {
         this.createTabUtility(this.dialog);
         this.createTabRisk(this.dialog);
         this.createTabGeneticAlgorithm(this.dialog);
+        this.createTabUI(this.dialog);
     }
 
     /**
@@ -131,8 +132,9 @@ public class DialogProperties implements IDialog {
             protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmMutationProbability((Double)t); }});  
         
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), false, true) { //$NON-NLS-1$
-        protected Boolean getValue() { return model.getInputConfig().getGeneticAlgorithmDeterministic(); }
-        protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmDeterministic((Boolean)t); }});
+            protected Boolean getValue() { return model.getInputConfig().getGeneticAlgorithmDeterministic(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmDeterministic((Boolean)t); }}
+        );
     }
 
     /**
@@ -277,7 +279,7 @@ public class DialogProperties implements IDialog {
         
         window.addGroup(Resources.getMessage("DialogProperties.9")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.131"), 0, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.131"), 1, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getHeuristicSearchThreshold(); }
             protected void setValue(Object t) { model.setHeuristicSearchThreshold((Integer)t); }});
 
@@ -324,6 +326,26 @@ public class DialogProperties implements IDialog {
      * Create a tab
      * @param window
      */
+    private void createTabUI(PreferencesDialog window) {
+
+        // Category
+        window.addCategory(Resources.getMessage("PropertyDialog.150"), //$NON-NLS-1$
+        controller.getResources().getManagedImage("ui.png")); //$NON-NLS-1$
+        
+        // Group
+        window.addGroup(Resources.getMessage("PropertyDialog.150")); //$NON-NLS-1$
+
+        // Option
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.151"), true, true) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.isHelpDialogModal(); }
+            protected void setValue(Object t) { model.setHelpDialogModal((Boolean)t); }}
+        );
+    }
+    
+    /**
+     * Create a tab
+     * @param window
+     */
     private void createTabUtility(PreferencesDialog window) {
 
         window.addCategory(Resources.getMessage("PropertyDialog.60"), //$NON-NLS-1$
@@ -359,7 +381,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getVectorLength(); }
             protected void setValue(Object t) { model.getClassificationModel().setVectorLength((Integer)t); }});
     }
-    
+
     /**
      * Returns a list of available locales
      * @return
@@ -384,4 +406,5 @@ public class DialogProperties implements IDialog {
         }
         return result.toArray(new String[result.size()]);
     }
+
 }

@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,18 +51,22 @@ public class WorkerExport extends Worker<DataHandle> {
 
     /** The data. */
     private final DataHandle handle;
+    
+    /** Shuffle*/
+    private final boolean    shuffle;
 
 	/**
-     * Creates a new instance.
-     *
-     * @param path
-     * @param separator
-     * @param handle
-     * @param config
-     * @param bytes
-     */
+	 * Creates a new instance.
+	 * @param path
+	 * @param csvConfig
+	 * @param shuffle
+	 * @param handle
+	 * @param config
+	 * @param bytes
+	 */
     public WorkerExport(final String path,
                         final CSVSyntax csvConfig,
+                        final boolean shuffle,
                         final DataHandle handle,
                         final ARXConfiguration config,
                         final long bytes) {
@@ -71,6 +75,7 @@ public class WorkerExport extends Worker<DataHandle> {
         this.bytes = bytes;
         this.csvSyntax = csvConfig;
         this.handle = handle;
+        this.shuffle = shuffle;
     }
 
  
@@ -114,7 +119,11 @@ public class WorkerExport extends Worker<DataHandle> {
         // Export the data
         try {
             final CSVDataOutput csvout = new CSVDataOutput(cout, csvSyntax);
-            csvout.write(handle.getView().iterator());
+            if (shuffle) {
+                csvout.write(handle.getView().shuffledIterator());
+            } else {
+                csvout.write(handle.getView().iterator());
+            }
             cout.close();
             result = handle;
             stop = true;

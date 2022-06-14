@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,6 +112,8 @@ public class MainWindow implements IView {
     private final ComponentTitledFolder root;
     /** View */
     private final LayoutExplore         layoutExplore;
+    /** View */
+    private DialogHelp                  help;
 
     /**
      * Creates a new instance.
@@ -518,12 +520,35 @@ public class MainWindow implements IView {
     /**
      * Shows a help dialog.
      *
+     * @param modal
      * @param id
      */
-    public void showHelpDialog(String id) {
+    public void showHelpDialog(boolean modal, String id) {
     	try {
-    	    DialogHelp dialog = new DialogHelp(shell, controller, id);
-    	    dialog.open();
+    	    
+    	    // Close dialog if open and settings changed    	    
+    	    if (help != null && help.isVisible()) {
+    	        if ((modal  && !help.isModal()) ||
+    	            (!modal && help.isModal())) {
+                    help.close();
+    	        }
+    	    }
+    	    
+    	    // Non-modal help
+    	    if (!modal) {
+    	        if (help == null || !help.isVisible()) {
+    	            help = new DialogHelp(shell, controller, false, id);
+    	            help.open();
+    	        } else {
+    	            help.navigateTo(id);
+    	        }
+    	    
+    	    // Modal help
+            } else {
+                DialogHelp dialog = new DialogHelp(shell, controller, true, id);
+                dialog.open();   
+            }
+    	    
     	} catch (Exception e) {
     		this.showErrorDialog(Resources.getMessage("MainWindow.12"), e); //$NON-NLS-1$
     	}
@@ -701,13 +726,51 @@ public class MainWindow implements IView {
      * Shows a file save dialog.
      *
      * @param shell
-     * @param filter
+     * @param nameHint
+     * @param filter 
      * @return
      */
-    public String showSaveFileDialog(final Shell shell, String filter) {
+    public String showSaveFileDialog(final Shell shell, String nameHint, String filter) {
+        
+        // Init dialog
         final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+        
+        // Suggest file name
+        if (nameHint != null) {
+            
+            // Lower case
+            nameHint = nameHint.toLowerCase(controller.getModel().getLocale());
+            
+            // Filter letters, digits and underscores
+            StringBuilder builder = new StringBuilder();
+            Character previous = null;
+            for (int i = 0; i < nameHint.length(); i++) {
+                Character c = nameHint.charAt(i);
+                if (Character.isLetterOrDigit(c)) {
+                    builder.append(c);
+                } else if (Character.isSpaceChar(c) || c == '-') {
+                    if (previous == null || (previous != '-' && previous != '_')) {
+                        builder.append('-');
+                    }
+                } else if (c == '_') {
+                    if (previous == null || (previous != '-' && previous != '_')) {
+                        builder.append('_');
+                    }
+                }
+                previous = builder.length() == 0 ? null : builder.charAt(builder.length() - 1);
+            }
+            
+            // Set if not empty
+            if (builder.length() > 0) {
+                dialog.setFileName(builder.toString());
+            }
+        }
+        
+        // Set extension
         dialog.setFilterExtensions(new String[] { filter });
         dialog.setFilterIndex(0);
+        
+        // Show dialog
         return dialog.open();
     }
     

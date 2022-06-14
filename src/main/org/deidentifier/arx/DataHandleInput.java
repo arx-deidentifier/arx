@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
 
 package org.deidentifier.arx;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.DataMatrix;
@@ -181,7 +183,7 @@ public class DataHandleInput extends DataHandle {
         checkRow(row, data.getNumRows());
         return internalGetValue(row, column, false);
     }
-    
+
     @Override
     public Iterator<String[]> iterator() {
         checkReleased();
@@ -203,6 +205,50 @@ public class DataHandleInput extends DataHandle {
                     final String[] result = new String[header.length];
                     for (int i = 0; i < result.length; i++) {
                         result[i] = getValue(index, i);
+                    }
+                    index++;
+                    return result;
+                }
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Remove is not supported by this iterator");
+            }
+        };
+    }
+
+    @Override
+    public Iterator<String[]> shuffledIterator() {
+        checkReleased();
+        return new Iterator<String[]>() {
+
+            private int index = -1;
+            private int[] indices;
+
+            @Override
+            public boolean hasNext() {
+                return (index < data.getNumRows());
+            }
+
+            @Override
+            public String[] next() {
+                if (index == -1) {
+                    
+                    // Shuffle rows
+                    indices = new int[data.getNumRows()];
+                    for (int i = 0; i < indices.length; i++) {
+                        indices[i] = i;
+                    }
+                    ArrayUtils.shuffle(indices, new SecureRandom());
+                    
+                    // Return header
+                    index++;
+                    return header;
+                } else {
+                    final String[] result = new String[header.length];
+                    for (int col = 0; col < result.length; col++) {
+                        result[col] = getValue(indices[index], col);
                     }
                     index++;
                     return result;
