@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,7 +104,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
     }
     
-    /**  TODO */
+    /** SVUID */
     private static final long serialVersionUID = -2749758635401073668L;
     
     /**
@@ -217,7 +217,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         super(Type.ORDER_BASED, type);
         
         final Map<String, Integer> map = new HashMap<String, Integer>();
-        for (int i=0; i<order.length; i++) {
+        for (int i = 0; i < order.length; i++) {
             map.put(order[i], i);
         }
         this.comparator = new SerializableComparator<String>(){
@@ -297,12 +297,12 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
             AbstractGroup[] first = new AbstractGroup[data.length];
             outer: while (true) {
                 for (Group<T> group : groups) {
-                    for (int i = 0; i<group.getSize(); i++){
+                    for (int i = 0; i < group.getSize(); i++) {
                         items.add(data[index++]);
                         if (index == data.length) break;
                     }
                     CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), group.getFunction());
-                    for (int i=0; i<items.size(); i++) {
+                    for (int i = 0; i < items.size(); i++) {
                         first[resultIndex++] = element;
                     }
                     groupCount++;
@@ -316,8 +316,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
             if (groupCount>1) {
                 
                 // Build higher-level columns
-                for (int i=1; i<super.getLevels().size(); i++){
-                    
+                for (int i = 1; i < super.getLevels().size(); i++) {
+
                     // Break if done
                     if (groupCount==1) break;
                     
@@ -327,7 +327,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                     Map<AbstractGroup, AbstractGroup> map = new HashMap<AbstractGroup, AbstractGroup>();
                     List<AbstractGroup> list = new ArrayList<AbstractGroup>();
                     AbstractGroup[] column = result.get(i-1);
-                    for (int j=0; j<column.length; j++){
+                    for (int j = 0; j < column.length; j++) {
                         if (!map.containsKey(column[j])) {
                             map.put(column[j], column[j]);
                             list.add(column[j]);
@@ -340,13 +340,13 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                     List<CloseElements<T>> gItems = new ArrayList<CloseElements<T>>();
                     outer: while (true) {
                         for (Group<T> group : groups) {
-                            for (int j = 0; j<group.getSize(); j++){
-                                gItems.add((CloseElements<T>)list.get(index++));
+                            for (int j = 0; j < group.getSize(); j++) {
+                                gItems.add((CloseElements<T>) list.get(index++));
                                 if (index == list.size()) break;
                             }
                             CloseElements<T> element = gItems.get(0).merge(gItems, group.getFunction());
                             groupCount++;
-                            for (int j=0; j<gItems.size(); j++) {
+                            for (int j = 0; j < gItems.size(); j++) {
                                 map.put(gItems.get(j), element);
                             }
                             
@@ -357,7 +357,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                     
                     // Store
                     AbstractGroup[] ccolumn = new AbstractGroup[data.length];
-                    for (int j=0; j<column.length; j++){
+                    for (int j = 0; j < column.length; j++) {
                         ccolumn[j] = map.get(column[j]);
                     }
                     result.add(ccolumn);
@@ -371,7 +371,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         if (groupCount>1) {
             AbstractGroup[] column = new AbstractGroup[data.length];
             CloseElements<T> element = new CloseElements<T>(new String[]{}, AggregateFunction.forType(getDataType()).createConstantFunction(DataType.ANY_VALUE));
-            for (int i=0; i<column.length; i++){
+            for (int i = 0; i < column.length; i++) {
                 column[i] = element;
             }
             result.add(column);

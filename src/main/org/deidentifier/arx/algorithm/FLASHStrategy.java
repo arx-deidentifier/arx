@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class FLASHStrategy implements Comparator<Integer> {
 
         // Check
         if (solutionSpace.getSize().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
-            throw new IllegalArgumentException("Solution space is too large to execute the optimal algorithm. Please choose another algorithm.");
+            throw new IllegalArgumentException("Solution space is too large (more than 2^31-1 elements) to execute the optimal algorithm. Please choose another algorithm.");
         }
         
         // Store

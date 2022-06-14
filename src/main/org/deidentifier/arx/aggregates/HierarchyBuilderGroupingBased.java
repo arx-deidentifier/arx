@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,10 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     public static class Group<U> implements Serializable {
         
-        /**  TODO */
+        /** SVUID */
         private static final long serialVersionUID = -5767501048737045793L;
         
-        /** Fanout. */
+        /** Size of group. */
         private final int size;
         
         /** Aggregate function. */
@@ -73,6 +73,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
+         * Returns the function.
+         * 
          * @return the function
          */
         public AggregateFunction<U> getFunction() {
@@ -80,6 +82,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
+         * Returns the size.
+         * 
          * @return the size
          */
         public int getSize() {
@@ -100,7 +104,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     public static class Level<U> implements Serializable { // NO_UCD
         
-        /**  TODO */
+        /** SVUID */
         private static final long serialVersionUID = 1410005675926162598L;
         
         /** Level. */
@@ -185,6 +189,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
+         * Returns the level
          * @return the level
          */
         public int getLevel() {
@@ -194,11 +199,13 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         @Override
         public String toString(){
             StringBuilder b = new StringBuilder();
-            b.append("Level[height="+level+"]\n");
-            for (int i=0, length=list.size(); i<length; i++){
+            b.append("Level[height=" + level + "]\n");
+            for (int i = 0, length = list.size(); i < length; i++) {
                 Group<U> fanout = list.get(i);
                 b.append("   ").append(fanout.toString());
-                if (i<length-1) b.append("\n");
+                if (i < length - 1) {
+                    b.append("\n");
+                }
             }
             return b.toString();
         }
@@ -211,15 +218,14 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     protected abstract static class AbstractGroup implements Serializable {
         
-        /**  TODO */
+        /** SVUID */
         private static final long serialVersionUID = -7657969446040078411L;
         
-        /**  TODO */
+        /** Label */
         private String label;
         
         /**
-         * 
-         *
+         * Creates a new group
          * @param label
          */
         protected AbstractGroup(String label){
@@ -227,8 +233,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
         
         /**
-         * 
-         *
+         * Returns the label
          * @return
          */
         protected String getLabel(){
@@ -236,7 +241,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
     }
     
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 3208791665131141362L;
     
     /** The data array. */
@@ -281,19 +286,18 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
 
         // Add input data
         String[][] result = new String[data.length][abstractGroups.length + 1];
-        for (int i=0; i<result.length; i++) {
+        for (int i = 0; i < result.length; i++) {
             result[i] = new String[abstractGroups.length + 1];
             result[i][0] = data[i];
         }
         
         // Add levels
-        for (int i=0; i<result[0].length - 1; i++){
+        for (int i = 0; i < result[0].length - 1; i++) {
             Map<String, Map<AbstractGroup, String>> multiplicities = new HashMap<String, Map<AbstractGroup, String>>();
-            for (int j=0; j<result.length; j++){
+            for (int j = 0; j < result.length; j++) {
                 result[j][i + 1] = getLabel(multiplicities, abstractGroups[i][j]);
             }
         }
-        
         
         Hierarchy h = Hierarchy.create(result);
         
@@ -375,13 +379,13 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         int max = 0;
         for (Entry<Integer, Level<T>> level : this.groups.entrySet()) {
             if (level.getValue().getGroups().isEmpty()) {
-                if (level.getKey() < this.groups.size()-1) {
-                    return "No group specified on level "+level.getKey();
+                if (level.getKey() < this.groups.size() - 1) {
+                    return "No group specified on level " + level.getKey();
                 }
             }
             max = Math.max(level.getKey(), max);
         }
-        for (int i=0; i<max; i++){
+        for (int i = 0; i < max; i++) {
             if (!this.groups.containsKey(i)) {
                 return "Missing specification for level "+i;
             } else if (this.groups.get(i).getGroups().isEmpty()) {
@@ -409,10 +413,10 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         // TODO: This assumes that input data does not contain duplicates
         int[] result = new int[this.abstractGroups.length + 1];
-        result[0] = data.length; 
-        for (int i=0; i<result.length - 1; i++){
+        result[0] = data.length;
+        for (int i = 0; i < result.length - 1; i++) {
             Set<AbstractGroup> set = new HashSet<AbstractGroup>();
-            for (int j=0; j<this.abstractGroups[i].length; j++){
+            for (int j = 0; j < this.abstractGroups[i].length; j++) {
                 set.add(abstractGroups[i][j]);
             }
             result[i + 1] = set.size();
@@ -451,7 +455,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             if (storedLabel != null) {
                 return storedLabel;
             } else {
-                label +="-"+map.size();
+                label += "-" + map.size();
                 map.put(group, label);
                 return label;
             }

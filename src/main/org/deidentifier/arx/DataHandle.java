@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -616,7 +616,7 @@ public abstract class DataHandle {
      * @return the iterator
      */
     public abstract Iterator<String[]> iterator();
-
+    
     /**
      * Releases this handle and all associated resources. If a input handle is released all associated results are released
      * as well.
@@ -774,6 +774,13 @@ public abstract class DataHandle {
         final CSVDataOutput output = new CSVDataOutput(path, config);
         output.write(iterator());
     }
+
+    /**
+     * Returns an iterator over the data in a random order.
+     *
+     * @return the iterator
+     */
+    public abstract Iterator<String[]> shuffledIterator();
 
     /**
      * Sorts the dataset according to the given columns. Will sort input and
