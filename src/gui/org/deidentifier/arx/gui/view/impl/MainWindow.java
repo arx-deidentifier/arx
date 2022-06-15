@@ -770,6 +770,9 @@ public class MainWindow implements IView {
         dialog.setFilterExtensions(new String[] { filter });
         dialog.setFilterIndex(0);
         
+        // Prompt user before overwriting an already existing file
+        dialog.setOverwrite(true);
+        
         // Show dialog
         return dialog.open();
     }
