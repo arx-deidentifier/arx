@@ -19,14 +19,9 @@ package org.deidentifier.arx.examples;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOError;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,24 +32,16 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
-import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an example on how to compare data mining performance
- * The evaluation can be used with either K-fold cross validation (default) or with 
- *     subset for training and different subset for testing
- *     
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- * @author Ibraheem Al-Dhamari
  */
 public class Example39 extends Example {
     
@@ -96,25 +83,7 @@ public class Example39 extends Example {
         
         return data;
     }
-
-    public static  Set<Integer> getRandomDataSubsetIndices(double dataSize, Data inputData, int numRecords) {
-        
-        if (dataSize < 0d || dataSize > 1d) {
-                     System.out.println(" data size ratio is out of range");
-                     throw new IOError(new Exception());                  
-         }
     
-         // Create a data subset via sampling based on beta
-         Set<Integer> subsetIndices = new HashSet<Integer>();
-         Random random = new SecureRandom();
-         for (int i = 0; i < numRecords; ++i) {
-             if (random.nextDouble() < dataSize) {
-                 subsetIndices.add(i);
-             }
-         }
-         return subsetIndices;
-     }    
-
     /**
      * Entry point.
      * 
@@ -142,65 +111,18 @@ public class Example39 extends Example {
         data.getDefinition().setDataType("age", DataType.INTEGER);
         data.getDefinition().setResponseVariable("marital-status", true);
         
-   
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
         config.setSuppressionLimit(1d);
         config.setQualityModel(Metric.createClassificationMetric());
         
-       // Create a training subset data with a specific percentage of the original data e.g 80%
-       double dataSize = 0.80; 
-            
-       // Creating a view from the original dataset 
-       Set<Integer>  subsetIndicesTrain = getRandomDataSubsetIndices(dataSize,  data,  data.getHandle().getNumRows()) ;        
-       DataSubset datasubTrain = DataSubset.create(data.getHandle().getNumRows(), subsetIndicesTrain);
-
-       // Adding the data subset to the current configuration,
-       // this subset will be used for the anonymization, 
-       // other records will be transformed but only suppressed,   
-       // In the training, only the subset will be used 
-        config.addPrivacyModel(new Inclusion (datasubTrain) );
-        
-        config.setSuppressionLimit(1d);
-        config.setQualityModel(Metric.createClassificationMetric());
-        
-        // Start anonymization process
         ARXResult result = anonymizer.anonymize(data, config);
-
-        System.out.println("===============================================");
-        System.out.println("   5-anonymous dataset (logistic regression)");
-        System.out.println("===============================================");
-        ClassificationConfigurationLogisticRegression logisticClassifier = ARXClassificationConfiguration.createLogisticRegression();
-        System.out.println("Evaluation using K-fold cross validation: ...............");        
-        logisticClassifier.setEvaluateWithKfold(true);        
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, logisticClassifier));
-        System.out.println("Evaluation using testing subset: ........................");        
-        logisticClassifier.setEvaluateWithKfold(false);        
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, logisticClassifier));
-
-        System.out.println("===============================================");     
-        System.out.println("   5-anonymous dataset (naive bayes)");
-        System.out.println("===============================================");
-        System.out.println("Evaluation using K-fold cross validation: ...............");        
-        logisticClassifier.setEvaluateWithKfold(true);        
-        ClassificationConfigurationNaiveBayes naiveBayesClassifier = ARXClassificationConfiguration.createNaiveBayes();
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, naiveBayesClassifier));
-        System.out.println("Evaluation using testing subset: ........................");        
-        logisticClassifier.setEvaluateWithKfold(false);        
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, naiveBayesClassifier));
-
-        System.out.println("===============================================");     
-        System.out.println("   5-anonymous dataset (random forest)");
-        System.out.println("===============================================");     
-        System.out.println("Evaluation using K-fold cross validation: ...............");        
-        logisticClassifier.setEvaluateWithKfold(true);        
-        ClassificationConfigurationRandomForest randomForestClassifier = ARXClassificationConfiguration.createRandomForest();
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, randomForestClassifier));
-        System.out.println("Evaluation using testing subset: ........................");        
-        logisticClassifier.setEvaluateWithKfold(false);        
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, randomForestClassifier));
-        
+        System.out.println("5-anonymous dataset (logistic regression)");
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createLogisticRegression()));
+        System.out.println("5-anonymous dataset (naive bayes)");
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createNaiveBayes()));
+        System.out.println("5-anonymous dataset (random forest)");
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createRandomForest()));
     }
 }
