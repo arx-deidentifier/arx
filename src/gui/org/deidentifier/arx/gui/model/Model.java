@@ -182,11 +182,8 @@ public class Model implements Serializable {
     /** Current selection. */
     private String                                        selectedAttribute               = null;
 
-    /** Enable/disable visualization */
+    /** Enable/disable. */
     private Boolean                                       showVisualization               = true;
-    
-    /** Enable/disable KFold evaluation */
-    private Boolean                                       useKFold                        = true;  
 
     /** Last two selections. */
     private String[]                                      pair                            = new String[] { null, null };
@@ -1892,17 +1889,6 @@ public class Model implements Serializable {
         this.showVisualization = value;
         this.setModified();
     }
-
-    /**
-     * Sets KFold as enabled/disabled.
-     *
-     * @param value
-     */
-    public void setKFoldEnabled(boolean value){
-        this.useKFold = value;
-        this.setModified();
-    }
-
     
     /**
      * Converts attributes into an array ordered by occurrence in the dataset

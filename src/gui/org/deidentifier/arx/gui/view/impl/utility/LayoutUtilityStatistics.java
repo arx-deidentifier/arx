@@ -17,21 +17,12 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import java.io.IOError;
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 import java.util.Map.Entry;
 
-import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -84,26 +75,13 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     private final ComponentTitledFolder                 folder;
 
     /** View */
-    private final ToolItem                              chkbtnVisualisation;
+    private final ToolItem                              enable;
 
     /** View */
-    private  ToolItem                                   chkbtnUseKFold;
-
-
-    /** View */
-    private  Boolean                                    useKFold                    = true;
+    private final Image                                 enabled;
 
     /** View */
-    private final Image                                 icnVisEnabled;
-
-    /** View */
-    private final Image                                 icnVisDisabled;
-
-    /** View */
-    private final Image                                 icnUseKFoldEnabled;
-
-    /** View */
-    private final Image                                 icnUseKFoldDisabled;
+    private final Image                                 disabled;
 
     /** View */
     private final Map<Composite, String>                helpids                     = new HashMap<Composite, String>();
@@ -130,37 +108,23 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                                    final ModelPart target,
                                    final ModelPart reset) {
 
-        this.icnVisEnabled = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
-        this.icnVisDisabled = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
-
-        this.icnUseKFoldEnabled = controller.getResources().getManagedImage("tickKFold.png"); //$NON-NLS-1$
-        this.icnUseKFoldDisabled = controller.getResources().getManagedImage("crossKFold.png"); //$NON-NLS-1$
-
+        this.enabled = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
+        this.disabled = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
         this.controller = controller;
         
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
 
-       // Create visualization toolbar
-        ComponentTitledFolderButtonBar toolbarVis  = new ComponentTitledFolderButtonBar("id-50", helpids); //$NON-NLS-1$
-
-        // Create visualization enable/disable check button
-        final String chkbtnVisualisationLabel = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
-        toolbarVis.add(chkbtnVisualisationLabel, icnVisEnabled, true, new Runnable() { @Override public void run() {
-            toggleChkbtnVisualization();
-            toggleChkbtnVisualizationIcon(); 
+        // Create enable/disable button
+        final String label = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-50", helpids); //$NON-NLS-1$
+        bar.add(label, disabled, true, new Runnable() { @Override public void run() {
+            toggleEnabled();
+            toggleImage(); 
         }});
-
-        // Create useKFold enable/disable check button
-        final String chkbtnUseKFoldLabel = Resources.getMessage("StatisticsView.31"); //$NON-NLS-1$
-        if (target == ModelPart.OUTPUT) {            
-           toolbarVis.add(chkbtnUseKFoldLabel, icnUseKFoldEnabled, true, new Runnable() { @Override public void run() {
-                toggleChkbtnUseKFold();
-                toggleChkbtnUseKFoldIcon(); 
-            }});
-        }
+        
         // Create the tab folder
-        folder = new ComponentTitledFolder(parent, controller, toolbarVis, null, false, true);
+        folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
         
         // Register tabs
         this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), "help.utility.summary"); //$NON-NLS-1$
@@ -179,15 +143,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         
         // Init folder
         this.folder.setSelection(0);
-
-        this.chkbtnVisualisation = folder.getButtonItem(chkbtnVisualisationLabel);
-        this.chkbtnVisualisation.setEnabled(false);
+        this.enable = folder.getButtonItem(label);
+        this.enable.setEnabled(false);
         
-        if ( target == ModelPart.OUTPUT ) {            
-            this.chkbtnUseKFold = folder.getButtonItem(chkbtnUseKFoldLabel);
-            this.chkbtnUseKFold.setEnabled(true);
-            this.chkbtnUseKFold.setToolTipText("Disable K-fold evaluation!");
-        };   
         // Set initial visibility
         folder.setVisibleItems(Arrays.asList(new String[] { TAB_SUMMARY,
                                                             TAB_DISTRIBUTION,
@@ -195,7 +153,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                                                             TAB_CLASSES_TABLE,
                                                             TAB_PROPERTIES }));
     }
-    
+
     /**
      * Adds a selection listener.
      *
@@ -230,9 +188,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     @Override
     public void reset() {
         model = null;
-        chkbtnVisualisation.setSelection(true);
-        chkbtnVisualisation.setImage(icnVisEnabled);
-        chkbtnVisualisation.setEnabled(false);
+        enable.setSelection(true);
+        enable.setImage(enabled);
+        enable.setEnabled(false);
     }
     
     /**
@@ -269,13 +227,13 @@ public class LayoutUtilityStatistics implements ILayout, IView {
 
         if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
-            this.chkbtnVisualisation.setEnabled(true);
-            this.chkbtnVisualisation.setSelection(model.isVisualizationEnabled());
-            this.toggleChkbtnVisualizationIcon();
+            this.enable.setEnabled(true);
+            this.enable.setSelection(model.isVisualizationEnabled());
+            this.toggleImage();
         } else if (event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION) {
-            this.chkbtnVisualisation.setSelection(model.isVisualizationEnabled());
-            this.toggleChkbtnVisualizationIcon();    
-       }
+            this.enable.setSelection(model.isVisualizationEnabled());
+            this.toggleImage();
+        }
     }
 
     /**
@@ -301,53 +259,19 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     /**
      * Toggle visualization enabled.
      */
-    private void toggleChkbtnVisualization() {
-        this.model.setVisualizationEnabled(this.chkbtnVisualisation.getSelection());
-        this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, chkbtnVisualisation.getSelection()));
+    private void toggleEnabled() {
+        this.model.setVisualizationEnabled(this.enable.getSelection());
+        this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, enable.getSelection()));
     }
 
     /**
-     * Toggle visualization icon.
+     * Toggle image.
      */
-    private void toggleChkbtnVisualizationIcon(){
-        if (chkbtnVisualisation.getSelection()) {
-            chkbtnVisualisation.setImage(icnVisEnabled);
+    private void toggleImage(){
+        if (enable.getSelection()) {
+            enable.setImage(enabled);
         } else {
-            chkbtnVisualisation.setImage(icnVisDisabled);
-        }
-    }
-
-    
-    /**
-     * Toggle UseKFold enabled.
-     */
-    private void toggleChkbtnUseKFold() {
-            
-        // It should work when classification tab is active
-        if (folder.getSelectionIndex()==5) {
-            DataSubset trainingSubset = DataSubset.create(this.model.getInputConfig().getInput(), this.model.getInputConfig().getResearchSubset());
-            
-            this.model.setVisualizationEnabled(false);
-            this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, false));
-            
-            this.model.getClassificationModel().getCurrentConfiguration().setEvaluateWithKfold(chkbtnUseKFold.getSelection());
-            this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_KFold, chkbtnUseKFold.getSelection()));
-            
-            this.model.setVisualizationEnabled(true);
-            this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION,true));
-        }
-    }
-
-    /**
-     * Toggle UseKFold icon.
-     */
-    private void toggleChkbtnUseKFoldIcon(){
-        if (folder.getSelectionIndex()==5) {
-            if (this.chkbtnUseKFold.getSelection()) {
-                this.chkbtnUseKFold.setImage(icnUseKFoldEnabled);
-            } else {
-                this.chkbtnUseKFold.setImage(icnUseKFoldDisabled);
-            }
+            enable.setImage(disabled);
         }
     }
 }
