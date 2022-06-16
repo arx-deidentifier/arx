@@ -183,17 +183,17 @@ public class Example61 extends Example {
         
         System.out.println(" - Logistic regression");
         ClassificationConfigurationLogisticRegression logisticClassifier = ARXClassificationConfiguration.createLogisticRegression();
-        logisticClassifier.setEvaluateWithKfold(!useTestTrainingSet);        
+        logisticClassifier.setUseTrainingTestSet(useTestTrainingSet);        
         System.out.println(data.getStatistics().getClassificationPerformance(features, clazz, logisticClassifier));
 
         System.out.println(" - Naive bayes");
         ClassificationConfigurationNaiveBayes naiveBayesClassifier = ARXClassificationConfiguration.createNaiveBayes();
-        naiveBayesClassifier.setEvaluateWithKfold(!useTestTrainingSet);
+        naiveBayesClassifier.setUseTrainingTestSet(useTestTrainingSet);
         System.out.println(data.getStatistics().getClassificationPerformance(features, clazz, naiveBayesClassifier));
         
         System.out.println(" - Random forest");
         ClassificationConfigurationRandomForest randomForestClassifier = ARXClassificationConfiguration.createRandomForest();
-        randomForestClassifier.setEvaluateWithKfold(!useTestTrainingSet);
+        randomForestClassifier.setUseTrainingTestSet(useTestTrainingSet);
         System.out.println(data.getStatistics().getClassificationPerformance(features, clazz, randomForestClassifier));
     }
 }
