@@ -51,9 +51,9 @@ import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an example on how to compare data mining performance
- * It shows how to use subset for training and different subset for testing
+ * using a training and a test set
  * @author Fabian Prasser
- * @author Florian Kohlmayer
+ * @author Ibhraheem Al-Dhamari
  */
 public class Example61 extends Example {
     
