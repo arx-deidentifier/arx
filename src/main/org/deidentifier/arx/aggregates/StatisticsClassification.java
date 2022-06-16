@@ -349,7 +349,7 @@ public class StatisticsClassification {
         this.numClasses = specification.classMap.size();
         
         // Training and evaluation
-        if (config.getEvaluateWithKfold()) {
+        if (config.isUseTrainingTestSet()) {
             // Evaluating using K-fold cross validation 
             evaluateWithKFoldCrossValidation(inputHandle, outputHandle, config, specification);
         } else {                
