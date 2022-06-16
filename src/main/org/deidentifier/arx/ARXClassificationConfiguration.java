@@ -31,6 +31,15 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
 
     /** SVUID */
     private static final long serialVersionUID = -8751059558718015927L;
+    /** Default value */
+    public static final boolean DEFAULT_DETERMINISTIC   = true;
+    /** Default value */
+    public static final int     DEFAULT_MAX_RECORDS     = 100000;
+    /** Default value */
+    public static final int     DEFAULT_NUMBER_OF_FOLDS = 10;
+    
+    /** Default value */
+    public static final int     DEFAULT_VECTOR_LENGTH   = 1000;
     /**
      * Creates a new instance for logistic regression classifiers
      * @return
@@ -52,15 +61,6 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     public static ClassificationConfigurationRandomForest createRandomForest() {
         return ClassificationConfigurationRandomForest.create();
     }
-    
-    /** Default value */
-    public static final boolean DEFAULT_DETERMINISTIC   = true;
-    /** Default value */
-    public static final int     DEFAULT_MAX_RECORDS     = 100000;
-    /** Default value */
-    public static final int     DEFAULT_NUMBER_OF_FOLDS = 10;
-    /** Default value */
-    public static final int     DEFAULT_VECTOR_LENGTH   = 1000;
 
     /** Deterministic */
     private boolean             deterministic           = DEFAULT_DETERMINISTIC;
@@ -74,8 +74,8 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     private int                 vectorLength            = DEFAULT_VECTOR_LENGTH;
     /** Modified */
     private boolean             modified                = false;
-    /** EvaluateWithKfold */
-    private boolean             EvaluateWithKfold       = true;
+    /** Training/test set */
+    private boolean             useTrainingTestSet      = false;
     /**
      * Creates a new instance with default settings
      */
@@ -144,6 +144,14 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
      */
     public boolean isModified() {
         return modified;
+    }
+    
+    /**
+     * Returns whether to use a training and a test set
+     * @return
+     */
+    public boolean isUseTrainingTestSet() {
+        return this.useTrainingTestSet;
     }
     
     /**
@@ -230,6 +238,14 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     }
     
     /**
+     * Sets whether to use a training and a test set
+     * @param value
+     */
+    public void setUseTrainingTestSet(boolean value) {
+        this.useTrainingTestSet = value;
+    }
+
+    /**
      * @param vectorLength the vectorLength to set
      */
     @SuppressWarnings("unchecked")
@@ -242,18 +258,5 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
             this.vectorLength = vectorLength;
         }
         return (T)this;
-    }
-    /**
-     * Get EvaluateWithKfold
-     */
-    public boolean getEvaluateWithKfold() {
-        return this.EvaluateWithKfold;
-    }
-
-    /**
-     * Set EvaluateWithKfold
-     */
-    public void setEvaluateWithKfold(boolean value) {
-        this.EvaluateWithKfold = value;
     }
 }
