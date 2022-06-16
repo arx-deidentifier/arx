@@ -164,6 +164,7 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
         this.setNumFolds(config.numberOfFolds);
         this.setSeed((int)config.seed);
         this.setVectorLength(config.vectorLength);
+        this.setUseTrainingTestSet(config.useTrainingTestSet);
     }
     
     /**
@@ -241,8 +242,10 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
      * Sets whether to use a training and a test set
      * @param value
      */
-    public void setUseTrainingTestSet(boolean value) {
+    @SuppressWarnings("unchecked")
+    public T setUseTrainingTestSet(boolean value) {
         this.useTrainingTestSet = value;
+        return (T)this;
     }
 
     /**
