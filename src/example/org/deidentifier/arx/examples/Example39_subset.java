@@ -1,6 +1,6 @@
 /*
- * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,14 +49,11 @@ import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an example on how to compare data mining performance
- * The evaluation can be used with either K-fold cross validation (default) or with 
- *     subset for training and different subset for testing
- *     
+ * It shows how to use subset for training and different subset for testing
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- * @author Ibraheem Al-Dhamari
  */
-public class Example39 extends Example {
+public class Example39_subset extends Example {
     
     /**
      * Loads a dataset from disk
@@ -142,65 +139,185 @@ public class Example39 extends Example {
         data.getDefinition().setDataType("age", DataType.INTEGER);
         data.getDefinition().setResponseVariable("marital-status", true);
         
-   
-        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        // Create a training subset data with a specific percentage of the original data e.g 80%
+
+        double dataSize = 0.80; 
         
+        // Createing a view from the original dataset 
+        Set<Integer>  subsetIndicesTrain = getRandomDataSubsetIndices(dataSize,  data,  data.getHandle().getNumRows()) ;        
+
+        System.out.println("Creating a training data subset ....");
+        DataSubset datasubTrain = DataSubset.create(data.getHandle().getNumRows(), subsetIndicesTrain);
+   
+        // To create a testing subset data from the remaining data we can use this commented  code
+        
+        // Set<Integer> subsetIndicesTest = new HashSet<Integer>();       
+        // for (int i = 0; i < data.getHandle().getNumRows(); ++i) {
+        //     subsetIndicesTest.add(i);
+        // }
+        // subsetIndicesTest.removeAll(subsetIndicesTrain);
+
+        // System.out.println("Creating a testing data subset ....");
+        // DataSubset datasubTest = DataSubset.create(data.getHandle().getNumRows(), subsetIndicesTest);
+
+        
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
         config.setSuppressionLimit(1d);
         config.setQualityModel(Metric.createClassificationMetric());
         
-       // Create a training subset data with a specific percentage of the original data e.g 80%
-       double dataSize = 0.80; 
-            
-       // Creating a view from the original dataset 
-       Set<Integer>  subsetIndicesTrain = getRandomDataSubsetIndices(dataSize,  data,  data.getHandle().getNumRows()) ;        
-       DataSubset datasubTrain = DataSubset.create(data.getHandle().getNumRows(), subsetIndicesTrain);
-
-       // Adding the data subset to the current configuration,
-       // this subset will be used for the anonymization, 
-       // other records will be transformed but only suppressed,   
-       // In the training, only the subset will be used 
-        config.addPrivacyModel(new Inclusion (datasubTrain) );
+   
         
+        // Adding the data subset to the current configuration,
+        // this subset will be used for the anonymization, 
+        // other records will be transformed but only suppressed,   
+        // In the training, only the subset will be used 
+        config.addPrivacyModel(new Inclusion (datasubTrain) );
         config.setSuppressionLimit(1d);
         config.setQualityModel(Metric.createClassificationMetric());
         
         // Start anonymization process
         ARXResult result = anonymizer.anonymize(data, config);
-
-        System.out.println("===============================================");
-        System.out.println("   5-anonymous dataset (logistic regression)");
-        System.out.println("===============================================");
-        ClassificationConfigurationLogisticRegression logisticClassifier = ARXClassificationConfiguration.createLogisticRegression();
-        System.out.println("Evaluation using K-fold cross validation: ...............");        
-        logisticClassifier.setEvaluateWithKfold(true);        
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, logisticClassifier));
-        System.out.println("Evaluation using testing subset: ........................");        
-        logisticClassifier.setEvaluateWithKfold(false);        
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, logisticClassifier));
-
-        System.out.println("===============================================");     
-        System.out.println("   5-anonymous dataset (naive bayes)");
-        System.out.println("===============================================");
-        System.out.println("Evaluation using K-fold cross validation: ...............");        
-        logisticClassifier.setEvaluateWithKfold(true);        
-        ClassificationConfigurationNaiveBayes naiveBayesClassifier = ARXClassificationConfiguration.createNaiveBayes();
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, naiveBayesClassifier));
-        System.out.println("Evaluation using testing subset: ........................");        
-        logisticClassifier.setEvaluateWithKfold(false);        
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, naiveBayesClassifier));
-
-        System.out.println("===============================================");     
-        System.out.println("   5-anonymous dataset (random forest)");
-        System.out.println("===============================================");     
-        System.out.println("Evaluation using K-fold cross validation: ...............");        
-        logisticClassifier.setEvaluateWithKfold(true);        
-        ClassificationConfigurationRandomForest randomForestClassifier = ARXClassificationConfiguration.createRandomForest();
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, randomForestClassifier));
-        System.out.println("Evaluation using testing subset: ........................");        
-        logisticClassifier.setEvaluateWithKfold(false);        
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, randomForestClassifier));
+        boolean evaluateWithKfold = true; 
         
+        System.out.println("5-anonymous dataset (logistic regression)");
+        ClassificationConfigurationLogisticRegression logisticClassifier = ARXClassificationConfiguration.createLogisticRegression();
+        logisticClassifier.setEvaluateWithKfold(evaluateWithKfold);        
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, logisticClassifier));
+
+        System.out.println("5-anonymous dataset (naive bayes)");
+        ClassificationConfigurationNaiveBayes naiveBayesClassifier = ARXClassificationConfiguration.createNaiveBayes();
+        naiveBayesClassifier.setEvaluateWithKfold(evaluateWithKfold);
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, naiveBayesClassifier));
+        
+        System.out.println("5-anonymous dataset (random forest)");
+        ClassificationConfigurationRandomForest randomForestClassifier = ARXClassificationConfiguration.createRandomForest();
+        randomForestClassifier.setEvaluateWithKfold(evaluateWithKfold);
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, randomForestClassifier));
     }
 }
+
+
+/**
+ * ===========================================================
+ * Example output with evaluateWithKfold = true;
+ * ===========================================================
+ Creating a training data subset ....
+5-anonymous dataset (logistic regression)
+StatisticsClassification{
+ - Accuracy:
+   * Original: 0.6953119819640607
+   * ZeroR: 0.4663152310854718
+   * Output: 0.6940189642596645
+ - Average error:
+   * Original: 0.4301467184165105
+   * ZeroR: 0.5336847689145282
+   * Output: 0.43041888382409704
+ - Brier score:
+   * Original: 0.4333317703310125
+   * ZeroR: 0.6572252917603948
+   * Output: 0.4372894125209676
+ - Number of classes: 7
+ - Number of measurements: 30162
+}
+5-anonymous dataset (naive bayes)
+StatisticsClassification{
+ - Accuracy:
+   * Original: 0.6447516742921557
+   * ZeroR: 0.4663152310854718
+   * Output: 0.6722697433857171
+ - Average error:
+   * Original: 0.38050937350272185
+   * ZeroR: 0.5336847689145282
+   * Output: 0.35648745375532154
+ - Brier score:
+   * Original: 0.5499427575714274
+   * ZeroR: 0.6572252917603948
+   * Output: 0.512156556610383
+ - Number of classes: 7
+ - Number of measurements: 30162
+}
+5-anonymous dataset (random forest)
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+StatisticsClassification{
+ - Accuracy:
+   * Original: 0.603772959352828
+   * ZeroR: 0.4663152310854718
+   * Output: 0.6156421987931835
+ - Average error:
+   * Original: 0.5699613869024831
+   * ZeroR: 0.5336847689145282
+   * Output: 0.5552447567631911
+ - Brier score:
+   * Original: 0.5317809865104269
+   * ZeroR: 0.6572252917603948
+   * Output: 0.5042967130971948
+ - Number of classes: 7
+ - Number of measurements: 30162
+}
+
+ 
+ * ===========================================================
+ * Example output with evaluateWithKfold = false;
+ * ===========================================================
+
+Creating a training data subset ....
+5-anonymous dataset (logistic regression)
+StatisticsClassification{
+ - Accuracy:
+    Original: 0.69
+    ZeroR: 0.46
+    Output: 0.6845
+ - Average error:
+    Original: 0.4357585527644324
+    ZeroR: 0.54
+    Output: 0.4377426743661062
+ - Brier score:
+    Original: 0.888404431332961
+    ZeroR: 0.932658447872528
+    Output: 0.8896271153039844
+ - Number of classes: 7
+ - Number of measurements: 6000
+}
+5-anonymous dataset (naive bayes)
+StatisticsClassification{
+ - Accuracy:
+    Original: 0.6406666666666667
+    ZeroR: 0.46
+    Output: 0.6766666666666666
+ - Average error:
+    Original: 0.3822702437028365
+    ZeroR: 0.54
+    Output: 0.3566992097114707
+ - Brier score:
+    Original: 0.9110100351549149
+    ZeroR: 0.932658447872528
+    Output: 0.9023854777043593
+ - Number of classes: 7
+ - Number of measurements: 6000
+}
+5-anonymous dataset (random forest)
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+StatisticsClassification{
+ - Accuracy:
+    Original: 0.5766666666666667
+    ZeroR: 0.46
+    Output: 0.5466666666666666
+ - Average error:
+    Original: 0.5760646545342571
+    ZeroR: 0.54
+    Output: 0.5770816662108619
+ - Brier score:
+    Original: 0.908826414086422
+    ZeroR: 0.932658447872528
+    Output: 0.9066104920932022
+ - Number of classes: 7
+ - Number of measurements: 6000
+}
+
+ */

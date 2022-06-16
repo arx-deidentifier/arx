@@ -85,6 +85,9 @@ public class ModelEvent {
         /**  SELECTED_UTILITY_VISUALIZATION */
         SELECTED_UTILITY_VISUALIZATION,
         
+        /**  SELECTED_UTILITY_KFold */
+        SELECTED_UTILITY_KFold,
+        
         /**  ATTRIBUTE_VALUE */
         ATTRIBUTE_VALUE,
 
