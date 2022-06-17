@@ -150,11 +150,15 @@ public class Example61 extends Example {
         DataHandle output = result.getOutput();
         
         // Run evaluation using k-fold cross validation 
+        System.out.println("----------------------------------------");
         System.out.println("Evaluation using k-fold cross validation");
+        System.out.println("----------------------------------------");
         evaluate(output, false);
         
         // Run evaluation using test/training set
+        System.out.println("--------------------------------------");
         System.out.println("Evaluation using test and training set");
+        System.out.println("--------------------------------------");
         evaluate(output, true);
     }
 
@@ -166,6 +170,7 @@ public class Example61 extends Example {
      */
     private static void evaluate(DataHandle data, boolean useTestTrainingSet) throws ParseException {
 
+        // Specify
         String[] features = new String[] {
                                            "sex",
                                            "age",
@@ -179,7 +184,7 @@ public class Example61 extends Example {
         
         String clazz = "marital-status";
         
-        System.out.println(" - Logistic regression");
+        // Perform measurement
         ClassificationConfigurationLogisticRegression logisticClassifier = ARXClassificationConfiguration.createLogisticRegression();
         logisticClassifier.setUseTrainingTestSet(useTestTrainingSet);
         System.out.println(data.getStatistics().getClassificationPerformance(features, clazz, logisticClassifier));
