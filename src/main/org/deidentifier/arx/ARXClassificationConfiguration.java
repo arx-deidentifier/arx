@@ -37,9 +37,9 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     public static final int     DEFAULT_MAX_RECORDS     = 100000;
     /** Default value */
     public static final int     DEFAULT_NUMBER_OF_FOLDS = 10;
-    
     /** Default value */
     public static final int     DEFAULT_VECTOR_LENGTH   = 1000;
+    
     /**
      * Creates a new instance for logistic regression classifiers
      * @return
@@ -76,6 +76,7 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     private boolean             modified                = false;
     /** Training/test set */
     private boolean             useTrainingTestSet      = false;
+    
     /**
      * Creates a new instance with default settings
      */
