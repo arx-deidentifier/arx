@@ -368,7 +368,7 @@ public class StatisticsClassification {
 
         // Track
         int classifications = 0;
-        double total = useTrainingTestSet ? (100d / (double)numClassifications) : 
+        double total = useTrainingTestSet ? (100d / (double)folds.get(0).size() + folds.get(1).size()) : 
                                             (100d / ((double)numClassifications * (double)folds.size()));
         double done = 0d;
         
