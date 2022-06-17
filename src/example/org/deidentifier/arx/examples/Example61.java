@@ -42,8 +42,6 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
@@ -183,17 +181,7 @@ public class Example61 extends Example {
         
         System.out.println(" - Logistic regression");
         ClassificationConfigurationLogisticRegression logisticClassifier = ARXClassificationConfiguration.createLogisticRegression();
-        logisticClassifier.setUseTrainingTestSet(useTestTrainingSet);        
+        logisticClassifier.setUseTrainingTestSet(useTestTrainingSet);
         System.out.println(data.getStatistics().getClassificationPerformance(features, clazz, logisticClassifier));
-
-        System.out.println(" - Naive bayes");
-        ClassificationConfigurationNaiveBayes naiveBayesClassifier = ARXClassificationConfiguration.createNaiveBayes();
-        naiveBayesClassifier.setUseTrainingTestSet(useTestTrainingSet);
-        System.out.println(data.getStatistics().getClassificationPerformance(features, clazz, naiveBayesClassifier));
-        
-        System.out.println(" - Random forest");
-        ClassificationConfigurationRandomForest randomForestClassifier = ARXClassificationConfiguration.createRandomForest();
-        randomForestClassifier.setUseTrainingTestSet(useTestTrainingSet);
-        System.out.println(data.getStatistics().getClassificationPerformance(features, clazz, randomForestClassifier));
     }
 }
