@@ -64,7 +64,7 @@ public class ARXAnonymizer { // NO_UCD
     public static final boolean PRODUCTION_RELEASE = true;
 	
 	/** The global version string of this release*/
-	public static final String VERSION = "3.9.0";
+	public static final String VERSION = "3.9.1";
 
     /**
      * Temporary result of the ARX algorithm.

@@ -406,7 +406,7 @@ public class ViewAttributeList implements IView {
                             }
                             
                             // Response variable and left click
-                            else if (i == 3 && e.button == 1) {
+                            else if (i == 4 && e.button == 1) {
                                 String attribute = (String)item.getData();
                                 boolean isResponseVariable = !model.getInputDefinition().isResponseVariable(attribute);
                                 model.getInputDefinition().setResponseVariable(attribute, isResponseVariable);
