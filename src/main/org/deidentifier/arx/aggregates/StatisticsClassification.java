@@ -348,30 +348,34 @@ public class StatisticsClassification {
         this.numClasses = specification.classMap.size();
 
         // Determine folds and samples to consider
-        int numSamples = getNumSamples(inputHandle, config);
+        int numRecords = getNumSamples(inputHandle, config);
         boolean useTrainingTestSet = config.isUseTrainingTestSet();
         List<List<Integer>> folds = null;
-        if (useTrainingTestSet && inputHandle.isSubsetAvailable()) {
+        if (useTrainingTestSet) {
             
             // Use test and training set
-            folds = getTestTrainingFolds(inputHandle, numSamples);
+            folds = getTestTrainingFolds(inputHandle, numRecords);
             
         } else {
             
             // K-fold cross-validation
-            int k = numSamples > config.getNumFolds() ? config.getNumFolds() : numSamples;
-            folds = getFolds(inputHandle.getNumRows(), numSamples, k);
+            int k = numRecords > config.getNumFolds() ? config.getNumFolds() : numRecords;
+            folds = getFolds(inputHandle.getNumRows(), numRecords, k);
         }
+        
+        // Determine number of classifications
+        int numClassifications = useTrainingTestSet ? folds.get(0).size() : numRecords;
 
         // Track
         int classifications = 0;
-        double total = 100d / ((double)numSamples * (double)folds.size());
+        double total = useTrainingTestSet ? (100d / (double)numClassifications) : 
+                                            (100d / ((double)numClassifications * (double)folds.size()));
         double done = 0d;
         
         // ROC
-        double[] inputConfidences = new double[numSamples * ( 1 + numClasses)];
-        double[] outputConfidences = (inputHandle == outputHandle) ? null : new double[numSamples * ( 1 + numClasses)];
-        double[] zerorConfidences = new double[numSamples * ( 1 + numClasses)];
+        double[] inputConfidences = new double[numClassifications * ( 1 + numClasses)];
+        double[] outputConfidences = (inputHandle == outputHandle) ? null : new double[numClassifications * ( 1 + numClasses)];
+        double[] zerorConfidences = new double[numClassifications * ( 1 + numClasses)];
         int confidencesIndex = 0;
                 
         // For each fold as a validation set
