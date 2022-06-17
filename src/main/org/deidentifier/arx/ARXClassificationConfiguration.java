@@ -30,15 +30,17 @@ import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 public abstract class ARXClassificationConfiguration<T extends ARXClassificationConfiguration<?>> implements Serializable, Cloneable {
 
     /** SVUID */
-    private static final long serialVersionUID = -8751059558718015927L;
+    private static final long   serialVersionUID          = -8751059558718015927L;
     /** Default value */
-    public static final boolean DEFAULT_DETERMINISTIC   = true;
+    public static final boolean DEFAULT_DETERMINISTIC     = true;
     /** Default value */
-    public static final int     DEFAULT_MAX_RECORDS     = 100000;
+    public static final int     DEFAULT_MAX_RECORDS       = 100000;
     /** Default value */
-    public static final int     DEFAULT_NUMBER_OF_FOLDS = 10;
+    public static final int     DEFAULT_NUMBER_OF_FOLDS   = 10;
     /** Default value */
-    public static final int     DEFAULT_VECTOR_LENGTH   = 1000;
+    public static final int     DEFAULT_VECTOR_LENGTH     = 1000;
+    /** Default value */
+    public static final boolean DEFAULT_TEST_TRAINING_SET = false;
     
     /**
      * Creates a new instance for logistic regression classifiers
@@ -75,7 +77,7 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     /** Modified */
     private boolean             modified                = false;
     /** Training/test set */
-    private boolean             useTrainingTestSet      = false;
+    private Boolean             useTrainingTestSet      = false;
     
     /**
      * Creates a new instance with default settings
@@ -152,6 +154,9 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
      * @return
      */
     public boolean isUseTrainingTestSet() {
+        if (this.useTrainingTestSet == null) {
+            this.useTrainingTestSet = DEFAULT_TEST_TRAINING_SET;
+        }
         return this.useTrainingTestSet;
     }
     

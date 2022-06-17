@@ -119,6 +119,11 @@ public class ModelClassification implements Serializable {
      * @param configCurrent
      */
     public void setCurrentConfiguration(ARXClassificationConfiguration<?> configCurrent){
+        if (!(configCurrent == config ||
+              configCurrent == configNaiveBayes ||
+              configCurrent == configRandomForest )) {
+            throw new IllegalArgumentException("Unknown configuration object");
+        }
         this.configCurrent = configCurrent;
     }
     
