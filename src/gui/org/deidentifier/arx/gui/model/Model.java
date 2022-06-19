@@ -304,6 +304,9 @@ public class Model implements Serializable {
     /** Model */
     private ModelClassification                           classificationModel             = new ModelClassification();
 
+    /** Select K-fold or training/testing subsets for evaluation */   
+    private Boolean                                       showKfoldEvaluation             = null;
+
     /* *****************************************
      * Information about the last anonymization process
      * ******************************************/
@@ -1344,6 +1347,17 @@ public class Model implements Serializable {
     }
 
     /**
+     * Whether to use K-fold for evaluation
+     * @return the showSuppressedValues
+     */
+    public boolean isKfoldEvaluation() {
+        if (showKfoldEvaluation == null) {
+            showKfoldEvaluation = true;
+        }
+        return showKfoldEvaluation;
+    }
+    
+    /**
      * Returns whether visualization is enabled.
      *
      * @return
@@ -1810,6 +1824,14 @@ public class Model implements Serializable {
     public void setSnapshotSizeSnapshot(final double snapshotSize) {
         setModified();
         snapshotSizeSnapshot = snapshotSize;
+    }
+    
+    /**
+     * Whether to use K-fold or training/subset for classification evaluation
+     * @param showKfoldEvaluation the showKfoldEvaluation to set
+     */
+    public void setShowKfoldEvaluation(boolean showKfoldEvaluation) {
+        this.showKfoldEvaluation = showKfoldEvaluation;
     }
     
     /**

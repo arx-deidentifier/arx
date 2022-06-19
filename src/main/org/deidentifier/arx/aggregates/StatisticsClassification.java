@@ -642,7 +642,7 @@ public class StatisticsClassification {
                                                   DataHandleInternal outputHandle,
                                                   ARXClassificationConfiguration<?> config,
                                                   ClassificationDataSpecification specification) throws ParseException {
-        
+
         // Track
         int classifications = 0;
         double total = numSamples;

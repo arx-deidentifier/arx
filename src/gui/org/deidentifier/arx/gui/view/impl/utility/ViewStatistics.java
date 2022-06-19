@@ -72,6 +72,9 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     /** Parent */
     private final Composite       parent;
 
+    /** Needs updates to include K-fold or training/testing subsets in classification evaluation*/
+    private final boolean         showKfoldEvaluation = true;
+    
 	/**
      * Creates a new instance.
      *
@@ -85,8 +88,8 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
                            final Controller controller,
                            final ModelPart target,
                            final ModelPart reset,
-                           final boolean dependsOnAttribute) {
-
+                           final boolean dependsOnAttribute,
+                           final boolean showKfoldEvaluation) {
         // Register
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
@@ -96,6 +99,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
+        controller.addListener(ModelPart.SHOW_KFOLD_EVALUATION, this);        
         controller.addListener(target, this);
         if (reset != null) {
             controller.addListener(reset, this);
@@ -196,6 +200,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         // Invalidate
         if (event.part == ModelPart.SELECTED_ATTRIBUTE || event.part == ModelPart.ATTRIBUTE_VALUE) {
             if (dependsOnAttribute) {
+                this.triggerUpdate();
+                return;
+            }
+        }
+        
+        // Invalidate
+        if (event.part == ModelPart.SHOW_KFOLD_EVALUATION) {
+            if (showKfoldEvaluation) {
                 this.triggerUpdate();
                 return;
             }

@@ -68,7 +68,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                        final ModelPart target,
                        final ModelPart reset) {
         
-        super(parent, controller, target, reset, true);
+        super(parent, controller, target, reset, true, true);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     

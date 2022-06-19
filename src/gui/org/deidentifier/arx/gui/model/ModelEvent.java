@@ -128,7 +128,10 @@ public class ModelEvent {
         RESPONSE_VARIABLES,
 
         /**  ATTRIBUTE_TYPE */
-        ATTRIBUTE_TYPE_BULK_UPDATE
+        ATTRIBUTE_TYPE_BULK_UPDATE,
+        
+        /** SHOW K_FOLD EVALUATION */
+        SHOW_KFOLD_EVALUATION
     }
 
     /** The part of the model that has changed. */

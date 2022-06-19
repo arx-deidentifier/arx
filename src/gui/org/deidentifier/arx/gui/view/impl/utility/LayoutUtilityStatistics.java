@@ -72,16 +72,20 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     private static final String                         TAB_CLASSIFICATION_ANALYSIS = Resources.getMessage("StatisticsView.9");             //$NON-NLS-1$
 
     /** View */
-    private final ComponentTitledFolder                 folder;
+    private final ComponentTitledFolder                 folder; 
 
     /** View */
-    private final ToolItem                              enable;
+    private final ToolItem                              chkboxVisualization; //enable
+    
+    /** View */
+    private final ToolItem                              showKfold;
+
 
     /** View */
-    private final Image                                 enabled;
+    private final Image                                 iconVisualizationEnabled;//enabled
 
     /** View */
-    private final Image                                 disabled;
+    private final Image                                 iconVisualizationDisabled; //disabled
 
     /** View */
     private final Map<Composite, String>                helpids                     = new HashMap<Composite, String>();
@@ -108,21 +112,32 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                                    final ModelPart target,
                                    final ModelPart reset) {
 
-        this.enabled = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
-        this.disabled = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
+        this.iconVisualizationEnabled = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
+        this.iconVisualizationDisabled = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
         this.controller = controller;
         
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
+        controller.addListener(ModelPart.SHOW_KFOLD_EVALUATION, this);
 
-        // Create enable/disable button
-        final String label = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
+        // Create show K-fold button
+        final String kfoldButtonLabel = Resources.getMessage("StatisticsView.13"); //$NON-NLS-1$
+
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-50", helpids); //$NON-NLS-1$
-        bar.add(label, disabled, true, new Runnable() { @Override public void run() {
-            toggleEnabled();
-            toggleImage(); 
-        }});
+        bar.add(kfoldButtonLabel, controller.getResources().getManagedImage("tickKFold.png"), true, //$NON-NLS-1$
+                new Runnable() {  
+                    @Override public void run() {
+                    toggleShowKfold();
+                }});
         
+
+        // Create visualization enable/disable button
+        final String visializationButtonLabel = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
+        bar.add(visializationButtonLabel, iconVisualizationDisabled, true, new Runnable() { @Override public void run() {
+            toggleVisualizationEnabled();
+            toggleVisualizationIcon(); 
+        }});
+
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
         
@@ -143,8 +158,10 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         
         // Init folder
         this.folder.setSelection(0);
-        this.enable = folder.getButtonItem(label);
-        this.enable.setEnabled(false);
+        this.showKfold = folder.getButtonItem(kfoldButtonLabel);
+        this.showKfold.setEnabled(true);        
+        this.chkboxVisualization = folder.getButtonItem(visializationButtonLabel);
+        this.chkboxVisualization.setEnabled(false);
         
         // Set initial visibility
         folder.setVisibleItems(Arrays.asList(new String[] { TAB_SUMMARY,
@@ -188,9 +205,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     @Override
     public void reset() {
         model = null;
-        enable.setSelection(true);
-        enable.setImage(enabled);
-        enable.setEnabled(false);
+        chkboxVisualization.setSelection(true);
+        chkboxVisualization.setImage(iconVisualizationEnabled);
+        chkboxVisualization.setEnabled(false);
     }
     
     /**
@@ -227,13 +244,18 @@ public class LayoutUtilityStatistics implements ILayout, IView {
 
         if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
-            this.enable.setEnabled(true);
-            this.enable.setSelection(model.isVisualizationEnabled());
-            this.toggleImage();
+            this.showKfold.setSelection(model.isKfoldEvaluation());
+            this.showKfold.setEnabled(true);            
+            this.chkboxVisualization.setEnabled(true);
+            this.chkboxVisualization.setSelection(model.isVisualizationEnabled());
+            this.toggleVisualizationIcon();
         } else if (event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION) {
-            this.enable.setSelection(model.isVisualizationEnabled());
-            this.toggleImage();
-        }
+            this.chkboxVisualization.setSelection(model.isVisualizationEnabled());
+            this.toggleVisualizationIcon();
+       } else if (event.part == ModelPart.SHOW_KFOLD_EVALUATION) {
+            this.showKfold.setSelection(model.isKfoldEvaluation());
+            this.showKfold.setEnabled(true);
+       }
     }
 
     /**
@@ -259,19 +281,29 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     /**
      * Toggle visualization enabled.
      */
-    private void toggleEnabled() {
-        this.model.setVisualizationEnabled(this.enable.getSelection());
-        this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, enable.getSelection()));
+    private void toggleVisualizationEnabled() {
+        this.model.setVisualizationEnabled(this.chkboxVisualization.getSelection());
+        this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, chkboxVisualization.getSelection()));
     }
 
     /**
      * Toggle image.
      */
-    private void toggleImage(){
-        if (enable.getSelection()) {
-            enable.setImage(enabled);
+    private void toggleVisualizationIcon(){
+        if (chkboxVisualization.getSelection()) {
+            chkboxVisualization.setImage(iconVisualizationEnabled);
         } else {
-            enable.setImage(disabled);
+            chkboxVisualization.setImage(iconVisualizationDisabled);
         }
     }
+    
+    /**
+     * Toggle show Kfold.
+     */
+    private void toggleShowKfold() {
+        this.model.setShowKfoldEvaluation(this.showKfold.getSelection());
+        this.model.getClassificationModel().getCurrentConfiguration().setEvaluateWithKfold(this.showKfold.getSelection());
+        this.controller.update(new ModelEvent(this, ModelPart.SHOW_KFOLD_EVALUATION, showKfold.getSelection()));
+    }
+    
 }
