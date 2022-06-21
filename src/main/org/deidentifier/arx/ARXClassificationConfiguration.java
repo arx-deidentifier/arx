@@ -93,13 +93,15 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
      * @param numberOfFolds
      * @param seed
      * @param vectorLength
+     * @param useTrainingTestSet
      */
-    protected ARXClassificationConfiguration(boolean deterministic, int maxRecords, int numberOfFolds, long seed, int vectorLength) {
+    protected ARXClassificationConfiguration(boolean deterministic, int maxRecords, int numberOfFolds, long seed, int vectorLength, boolean useTrainingTestSet) {
         this.deterministic = deterministic;
         this.maxRecords = maxRecords;
         this.numberOfFolds = numberOfFolds;
         this.seed = seed;
         this.vectorLength = vectorLength;
+        this.useTrainingTestSet = useTrainingTestSet;
     }
 
     @Override
