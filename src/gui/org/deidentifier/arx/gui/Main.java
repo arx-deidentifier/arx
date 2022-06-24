@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
 
 /**
+ *  test 
  * Main entry point.
  *
  * @author Fabian Prasser
@@ -101,6 +102,8 @@ public class Main {
             
             // Check for updates
             new Update(main.getShell());
+            
+            int x =10;
             
             // Main event loop
             while (!main.isDisposed()) {
