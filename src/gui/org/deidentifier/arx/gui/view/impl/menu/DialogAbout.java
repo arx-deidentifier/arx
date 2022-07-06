@@ -76,7 +76,7 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Philip Offtermatt (performance improvements)\n" + //$NON-NLS-1$
                                                "Kieu-Mi Do (genetic algorithm)\n" + //$NON-NLS-1$
                                                "Thierry Meurers (genetic algorithm)" + //$NON-NLS-1$
-                                               "Armin Müller (bugfixes)"; //$NON-NLS-1$
+                                               "Armin Mueller (bugfixes)"; //$NON-NLS-1$
     
     /**  Icon */
     private Image image;
