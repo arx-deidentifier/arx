@@ -29,15 +29,15 @@
 
 [Example 16](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example16.java) - how to use the API for access to basic statistics about the data
 
-[Example 17](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example16.java) - how to list the available data types
+[Example 17](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example17.java) - how to list the available data types
 
-[Example 18](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example17.java) - how to use the builders for generalization hierarchies
+[Example 18](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example18.java) - how to use the builders for generalization hierarchies
 
-[Example 19](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example18.java) - how to use the API for creating different output representations of an input dataset
+[Example 19](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example19.java) - how to use the API for creating different output representations of an input dataset
 
-[Example 20](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example19.java) - how to use aggregate functions
+[Example 20](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example20.java) - how to use aggregate functions
 
-[Example 21](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example20.java) - demonstrates the use of the data import facilities provided by the ARX framework. Data can be imported from various types of sources, e.g. CSV files, Excel files and databases (using JDBC). The API is mostly the same for all of these sources, although not all options might be available in each case. Refer to the comments further down below for details about particular sources. 
+[Example 21](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example21.java) - demonstrates the use of the data import facilities provided by the ARX framework. Data can be imported from various types of sources, e.g. CSV files, Excel files and databases (using JDBC). The API is mostly the same for all of these sources, although not all options might be available in each case. Refer to the comments further down below for details about particular sources. 
 
 [Example 22](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example22.java) - how to use the l-diversity privacy model without protecting sensitive assocations
 
