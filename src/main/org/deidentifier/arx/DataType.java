@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,6 +127,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         }
 
+        /**
+         * Clone constructor
+         * @param format
+         * @param string
+         * @param locale
+         */
+        private ARXDate(SimpleDateFormat format, String string, Locale locale) {
+            this.format = format;
+            this.string = string;
+            this.locale = locale;
+        }
+
         @Override
         public Date add(Date augend, Date addend) {
             long d1 = augend.getTime();
@@ -136,7 +148,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
 
         @Override
         public DataType<Date> clone() {
-            return this;
+            return new ARXDate( format == null ? null : (SimpleDateFormat)format.clone(), 
+                                string,
+                                locale == null ? null : (Locale)locale.clone());
         }
 
         @Override
@@ -201,7 +215,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             if (s == null) {
                 return NULL_VALUE;
             }
-        	return format.format(s);
+            // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+        	return ((SimpleDateFormat)format.clone()).format(s);
         }
         
         /**
@@ -215,9 +230,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
             
             // Prepare
-            SimpleDateFormat sdf = format;
+            // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+            SimpleDateFormat sdf = ((SimpleDateFormat)format.clone());
             if (zone != null) {
-                sdf = (SimpleDateFormat) format.clone();   
                 sdf.setTimeZone(zone);
             }
             
@@ -324,7 +339,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         	try {
         	    ParsePosition pos = new ParsePosition(0);
-                Date parsed = format.parse(s, pos);
+                // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                Date parsed = ((SimpleDateFormat)format.clone()).parse(s, pos);
                 if (pos.getIndex() != s.length() || pos.getErrorIndex() != -1) {
                     throw new IllegalArgumentException("Parse error");
                 }
@@ -430,6 +446,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         }
 
+        /**
+         * Clone constructor
+         * @param format
+         * @param string
+         * @param locale
+         */
+        private ARXDecimal(DecimalFormat format, String string, Locale locale) {
+            this.format = format;
+            this.string = string;
+            this.locale = locale;
+        }
+
         @Override
         public Double add(Double augend, Double addend) {
             return parse(format(augend + addend));
@@ -437,7 +465,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
         
         @Override
         public DataType<Double> clone() {
-            return this;
+            return new ARXDecimal(  format == null ? null : (DecimalFormat)format.clone(), 
+                                    string,
+                                    locale == null ? null : (Locale)locale.clone());
         }
 
         @Override
@@ -510,7 +540,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             if (format==null){
                 return String.valueOf(s);
             } else {
-                return format.format(s);
+                // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                return ((DecimalFormat)format.clone()).format(s);
             }
         }
 
@@ -612,7 +643,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
                     return Double.valueOf(s);
                 } else {
                     ParsePosition pos = new ParsePosition(0);
-                    double parsed = format.parse(s, pos).doubleValue();
+                    // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                    double parsed = ((DecimalFormat)format.clone()).parse(s, pos).doubleValue();
                     if (pos.getIndex() != s.length() || pos.getErrorIndex() != -1) {
                         throw new IllegalArgumentException("Parse error");
                     }
@@ -716,6 +748,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         }
         
+        /**
+         * Clone constructor
+         * @param format
+         * @param string
+         * @param locale
+         */
+        private ARXInteger(DecimalFormat format, String string, Locale locale) {
+            this.format = format;
+            this.string = string;
+            this.locale = locale;
+        }
+
         @Override
         public Long add(Long augend, Long addend) {
             return augend + addend;
@@ -723,7 +767,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
         
         @Override
         public DataType<Long> clone() {
-            return this;
+            return new ARXInteger(  format == null ? null : (DecimalFormat)format.clone(), 
+                                    string,
+                                    locale == null ? null : (Locale)locale.clone());
         }
 
         @Override
@@ -791,7 +837,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             if (format==null){
                 return String.valueOf(s);
             } else {
-                return format.format(s);
+                // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                return ((DecimalFormat)format.clone()).format(s);
             }
         }
         
@@ -892,7 +939,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
                 if (format == null) {
                     return Long.valueOf(s);
                 } else {
-                    return format.parse(s).longValue();
+                    // TODO: We clone "format" to increase thread safety. There may be better (and more efficient) options.
+                    return ((DecimalFormat)format.clone()).parse(s).longValue();
                 }
             } catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
@@ -1012,9 +1060,17 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
             }
         }
         
+        /**
+         * Clone constructor
+         * @param order
+         */
+        private ARXOrderedString(Map<String, Integer> order) {
+            this.order = order;
+        }
+
         @Override
         public DataType<String> clone() {
-            return this;
+            return new ARXOrderedString(order == null ? null : new HashMap<String, Integer>(order));
         }
         
         @Override

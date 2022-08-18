@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Martin Waltl (summary statistics, GUI improvements)\n" + //$NON-NLS-1$
                                                "Philip Offtermatt (performance improvements)\n" + //$NON-NLS-1$
                                                "Kieu-Mi Do (genetic algorithm)\n" + //$NON-NLS-1$
-                                               "Thierry Meurers (genetic algorithm)"; //$NON-NLS-1$
+                                               "Thierry Meurers (genetic algorithm)" + //$NON-NLS-1$
+                                               "Armin Mueller (bugfixes)"; //$NON-NLS-1$
     
     /**  Icon */
     private Image image;

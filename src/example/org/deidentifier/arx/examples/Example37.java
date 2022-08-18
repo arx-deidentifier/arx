@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,15 +33,16 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 
 /**
- * This class implements an example of how to use (e,d)-DP
+ * This class implements an example of how to use data-dependent and data-independent (e,d)-DP
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Ibraheem Al-Dhamari
  */
 public class Example37 extends Example {
 
     /**
-     * Entry point.
+     *  Differential privacy example
      * 
      * @param args
      *            the arguments
@@ -84,28 +85,97 @@ public class Example37 extends Example {
         data.getDefinition().setHierarchy("gender", gender);
         data.getDefinition().setHierarchy("zipcode", zipcode);
 
+        // Print input
+        System.out.println(" - Input data:");
+        printHandle(data.getHandle());
+
+        // The parameter epsilon
+        double epsilon = 2d;
+        
+        // The parameter delta
+        // Notes: 1. It is recommended that it is less than 1/number_of_records
+        //        2. For this small dataset, all records will be suppressed
+        double delta = 0.1d;
+        
+       // Anonymize using data independent DP         
+       dataIndependentDP(data, epsilon, delta);
+       
+       // Release handle
+       data.getHandle().release();
+       
+       // Anonymize using data dependent DP         
+       dataDependentDP(data, epsilon, delta); 
+    }
+    
+    /**
+     * Data Dependent DP.
+     * @param delta 
+     * @param epsilon 
+     * 
+     * @param config: the anonymization configuration 
+     *
+     */
+    public static void dataDependentDP (DefaultData data, double epsilon, double delta) throws IOException {
+
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
 
-        // Create a differential privacy criterion
-        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.00001d,
-                                                                    DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
+        // Additional epsilon for search process
+        double dpSearchBudget = 0.1;              
 
+        // Create anonymization configuration
         ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(criterion);
-        config.setSuppressionLimit(1d);
+        config.setSuppressionLimit(1d);        
+        config.addPrivacyModel(new EDDifferentialPrivacy(epsilon, delta));
+        config.setDPSearchBudget(dpSearchBudget);  
+
+        // Number of steps to search
+        // Number of steps should not be more than the product of height of 
+        // all hierarchies. I.e. for this dataset: 3 * 2 * 6 = 36.
+        config.setHeuristicSearchStepLimit(36);
+
+        // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);
 
         // Access output
         DataHandle optimal = result.getOutput();
 
-        System.out.println(result.isResultAvailable());
+        // Print
+        System.out.println(" - Data dependent DP:");
+        printHandle(optimal);
+    }
+    
+    /**
+     *  Data independent differential privacy
+     * @param delta 
+     * @param epsilon 
+     * 
+     * @param config: the anonymization configuration 
+     *
+     */
+    public static void dataIndependentDP(DefaultData data, double epsilon, double delta) throws IOException {
 
-        // Print input
-        System.out.println(" - Input data:");
-        printHandle(data.getHandle());
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
 
-        System.out.println(" - Result:");
+        // Create anonymization configuration
+        ARXConfiguration config = ARXConfiguration.create();
+        config.setSuppressionLimit(1d);          
+        
+        // Create a data-independent differential privacy criterion
+        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(epsilon, delta,
+                                                                    DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
+
+        config.addPrivacyModel(criterion);
+
+        // Anonymize
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Access output
+        DataHandle optimal = result.getOutput();
+
+        // Print
+        System.out.println(" - Data independent DP:");
         printHandle(optimal);
     }
 }

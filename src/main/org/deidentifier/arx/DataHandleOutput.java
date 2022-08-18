@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,12 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
@@ -53,6 +55,32 @@ public class DataHandleOutput extends DataHandle {
         /** The current row. */
         private int row = -1;
         
+        /** Shuffled indices*/
+        int[] indices = null;
+        
+        /**
+         * Creates an iterator
+         */
+        private ResultIterator() {
+            this(false);
+        }
+        
+        /**
+         * Creates an iterator
+         * @param random
+         */
+        private ResultIterator(boolean random) {
+
+            // Shuffle rows
+            if (random) {
+                indices = new int[dataGeneralized.getArray().getNumRows()];
+                for (int i = 0; i < indices.length; i++) {
+                    indices[i] = i;
+                }
+                ArrayUtils.shuffle(indices, new SecureRandom());
+            }
+        }
+        
         @Override
         public boolean hasNext() {
         	if (dataGeneralized == null || dataGeneralized.getArray() == null) {
@@ -75,8 +103,8 @@ public class DataHandleOutput extends DataHandle {
                 
                 // Create row
                 result = new String[header.length];
-                for (int i = 0; i < result.length; i++) {
-                    result[i] = internalGetValue(row, i, false);
+                for (int col = 0; col < result.length; col++) {
+                    result[col] = internalGetValue(indices == null ? row : indices[row], col, false);
                 }
             }
             
@@ -237,20 +265,21 @@ public class DataHandleOutput extends DataHandle {
         return this.optimized;
     }
     
-    /**
-     * Iterator.
-     * 
-     * @return the iterator
-     */
     @Override
     public Iterator<String[]> iterator() {
         checkReleased();
         return new ResultIterator();
     }
-    
+
     @Override
     public boolean replace(int column, String original, String replacement) {
         throw new UnsupportedOperationException("This operation is only supported by handles for data input");
+    }
+    
+    @Override
+    public Iterator<String[]> shuffledIterator() {
+        checkReleased();
+        return new ResultIterator(true);
     }
     
     /**

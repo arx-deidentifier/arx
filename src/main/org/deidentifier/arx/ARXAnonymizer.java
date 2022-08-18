@@ -1,6 +1,6 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2021 Fabian Prasser and contributors
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class ARXAnonymizer { // NO_UCD
     public static final boolean PRODUCTION_RELEASE = true;
 	
 	/** The global version string of this release*/
-	public static final String VERSION = "3.9.0";
+	public static final String VERSION = "3.9.1";
 
     /**
      * Temporary result of the ARX algorithm.
