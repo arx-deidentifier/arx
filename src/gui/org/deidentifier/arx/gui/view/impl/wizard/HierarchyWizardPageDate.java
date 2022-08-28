@@ -78,8 +78,10 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
 
     /** State */
     private boolean                        formatOK       = false;
+
     /** State */
     private boolean                        topCodingOK    = true;
+
     /** State */
     private boolean                        bottomCodingOK = true;
 

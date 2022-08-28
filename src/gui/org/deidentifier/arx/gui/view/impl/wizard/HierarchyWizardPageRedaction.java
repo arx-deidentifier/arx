@@ -305,7 +305,6 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         });
     }
     
-
     /**
      * Returns the index of the item, or adds it to the combo.
      *

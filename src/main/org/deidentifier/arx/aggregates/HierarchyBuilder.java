@@ -53,7 +53,10 @@ public abstract class HierarchyBuilder<T> implements Serializable {
         REDACTION_BASED("Redaction"),
 
         /**  Date-based hierarchy */
-        DATE_BASED("Date");
+        DATE_BASED("Date"),
+        
+        /**  Priority-based hierarchy */
+        PRIORITY_BASED("Priority");
         
         /** Name*/
         private final String name;

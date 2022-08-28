@@ -26,11 +26,14 @@ import java.util.GregorianCalendar;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
+import org.deidentifier.arx.aggregates.HierarchyBuilderDate;
+import org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity;
 import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Level;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderPriorityBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 
@@ -43,7 +46,7 @@ import cern.colt.Arrays;
  * @author Florian Kohlmayer
  */
 public class Example18 extends Example {
-
+    
     /**
      * Entry point.
      *
@@ -55,39 +58,36 @@ public class Example18 extends Example {
         intervalBased();
         orderBased();
         ldlCholesterol();
-        dates();
+        date();
         loadStore();
+        priorityBased();
     }
-
+    
     /**
-     * Exemplifies the use of the order-based builder.
+     * Exemplifies the use of the date-based builder.
      */
-    private static void dates() {
-
+    private static void date() {
+        
     	String stringDateFormat = "yyyy-MM-dd HH:mm";
     	
     	DataType<Date> dateType = DataType.createDate(stringDateFormat);
     	
         // Create the builder
-        HierarchyBuilderOrderBased<Date> builder = HierarchyBuilderOrderBased.create(dateType, false);
-
-        // Define grouping fanouts
-        builder.getLevel(0).addGroup(10, dateType.createAggregate().createIntervalFunction());
-        builder.getLevel(1).addGroup(2, dateType.createAggregate().createIntervalFunction());
-
-        // Alternatively
-        // builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
-        // builder.getLevel(0).addFanout(10);
-        // builder.getLevel(1).addFanout(2);
+        HierarchyBuilderDate builder = HierarchyBuilderDate.create(dateType);
+        
+        // Define grouping
+        builder.setGranularities(new Granularity[] {Granularity.WEEK_YEAR, 
+                                                    Granularity.QUARTER_YEAR, 
+                                                    Granularity.YEAR});
         
         System.out.println("---------------------");
-        System.out.println("ORDER-BASED DATE HIERARCHY");
+        System.out.println("DATE HIERARCHY");
         System.out.println("---------------------");
         System.out.println("");
         System.out.println("SPECIFICATION");
         
         // Print specification
-        for (Level<Date> level : builder.getLevels()) {
+        for (Granularity level : builder.getGranularities()) {
             System.out.println(level);
         }
         
@@ -101,7 +101,7 @@ public class Example18 extends Example {
         printArray(builder.build().getHierarchy());
         System.out.println("");
     }
-
+    
     /**
      * Returns example data.
      *
@@ -134,6 +134,7 @@ public class Example18 extends Example {
         	
             result[i] = format.format(date.getTime());
         }
+        result[result.length - 1] = DataType.NULL_VALUE;
         return result;
     }
 
@@ -150,7 +151,7 @@ public class Example18 extends Example {
         }
         return result;
     }
-    
+
     /**
      * Exemplifies the use of the interval-based builder.
      */
@@ -199,7 +200,7 @@ public class Example18 extends Example {
         printArray(builder.build().getHierarchy());
         System.out.println("");
     }
-
+    
     /**
      * Exemplifies the use of the interval-based builder for LDL cholesterol
      * in mmol/l.
@@ -248,7 +249,7 @@ public class Example18 extends Example {
         printArray(builder.build().getHierarchy());
         System.out.println("");
     }
-    
+
     /**
      * Shows how to load and store hierarchy specifications.
      */
@@ -298,11 +299,6 @@ public class Example18 extends Example {
         // Define grouping fanouts
         builder.getLevel(0).addGroup(10, DataType.INTEGER.createAggregate().createIntervalFunction());
         builder.getLevel(1).addGroup(2, DataType.INTEGER.createAggregate().createIntervalFunction());
-
-        // Alternatively
-        // builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
-        // builder.getLevel(0).addFanout(10);
-        // builder.getLevel(1).addFanout(2);
         
         System.out.println("---------------------");
         System.out.println("ORDER-BASED HIERARCHY");
@@ -317,6 +313,40 @@ public class Example18 extends Example {
         
         // Print info about resulting groups
         System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
+        
+        System.out.println("");
+        System.out.println("RESULT");
+        
+        // Print resulting hierarchy
+        printArray(builder.build().getHierarchy());
+        System.out.println("");
+    }
+    
+    /**
+     * Exemplifies the use of the priority-based builder.
+     */
+    private static void priorityBased() {
+        
+        System.out.println("-------------------------");
+        System.out.println("PRIORITY-BASED HIERARCHY");
+        System.out.println("-------------------------");
+        
+        // Create the builder
+        HierarchyBuilderPriorityBased<String> builder = HierarchyBuilderPriorityBased.create();
+        builder.setMaxLevels(3);
+        
+        // Print info about resulting groups
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(new String[] {"Prio1",
+                                                                                              "Prio2",
+                                                                                              "Prio3",
+                                                                                              "Prio4",
+                                                                                              "Prio5",
+                                                                                              "Prio6",
+                                                                                              "Prio7",
+                                                                                              "Prio8",
+                                                                                              "Prio9",
+                                                                                              "Prio10",
+                                                                                              "Prio11"})));
         
         System.out.println("");
         System.out.println("RESULT");
