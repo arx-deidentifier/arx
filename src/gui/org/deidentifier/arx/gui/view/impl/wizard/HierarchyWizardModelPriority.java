@@ -163,7 +163,7 @@ public class HierarchyWizardModelPriority<T> extends HierarchyWizardModelAbstrac
                     public int compare(String o1, String o2) {
                         int prio1 = frequency.getOrDefault(o1, 0);
                         int prio2 = frequency.getOrDefault(o2, 0);
-                        return (priority == Priority.FREQUENCY_HIGHEST_TO_LOWEST) ? Integer.compare(prio1, prio2) : -Integer.compare(prio1, prio2); 
+                        return (priority == Priority.FREQUENCY_HIGHEST_TO_LOWEST) ? -Integer.compare(prio1, prio2) : Integer.compare(prio1, prio2); 
                     }
                 });
             }
@@ -176,7 +176,7 @@ public class HierarchyWizardModelPriority<T> extends HierarchyWizardModelAbstrac
                     @Override
                     public int compare(String o1, String o2) {
                         try {
-                            return (priority == Priority.ORDER_HIGHEST_TO_LOWEST) ? dataType.compare(o1, o2) : -dataType.compare(o1, o2);
+                            return (priority == Priority.ORDER_HIGHEST_TO_LOWEST) ? -dataType.compare(o1, o2) : dataType.compare(o1, o2);
                         } catch (Exception e) {
                             return 0;
                         } 
