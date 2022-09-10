@@ -150,6 +150,7 @@ public class ImportWizardPageColumns extends WizardPage {
                     boolean selected = !wizardColumn.isEnabled();
                     wizardColumn.setEnabled(selected);
                     viewer.update(wizardColumn, null);
+                    check();
                 }
             });
 
@@ -168,6 +169,7 @@ public class ImportWizardPageColumns extends WizardPage {
                     if (name != null) {
                         wizardColumn.getColumn().setAliasName(name);
                         viewer.update(wizardColumn, null);
+                        check();
                     }
                 }
             });
@@ -201,6 +203,7 @@ public class ImportWizardPageColumns extends WizardPage {
                         ImportColumn column = wizardColumn.getColumn();
                         column.setDataType(entry.getValue());
                         viewer.update(wizardColumn, null);
+                        check();
                         return;
                     }
                 });
@@ -218,6 +221,7 @@ public class ImportWizardPageColumns extends WizardPage {
                         ImportColumn column = wizardColumn.getColumn();
                         column.setDataType(entry.getValue());
                         viewer.update(wizardColumn, null);
+                        check();
                         return;
                     }
                 });
