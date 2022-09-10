@@ -256,9 +256,9 @@ public class ImportWizardPageColumns extends WizardPage {
          * @param select
          */
         private void selectAll(boolean select) {
-            for (int i = 0; i < table.getItems().length; i++) {
-                wizardImport.getData().getWizardColumns().get(i).setEnabled(select);
-                viewer.update(wizardImport.getData().getWizardColumns().get(i), null);
+            for (ImportWizardModelColumn column : wizardImport.getData().getWizardColumns()) {
+                column.setEnabled(select);
+                viewer.update(column, null);
             }
             check();
         }
