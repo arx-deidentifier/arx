@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -32,6 +34,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Level;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
+import org.deidentifier.arx.aggregates.HierarchyBuilderPriorityBased.Priority;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderPriorityBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
@@ -331,22 +334,30 @@ public class Example18 extends Example {
         System.out.println("PRIORITY-BASED HIERARCHY");
         System.out.println("-------------------------");
         
+        // Data
+        String[] data = new String[] {"Prio1",
+                                      "Prio2",
+                                      "Prio3",
+                                      "Prio4",
+                                      "Prio5",
+                                      "Prio6",
+                                      "Prio7",
+                                      "Prio8",
+                                      "Prio9",
+                                      "Prio10",
+                                      "Prio11"};
+        
+        Map<String, Integer> priorities = new HashMap<String, Integer>();
+        for (int i = 0; i < data.length; i++) {
+            priorities.put(data[i], -i);
+        }
+        
         // Create the builder
-        HierarchyBuilderPriorityBased<String> builder = HierarchyBuilderPriorityBased.create();
+        HierarchyBuilderPriorityBased<String> builder = HierarchyBuilderPriorityBased.create(priorities, Priority.HIGHEST_TO_LOWEST);
         builder.setMaxLevels(3);
         
         // Print info about resulting groups
-        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(new String[] {"Prio1",
-                                                                                              "Prio2",
-                                                                                              "Prio3",
-                                                                                              "Prio4",
-                                                                                              "Prio5",
-                                                                                              "Prio6",
-                                                                                              "Prio7",
-                                                                                              "Prio8",
-                                                                                              "Prio9",
-                                                                                              "Prio10",
-                                                                                              "Prio11"})));
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(data)));
         
         System.out.println("");
         System.out.println("RESULT");

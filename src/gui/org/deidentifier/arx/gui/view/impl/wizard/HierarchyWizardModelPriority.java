@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Map;
 
 import org.deidentifier.arx.DataType;
@@ -82,7 +80,25 @@ public class HierarchyWizardModelPriority<T> extends HierarchyWizardModelAbstrac
     
     @Override
     public HierarchyBuilderPriorityBased<T> getBuilder(boolean serializable) {
-        return HierarchyBuilderPriorityBased.create(dataType, this.maxLevels);
+
+        if (priority == Priority.FREQUENCY_HIGHEST_TO_LOWEST) {
+            return HierarchyBuilderPriorityBased.create(frequency,
+                                                        HierarchyBuilderPriorityBased.Priority.HIGHEST_TO_LOWEST,
+                                                        maxLevels);
+        } else if (priority == Priority.FREQUENCY_LOWEST_TO_HIGHEST) {
+            return HierarchyBuilderPriorityBased.create(frequency,
+                                                        HierarchyBuilderPriorityBased.Priority.LOWEST_TO_HIGHEST,
+                                                        maxLevels);
+        } else if (priority == Priority.ORDER_HIGHEST_TO_LOWEST) {
+            return HierarchyBuilderPriorityBased.create(dataType,
+                                                        HierarchyBuilderPriorityBased.Priority.HIGHEST_TO_LOWEST,
+                                                        maxLevels);
+        } else if (priority == Priority.ORDER_LOWEST_TO_HIGHEST) {
+            return HierarchyBuilderPriorityBased.create(dataType,
+                                                        HierarchyBuilderPriorityBased.Priority.LOWEST_TO_HIGHEST,
+                                                        maxLevels);
+        }
+        throw new IllegalStateException("Invalid internal state");
     }
     
     /**
@@ -101,14 +117,36 @@ public class HierarchyWizardModelPriority<T> extends HierarchyWizardModelAbstrac
         return this.priority;
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void parse(HierarchyBuilder<T> _builder) {
         
         if (!(_builder instanceof HierarchyBuilderPriorityBased)) {
             return;
         }
+        HierarchyBuilderPriorityBased<?> builder = ((HierarchyBuilderPriorityBased<?>)_builder);
+        
+        if (builder.getDataType() != null && !builder.getDataType().equals(this.dataType)) {
+            return;
+        }
+        
         this.maxLevels = ((HierarchyBuilderPriorityBased<?>)_builder).getMaxLevels();
-        this.update();
+        if (builder.getPriorities() != null) {
+            this.frequency = builder.getPriorities();
+            if (builder.getPriority() == HierarchyBuilderPriorityBased.Priority.HIGHEST_TO_LOWEST) {
+                this.priority = Priority.FREQUENCY_HIGHEST_TO_LOWEST;
+            } else {
+                this.priority = Priority.FREQUENCY_LOWEST_TO_HIGHEST;
+            }
+        }
+        if (builder.getDataType() != null) {
+            this.dataType = (DataType<T>)builder.getDataType();
+            if (builder.getPriority() == HierarchyBuilderPriorityBased.Priority.HIGHEST_TO_LOWEST) {
+                this.priority = Priority.ORDER_HIGHEST_TO_LOWEST;
+            } else {
+                this.priority = Priority.ORDER_LOWEST_TO_HIGHEST;
+            }
+        }
     }
     
     /**
@@ -148,46 +186,13 @@ public class HierarchyWizardModelPriority<T> extends HierarchyWizardModelAbstrac
         super.groupsizes = null;
 
         // Check
-        if (data==null) return;
+        if (data == null) return;
         
         // Prepare
-        String[] array = data.clone();
-        
-        // Build prioritized array of items
-        if (priority == Priority.FREQUENCY_HIGHEST_TO_LOWEST || priority == Priority.FREQUENCY_LOWEST_TO_HIGHEST) {
-            
-            // Check
-            if (frequency != null) {
-                Arrays.sort(array, new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        int prio1 = frequency.getOrDefault(o1, 0);
-                        int prio2 = frequency.getOrDefault(o2, 0);
-                        return (priority == Priority.FREQUENCY_HIGHEST_TO_LOWEST) ? -Integer.compare(prio1, prio2) : Integer.compare(prio1, prio2); 
-                    }
-                });
-            }
-            
-        } else if (priority == Priority.ORDER_HIGHEST_TO_LOWEST || priority == Priority.ORDER_LOWEST_TO_HIGHEST) {
-            
-            // Check
-            if (dataType != null) {
-                Arrays.sort(array, new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        try {
-                            return (priority == Priority.ORDER_HIGHEST_TO_LOWEST) ? -dataType.compare(o1, o2) : dataType.compare(o1, o2);
-                        } catch (Exception e) {
-                            return 0;
-                        } 
-                    }
-                });
-            }
-        }
-        
         HierarchyBuilderPriorityBased<T> builder = getBuilder(false);
+        
         try {
-            super.groupsizes = builder.prepare(array);
+            super.groupsizes = builder.prepare(data);
         } catch(Exception e){
             super.error = Resources.getMessage("HierarchyWizardModelRedaction.0"); //$NON-NLS-1$
             return;
