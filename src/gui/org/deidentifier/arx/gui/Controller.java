@@ -57,6 +57,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
@@ -788,6 +789,12 @@ public class Controller implements IView {
                              .getStatistics()
                              .getDistinctValues(index);
         
+        StatisticsFrequencyDistribution distribution = model.getInputConfig()
+                                                            .getInput()
+                                                            .getHandle()
+                                                            .getStatistics()
+                                                            .getFrequencyDistribution(index);
+        
         if (data.length == 1) {
             main.showInfoDialog(main.getShell(),
                                 Resources.getMessage("Controller.18"), //$NON-NLS-1$
@@ -797,7 +804,7 @@ public class Controller implements IView {
 
         HierarchyBuilder<?> builder = model.getInputConfig().getHierarchyBuilder(attr);
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        ARXWizard<HierarchyWizardResult<?>> wizard = new HierarchyWizard(this, attr, builder, type, model.getLocale(), data);
+        ARXWizard<HierarchyWizardResult<?>> wizard = new HierarchyWizard(this, attr, builder, type, model.getLocale(), data, distribution);
 
         if (wizard.open(main.getShell())) {
             HierarchyWizardResult<?> result = wizard.getResult();

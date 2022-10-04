@@ -77,6 +77,9 @@ import de.linearbits.swt.table.DynamicTable;
  * @author Fabian Prasser
  */
 public class SWTUtil {
+    
+    /** Scale factor for handling higher DPI*/
+    public static double        DPI_SCALE_FACTOR = Double.MIN_VALUE;
 
     /** Constant */
     public static final int     SLIDER_MAX = 1000;
@@ -748,6 +751,24 @@ public class SWTUtil {
                 redraw(c);
             }
         }
+    }
+    
+    /**
+     * Scales sizes to DPI settings
+     * @param size
+     * @return
+     */
+    public static int scaleToDPI(int size) {
+        
+        // Calculate if not done, yet
+        if (DPI_SCALE_FACTOR == Double.MIN_VALUE) {
+            double currentDPI = Display.getDefault().getDPI().x;
+            double scale = currentDPI / 96.0f;
+            DPI_SCALE_FACTOR = Math.max(1d, scale);
+        }
+        
+        // Return
+        return (int)Math.round((double)size * DPI_SCALE_FACTOR);
     }
     
     /**

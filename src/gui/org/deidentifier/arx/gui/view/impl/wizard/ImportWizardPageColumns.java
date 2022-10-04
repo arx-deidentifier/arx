@@ -150,6 +150,7 @@ public class ImportWizardPageColumns extends WizardPage {
                     boolean selected = !wizardColumn.isEnabled();
                     wizardColumn.setEnabled(selected);
                     viewer.update(wizardColumn, null);
+                    check();
                 }
             });
 
@@ -168,6 +169,7 @@ public class ImportWizardPageColumns extends WizardPage {
                     if (name != null) {
                         wizardColumn.getColumn().setAliasName(name);
                         viewer.update(wizardColumn, null);
+                        check();
                     }
                 }
             });
@@ -201,6 +203,7 @@ public class ImportWizardPageColumns extends WizardPage {
                         ImportColumn column = wizardColumn.getColumn();
                         column.setDataType(entry.getValue());
                         viewer.update(wizardColumn, null);
+                        check();
                         return;
                     }
                 });
@@ -218,6 +221,7 @@ public class ImportWizardPageColumns extends WizardPage {
                         ImportColumn column = wizardColumn.getColumn();
                         column.setDataType(entry.getValue());
                         viewer.update(wizardColumn, null);
+                        check();
                         return;
                     }
                 });
@@ -252,9 +256,9 @@ public class ImportWizardPageColumns extends WizardPage {
          * @param select
          */
         private void selectAll(boolean select) {
-            for (int i = 0; i < table.getItems().length; i++) {
-                wizardImport.getData().getWizardColumns().get(i).setEnabled(select);
-                viewer.update(wizardImport.getData().getWizardColumns().get(i), null);
+            for (ImportWizardModelColumn column : wizardImport.getData().getWizardColumns()) {
+                column.setEnabled(select);
+                viewer.update(column, null);
             }
             check();
         }

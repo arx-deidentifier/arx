@@ -18,7 +18,9 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
@@ -28,6 +30,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.ARXWizardDialog.ARXWizardButton;
@@ -111,6 +114,9 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     private HierarchyWizardPageRedaction<T> pageRedaction;
 
     /** Var. */
+    private HierarchyWizardPagePriority<T>  pagePriority;
+    
+    /** Var. */
     private HierarchyWizardPageFinal<T>     pageFinal;
 
     /** Var. */
@@ -125,6 +131,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      * @param datatype
      * @param locale
      * @param items
+     * @param distribution
      */
     @SuppressWarnings("unchecked")
     public HierarchyWizard(final Controller controller,
@@ -132,11 +139,20 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
                            final HierarchyBuilder<?> builder,
                            final DataType<T> datatype,
                            final Locale locale,
-                           final String[] items) {
+                           final String[] items,
+                           final StatisticsFrequencyDistribution distribution) {
         super(new Point(800, 400));
         
+        // Build frequency map
+        Map<String, Integer> frequency = new HashMap<>();
+        if (distribution != null) {
+            for (int i = 0; i < distribution.values.length; i++) {
+                frequency.put(distribution.values[i], (int)(distribution.frequency[i] * (double)distribution.count));
+            }
+        }
+        
         // Store
-        this.model = new HierarchyWizardModel<T>(datatype, locale, items);
+        this.model = new HierarchyWizardModel<T>(datatype, locale, items, frequency);
         this.controller = controller;
         
         // Parse given builder, if needed
@@ -146,7 +162,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             }
         } catch (Exception e){ 
             /* Die silently, and recover*/
-            this.model = new HierarchyWizardModel<T>(datatype, locale, items);
+            this.model = new HierarchyWizardModel<T>(datatype, locale, items, frequency);
         }
         
         // Initialize window
@@ -192,7 +208,8 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         }
         pageOrder = new HierarchyWizardPageOrder<T>(controller, this, model, pageFinal);
         pageRedaction = new HierarchyWizardPageRedaction<T>(controller, this, model, pageFinal);
-        pageType = new HierarchyWizardPageType<T>(this, model, pageIntervals, pageOrder, pageRedaction, pageDate);
+        pagePriority = new HierarchyWizardPagePriority<T>(controller, this, model, pageFinal);
+        pageType = new HierarchyWizardPageType<T>(this, model, pageIntervals, pageOrder, pageRedaction, pageDate, pagePriority);
     }
     
     @Override
@@ -201,6 +218,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         addPage(pageType);
         addPage(pageOrder);
         addPage(pageRedaction);
+        addPage(pagePriority);
         addPage(pageFinal);
         if (pageIntervals != null) {
             addPage(pageIntervals);
@@ -316,6 +334,12 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             this.pageType.updatePage();
             this.getContainer().showPage(pageRedaction);
             break;
+        case PRIORITY_BASED:
+            this.pagePriority.updatePage();
+            this.model.setType(Type.PRIORITY_BASED);
+            this.pageType.updatePage();
+            this.getContainer().showPage(pagePriority);
+            break;
         }
     }
 
@@ -344,6 +368,8 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
                 builder = model.getIntervalModel().getBuilder(true);
             } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageRedaction){
                 builder = model.getRedactionModel().getBuilder(true);
+            } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPagePriority){
+                builder = model.getPriorityModel().getBuilder(true);
             }
 
             // Save
