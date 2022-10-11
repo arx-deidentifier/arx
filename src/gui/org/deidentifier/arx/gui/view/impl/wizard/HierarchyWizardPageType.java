@@ -52,6 +52,9 @@ public class HierarchyWizardPageType<T> extends WizardPage {
     private Button                                date;
 
     /** Var. */
+    private Button                                priority;
+    
+    /** Var. */
     private IWizardPage                           next;
 
     /** Var. */
@@ -67,6 +70,9 @@ public class HierarchyWizardPageType<T> extends WizardPage {
     private final HierarchyWizardPageDate         datePage;
 
     /** Var. */
+    private final HierarchyWizardPagePriority<T>  priorityPage;
+    
+    /** Var. */
     private final HierarchyWizard<T>              wizard;
     
     /**
@@ -78,13 +84,15 @@ public class HierarchyWizardPageType<T> extends WizardPage {
      * @param orderPage
      * @param redactionPage
      * @param datePage
+     * @param priorityPage
      */
     public HierarchyWizardPageType(final HierarchyWizard<T> wizard,
                                    final HierarchyWizardModel<T> model,
                                    final HierarchyWizardPageIntervals<T> intervalPage,
                                    final HierarchyWizardPageOrder<T> orderPage,
                                    final HierarchyWizardPageRedaction<T> redactionPage,
-                                   final HierarchyWizardPageDate datePage) {
+                                   final HierarchyWizardPageDate datePage,
+                                   final HierarchyWizardPagePriority<T> priorityPage) {
         
         super(""); //$NON-NLS-1$
         this.wizard = wizard;
@@ -92,6 +100,7 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         this.orderPage = orderPage;
         this.intervalPage = intervalPage;
         this.datePage = datePage;
+        this.priorityPage = priorityPage;
         this.model = model;
         this.next = intervalPage;
         setTitle(Resources.getMessage("HierarchyWizardPageType.0")); //$NON-NLS-1$
@@ -125,6 +134,10 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         this.redaction = new Button(composite, SWT.RADIO);
         this.redaction.setText(Resources.getMessage("HierarchyWizardPageType.4")); //$NON-NLS-1$
         this.redaction.setEnabled(true);
+
+        this.priority = new Button(composite, SWT.RADIO);
+        this.priority.setText(Resources.getMessage("HierarchyWizardPageType.6")); //$NON-NLS-1$
+        this.priority.setEnabled(true);
 
         this.date.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
@@ -161,17 +174,28 @@ public class HierarchyWizardPageType<T> extends WizardPage {
                 }
             }
         });
+
+        this.priority.addSelectionListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                if (priority.getSelection()) {
+                    next = priorityPage;
+                    model.setType(Type.PRIORITY_BASED);
+                }
+            }
+        });
         
         date.setSelection(model.getType() == Type.DATE_BASED);
         interval.setSelection(model.getType() == Type.INTERVAL_BASED);
         order.setSelection(model.getType() == Type.ORDER_BASED);
         redaction.setSelection(model.getType() == Type.REDACTION_BASED);
+        priority.setSelection(model.getType() == Type.PRIORITY_BASED);
         
         switch (model.getType()){
         case DATE_BASED:      next = datePage;      break;
         case INTERVAL_BASED:  next = intervalPage;  break;
         case ORDER_BASED:     next = orderPage;     break;
         case REDACTION_BASED: next = redactionPage; break;
+        case PRIORITY_BASED:  next = priorityPage; break;
         default:
             throw new IllegalStateException("Unknown type of builder"); //$NON-NLS-1$
         }
@@ -209,11 +233,13 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         order.setSelection(model.getType() == Type.ORDER_BASED);
         redaction.setSelection(model.getType() == Type.REDACTION_BASED);
         date.setSelection(model.getType() == Type.DATE_BASED);
+        priority.setSelection(model.getType() == Type.PRIORITY_BASED);
         switch (model.getType()){
             case INTERVAL_BASED:  next = intervalPage;  break;
             case ORDER_BASED:     next = orderPage;     break;
             case REDACTION_BASED: next = redactionPage; break;
             case DATE_BASED:      next = datePage;      break;
+            case PRIORITY_BASED:  next = priorityPage;  break;
         }
     }
 }

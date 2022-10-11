@@ -102,7 +102,7 @@ public class DialogOpenHierarchy extends TitleAreaDialog implements IDialog {
         super.create();
         setTitle(Resources.getMessage("SeparatorDialog.4")); //$NON-NLS-1$
         setMessage(Resources.getMessage("SeparatorDialog.5"), IMessageProvider.INFORMATION); //$NON-NLS-1$
-        super.getShell().setSize(500, 350);
+        super.getShell().setSize(SWTUtil.scaleToDPI(500), SWTUtil.scaleToDPI(350));
         super.getShell().layout();
         SWTUtil.center(super.getShell(), super.getParentShell());
     }
