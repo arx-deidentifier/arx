@@ -91,7 +91,6 @@ public class DialogHelpConfig {
         
         // Create the help entries
         for (String idx : configList) {
-             System.out.println(idx);
              entries.add(new Entry("id." + idx, //$NON-NLS-1$
                      Resources.getMessage("DialogHelpConfig." + idx), //$NON-NLS-1$
                      helpWebSite + version + Resources.getMessage("DialogHelpPage." + idx))); //$NON-NLS-1$
