@@ -17,7 +17,9 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -69,170 +71,31 @@ public class DialogHelpConfig {
         final String version = ARXAnonymizer.VERSION;
         final String helpWebSite = ARXAnonymizer.HELP_WEBSITE;
         
-        //TODO: replace by a loop  
-        entries.add(new Entry("id.0100", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0100"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0100"))); //$NON-NLS-1$
+        // Read messages.properties file
+        final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
         
-        entries.add(new Entry("id.0101", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0101"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0101"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0102", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0102"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0102"))); //$NON-NLS-1$
+        // Get all keys 
+        Enumeration<String> messagesKeys = MESSAGES_BUNDLE.getKeys();
+              
+        // Get all keys for the help web pages    
+        List<String> configList = new ArrayList<String>();
+        while (messagesKeys.hasMoreElements()) {
+        	String currentKey =   messagesKeys.nextElement(); 
+        	if (currentKey.contains("DialogHelpConfig")){
+               configList.add(currentKey.substring(17));
+        	}
+        }
         
-        entries.add(new Entry("id.0103", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0103"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0103"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0104", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0104"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0104"))); //$NON-NLS-1$
+        // Sorting
+        configList.sort(null);
         
-        entries.add(new Entry("id.0200", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0200"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0200"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0201", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0201"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0201"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0202", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0202"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0202"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0203", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0203"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0203"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0204", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0204"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0204"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0300", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0300"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0300"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0301", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0301"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0301"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0302", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0302"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0302"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0303", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0303"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0303"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0304", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0304"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0304"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0305", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0305"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0305"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0306", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0306"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0306"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0307", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0307"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0307"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0400", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0400"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0400"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0401", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0401"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0401"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0402", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0402"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0402"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0403", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0403"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0403"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0404", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0404"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0404"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0500", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0500"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0500"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0501", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0501"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0501"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0502", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0502"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0502"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0503", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0503"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0503"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0504", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0504"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0504"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0505", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0505"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0505"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0506", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0506"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0506"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0507", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0507"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0507"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0508", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0508"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0508"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0509", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0509"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0509"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0510", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0510"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0510"))); //$NON-NLS-1$
-        
-        entries.add(new Entry("id.0600", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0600"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0600"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0601", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0601"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0601"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0602", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0602"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0602"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0603", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0603"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0603"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0604", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0604"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0604"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0605", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0605"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0605"))); //$NON-NLS-1$
-
-        entries.add(new Entry("id.0606", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.0606"), //$NON-NLS-1$
-                              helpWebSite + version + Resources.getMessage("DialogHelpPage.0606"))); //$NON-NLS-1$
+        // Create the help entries
+        for (String idx : configList) {
+             System.out.println(idx);
+             entries.add(new Entry("id." + idx, //$NON-NLS-1$
+                     Resources.getMessage("DialogHelpConfig." + idx), //$NON-NLS-1$
+                     helpWebSite + version + Resources.getMessage("DialogHelpPage." + idx))); //$NON-NLS-1$
+        }
     }
     
     /**
