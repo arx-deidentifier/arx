@@ -16,6 +16,7 @@
  */
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -68,8 +69,13 @@ public class DialogHelpConfig {
      */
     public DialogHelpConfig() {
         
-        final String version = ARXAnonymizer.VERSION;
-        final String helpWebSite = ARXAnonymizer.HELP_WEBSITE;
+        String version = ARXAnonymizer.VERSION;
+        String helpWebSite = ARXAnonymizer.HELP_WEBSITE;
+        
+        if 	(!ARXAnonymizer.HELP_WEBSITE_ONLINE) {
+        	helpWebSite = "file:///" +  new File("help").getAbsolutePath();  
+        	version = "";
+        }
         
         // Read messages.properties file
         final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
