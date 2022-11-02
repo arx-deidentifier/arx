@@ -44,12 +44,12 @@ public class LayoutRisksTop extends LayoutRisksAbstract {
 
         super(parent, controller, target == ModelPart.INPUT, true);
         
-        registerView(0, new ViewRisksRiskDistribution(createTab(Resources.getMessage("RiskAnalysis.4"), "help.risk.classsizes"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(1, new ViewRisksQuasiIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.15"), "help.risk.quasiidentifiers"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(2, new ViewRisksAttackerModels(createTab(Resources.getMessage("RiskAnalysis.32"), "help.risk.reidentification"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(0, new ViewRisksRiskDistribution(createTab(Resources.getMessage("RiskAnalysis.4"), Resources.getMessage("DialogHelpLayout.RiskClasses")), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(1, new ViewRisksQuasiIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.15"), Resources.getMessage("DialogHelpLayout.RiskQuasi")), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(2, new ViewRisksAttackerModels(createTab(Resources.getMessage("RiskAnalysis.32"), Resources.getMessage("DialogHelpLayout.RiskReidentify")), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         
         if (target == ModelPart.INPUT) {
-            new ViewRisksHIPAAIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.26"), "help.risk.hipaa"), controller, target, reset); //$NON-NLS-1$ //$NON-NLS-2$
+            new ViewRisksHIPAAIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.26"), Resources.getMessage("DialogHelpLayout.RiskHIPAA")), controller, target, reset); //$NON-NLS-1$ //$NON-NLS-2$
         }
         
         setSelectionIdex(0);

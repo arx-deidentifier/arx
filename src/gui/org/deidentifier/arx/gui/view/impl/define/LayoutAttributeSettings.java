@@ -45,7 +45,7 @@ public class LayoutAttributeSettings implements ILayout {
     public LayoutAttributeSettings(final Composite parent,
                                    final Controller controller) {
         
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-1"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(Resources.getMessage("DialogHelpLayout.ConfigurationAttributes")); //$NON-NLS-1$
         bar.add(Resources.getMessage("AttributeDefinitionView.13"), //$NON-NLS-1$
                 controller.getResources().getImage(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE), // $NON-NLS-1$
                 new Runnable() {
@@ -72,7 +72,7 @@ public class LayoutAttributeSettings implements ILayout {
                 });
 
         // Create the tab folder
-        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, "id-1");
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, Resources.getMessage("DialogHelpLayout.ConfigurationAttributes"));
         folder.setLayoutData(SWTUtil.createFillGridData());
 
         // First view

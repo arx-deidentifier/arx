@@ -152,18 +152,18 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
         
         // Register tabs
-        this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), "help.utility.summary"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset), "help.utility.distribution"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset), "help.utility.distribution"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), "help.utility.classes"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilitySummary")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilityDistribution")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilityDistribution")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilityContingency")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.xUtilityContingency")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilityClasses")); //$NON-NLS-1$
         if (target == ModelPart.INPUT) {
-            this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.inputproperties"); //$NON-NLS-1$
-            this.registerView(new ViewStatisticsClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), "help.utility.accuracy"); //$NON-NLS-1$
+            this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), Resources.getMessage("DialogHelpLayout.UtilityInputs")); //$NON-NLS-1$
+            this.registerView(new ViewStatisticsClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), Resources.getMessage("DialogHelpLayout.UtilityAccuracy")); //$NON-NLS-1$
         } else {
-            this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.outputproperties"); //$NON-NLS-1$
-            this.registerView(new ViewStatisticsClassificationConfiguration(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false, new StackLayout()), controller), "help.utility.accuracy"); //$NON-NLS-1$
+            this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), Resources.getMessage("DialogHelpLayout.UtilityOutputs")); //$NON-NLS-1$
+            this.registerView(new ViewStatisticsClassificationConfiguration(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false, new StackLayout()), controller), Resources.getMessage("DialogHelpLayout.UtilityAccuracy")); //$NON-NLS-1$
         }
         
         // Initialize folder

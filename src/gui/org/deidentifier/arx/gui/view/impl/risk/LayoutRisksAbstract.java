@@ -90,7 +90,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.MODEL, this);
         
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(isTop ? "help.risk.overview" : "help.risk.overview", helpids); //$NON-NLS-1$ //$NON-NLS-2$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(isTop ? Resources.getMessage("DialogHelpLayout.Risk") : Resources.getMessage("DialogHelpLayout.Risk"), helpids); //$NON-NLS-1$ //$NON-NLS-2$
         
         if (isTop) {
             bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 

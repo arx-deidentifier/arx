@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ViewDataInput;
@@ -60,7 +61,7 @@ public class LayoutDefinition implements ILayout {
         compositeLeft.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        new ViewDataInput(compositeLeft, controller, "id-140", true); //$NON-NLS-1$
+        new ViewDataInput(compositeLeft, controller, Resources.getMessage("DialogHelpLayout.ConfigurationInputdata"), true); //$NON-NLS-1$
         new ViewSubsetDefinition(compositeLeft, controller);
         
         // -----------------------

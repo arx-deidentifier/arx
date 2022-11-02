@@ -131,8 +131,8 @@ public class LayoutUtility implements ILayout {
         centerRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        dataInputView = new ViewDataInput(centerLeft, controller, "help.utility.data"); //$NON-NLS-1$
-        dataOutputView = new ViewDataOutput(centerRight, controller, "help.utility.data"); //$NON-NLS-1$
+        dataInputView = new ViewDataInput(centerLeft, controller, Resources.getMessage("DialogHelpLayout.UtilityData")); //$NON-NLS-1$
+        dataOutputView = new ViewDataOutput(centerRight, controller, Resources.getMessage("DialogHelpLayout.UtilityData")); //$NON-NLS-1$
 
         // Sync tables
         dataInputView.addScrollBarListener(new Listener() {
@@ -156,19 +156,19 @@ public class LayoutUtility implements ILayout {
             }
         });
         
-        Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), Resources.getMessage("DialogHelpLayout.UtilityAccuracy")); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
         ViewStatisticsClassificationInput viewClassificationInput = new ViewStatisticsClassificationInput(classificationInput, controller);
         
-        Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), Resources.getMessage("DialogHelpLayout.UtilityAccuracy")); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
         ViewStatisticsClassificationOutput viewClassificationOutput = new ViewStatisticsClassificationOutput(classificationOutput, controller);
 
-        Composite qualityInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite qualityInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), Resources.getMessage("DialogHelpLayout.UtilityQuality")); //$NON-NLS-1$ //$NON-NLS-2$
         qualityInput.setLayout(new FillLayout());
         new ViewStatisticsQuality(qualityInput, controller, ModelPart.INPUT, ModelPart.INPUT);
         
-        Composite qualityOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite qualityOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), Resources.getMessage("DialogHelpLayout.UtilityQuality")); //$NON-NLS-1$ //$NON-NLS-2$
         qualityOutput.setLayout(new FillLayout());
         new ViewStatisticsQuality(qualityOutput, controller, ModelPart.OUTPUT, ModelPart.INPUT);
 

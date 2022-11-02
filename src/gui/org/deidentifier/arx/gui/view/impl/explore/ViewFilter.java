@@ -124,7 +124,7 @@ public class ViewFilter implements IView {
         Image imageOptimum = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
 
         // Bar
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-21"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(Resources.getMessage("DialogHelpLayout.ExplorationFilter")); //$NON-NLS-1$
         bar.add(Resources.getMessage("ViewFilter.0"), imageOptimum, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionShowOptimum();

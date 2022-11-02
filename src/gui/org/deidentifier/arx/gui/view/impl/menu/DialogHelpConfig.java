@@ -114,7 +114,7 @@ public class DialogHelpConfig {
      */
     public int getIndexForId(String id) {
         for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).id.equals(id)) {
+            if (entries.get(i).id.equals("id."+id)) {
                 return i;
             }
         }

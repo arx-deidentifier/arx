@@ -327,7 +327,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             }
         });
 
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-80"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(Resources.getMessage("DialogHelpLayout.ConfigurationCriteria")); //$NON-NLS-1$
         bar.add(Resources.getMessage("DialogCriterionUpdate.16"),  //$NON-NLS-1$
                 controller.getResources().getManagedImage("bullet_arrow_down.png"), //$NON-NLS-1$
                 new Runnable() {

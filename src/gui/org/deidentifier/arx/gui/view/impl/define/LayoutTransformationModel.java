@@ -97,7 +97,7 @@ public class LayoutTransformationModel implements ILayout, IView {
     private Composite build(final Composite parent) {
 
         // Create folder
-        folder = new ComponentTitledFolder(parent, controller, null, "id-60"); //$NON-NLS-1$
+        folder = new ComponentTitledFolder(parent, controller, null, Resources.getMessage("DialogHelpLayout.ConfigurationGeneralSettings")); //$NON-NLS-1$
         folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         // Create general tab

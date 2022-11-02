@@ -94,7 +94,7 @@ public class ViewClipboard implements IView {
         controller.addListener(ModelPart.SELECTED_NODE, this);
         this.controller = controller;
 
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-23"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(Resources.getMessage("DialogHelpLayout.ExplorationClipboard")); //$NON-NLS-1$
         bar.add(Resources.getMessage("ViewClipboard.0"), imageRemove, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionRemove();

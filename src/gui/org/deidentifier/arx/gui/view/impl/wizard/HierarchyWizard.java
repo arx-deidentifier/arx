@@ -250,7 +250,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      * Shows the help dialog.
      */
     private void help() {
-        controller.actionShowHelpDialog("id-51"); //$NON-NLS-1$
+        controller.actionShowHelpDialog(Resources.getMessage("DialogHelpLayout.ConfigurationHierarchies")); //$NON-NLS-1$
     }
     
     /**

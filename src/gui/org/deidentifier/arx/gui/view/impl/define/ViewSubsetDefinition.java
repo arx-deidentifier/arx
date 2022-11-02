@@ -133,7 +133,7 @@ public class ViewSubsetDefinition implements IView{
     private Composite build(Composite parent) {
 
         // Button bar
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-40"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(Resources.getMessage("DialogHelpLayout.ConfigurationSubset")); //$NON-NLS-1$
         bar.add(Resources.getMessage("SubsetDefinitionView.1"),  //$NON-NLS-1$
                 controller.getResources().getManagedImage("page_white.png"), //$NON-NLS-1$
                 new Runnable() {
