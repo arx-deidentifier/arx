@@ -1762,7 +1762,7 @@ public class Controller implements IView {
      * @param id
      */
     public void actionShowHelpDialog(String id) {
-        main.showHelpDialog(model.isHelpDialogModal(), id);
+        main.showHelpDialog(model == null || model.isHelpDialogModal(), id);
     }
 
     /**
