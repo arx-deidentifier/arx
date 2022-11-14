@@ -189,7 +189,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         /**  Granularity */
         QUARTER_YEAR("QQQ yyyy"),
         /**  Granularity */
-        WEEKDAY("u"),
+        WEEKDAY("e"),
         /**  Granularity */
         WEEK("w"),
         /**  Granularity */
