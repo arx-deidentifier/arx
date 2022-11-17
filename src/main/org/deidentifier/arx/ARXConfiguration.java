@@ -553,7 +553,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.bCriteria = this.bCriteria.clone();
         result.criteria = new HashSet<PrivacyCriterion>(this.criteria);
         result.requirements = this.requirements;
-        result.metric = this.metric;
+        result.metric = this.metric.getDescription().createInstance(this.metric.getConfiguration());
         result.snapshotLength = this.snapshotLength;
         result.suppressionAlwaysEnabled = this.suppressionAlwaysEnabled;
         result.suppressedAttributeTypes = this.suppressedAttributeTypes;

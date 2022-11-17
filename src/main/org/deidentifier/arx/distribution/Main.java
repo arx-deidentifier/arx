@@ -93,28 +93,30 @@ public class Main {
      */
     public static void main(String[] args) throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
         
-        Data data = createData("adult");
-        //data.getDefinition().setAttributeType("occupation", AttributeType.SENSITIVE_ATTRIBUTE);
+        Data data = createData("ihis");
         
-        for (int i=0; i < 10; i++) {
-            ARXConfiguration config = ARXConfiguration.create();
-            config.addPrivacyModel(new KAnonymity(5));
-            config.setQualityModel(Metric.createLossMetric(0d));
-            
-            // Anonymize
-            ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(5, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
-            ARXDistributedResult result = anonymizer.anonymize(data, config);
-            
-            // Print
-            System.out.println("--------------------------");
-            for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
-                System.out.println(entry.getKey()+": " + getAverage(entry.getValue()));
+        for (int threads = 1; threads <= 4; threads++) {
+            for (int i=0; i < 3; i++) {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new KAnonymity(5));
+                config.setQualityModel(Metric.createLossMetric(0d));
+                
+                // Anonymize
+                ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
+                ARXDistributedResult result = anonymizer.anonymize(data, config);
+                
+                // Print
+                System.out.println("--------------------------");
+                System.out.println("Number of threads: " + threads);
+                for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
+                    System.out.println(entry.getKey()+": " + getAverage(entry.getValue()));
+                }
+                
+                // Timing
+                System.out.println("Preparation time: " + result.getTimePrepare());
+                System.out.println("Anonymization time: " + result.getTimeAnonymize());
+                System.out.println("Postprocessing time: " + result.getTimePostprocess());
             }
-            
-            // Timing
-            System.out.println("Preparation time: " + result.getTimePrepare());
-            System.out.println("Anonymization time: " + result.getTimeAnonymize());
-            System.out.println("Postprocessing time: " + result.getTimePostprocess());
         }
     }
     
