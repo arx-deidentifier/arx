@@ -345,6 +345,16 @@
             <zipgroupfileset refid="gui.jars" />
         </jar>
     </target>
+	
+    <target name="distributed" depends="compile, buildExternalLibs">
+        <jar destfile="jars/distributed.jar">
+            <fileset dir="build/gui" defaultexcludes="no" />
+            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <manifest>
+                <attribute name="Main-Class" value="org.deidentifier.arx.distributed.Main" />
+            </manifest>
+        </jar>
+    </target>
 
     <target name="jar-win" depends="compile, buildExternalLibs">
         <jar destfile="jars/arx-${arx.version}-win-64.jar">

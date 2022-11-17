@@ -1,4 +1,4 @@
-package org.deidentifier.arx.distribution;
+package org.deidentifier.arx.distributed;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;

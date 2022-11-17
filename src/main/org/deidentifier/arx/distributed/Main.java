@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.distribution;
+package org.deidentifier.arx.distributed;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,8 +32,8 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.distribution.ARXDistributedAnonymizer.DistributionStrategy;
-import org.deidentifier.arx.distribution.ARXDistributedAnonymizer.PartitioningStrategy;
+import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.DistributionStrategy;
+import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.PartitioningStrategy;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
@@ -95,29 +96,49 @@ public class Main {
         
         Data data = createData("ihis");
         
-        for (int threads = 1; threads <= 4; threads++) {
-            for (int i=0; i < 3; i++) {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new KAnonymity(5));
-                config.setQualityModel(Metric.createLossMetric(0d));
-                
-                // Anonymize
-                ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
-                ARXDistributedResult result = anonymizer.anonymize(data, config);
-                
-                // Print
-                System.out.println("--------------------------");
-                System.out.println("Number of threads: " + threads);
-                for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
-                    System.out.println(entry.getKey()+": " + getAverage(entry.getValue()));
+        BufferedWriter out = new BufferedWriter(new FileWriter(new File("result.csv")));
+        
+        out.write("Dataset;k;Threads;Granularity;Time\n");
+        out.flush();
+        
+        int run = 1;
+        for (int k : new int[] {5, 11}) {
+            for (int threads = 1; threads <= 64; threads++) {
+                for (int i = 0; i < 3; i++) {
+                    
+                    System.out.println("Run " + run + " of " + (2 * 64 * 3));
+                    
+                    ARXConfiguration config = ARXConfiguration.create();
+                    config.addPrivacyModel(new KAnonymity(5));
+                    config.setQualityModel(Metric.createLossMetric(0d));
+                    
+                    // Anonymize
+                    ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
+                    ARXDistributedResult result = anonymizer.anonymize(data, config);
+                    
+                    // Print
+                    if (i==2) {
+                        out.write("Ihis;");
+                        out.write(k+";");
+                        out.write(threads+";");
+                        out.write(getAverage(result.getQuality().get("Granularity"))+";");
+                        out.write(result.getTimeAnonymize()+"\n");
+                        out.flush();
+                    }
+//                    System.out.println("--------------------------");
+//                    System.out.println("Number of threads: " + threads);
+//                    for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
+//                        System.out.println(entry.getKey()+": " + getAverage(entry.getValue()));
+//                    }
+//                    
+//                    // Timing
+//                    System.out.println("Preparation time: " + result.getTimePrepare());
+//                    System.out.println("Anonymization time: " + result.getTimeAnonymize());
+//                    System.out.println("Postprocessing time: " + result.getTimePostprocess());
                 }
-                
-                // Timing
-                System.out.println("Preparation time: " + result.getTimePrepare());
-                System.out.println("Anonymization time: " + result.getTimeAnonymize());
-                System.out.println("Postprocessing time: " + result.getTimePostprocess());
             }
         }
+        out.close();
     }
     
     /**

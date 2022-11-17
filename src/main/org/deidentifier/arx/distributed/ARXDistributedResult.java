@@ -1,4 +1,4 @@
-package org.deidentifier.arx.distribution;
+package org.deidentifier.arx.distributed;
 
 import java.util.ArrayList;
 import java.util.HashMap;
