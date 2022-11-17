@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
@@ -29,6 +29,14 @@ public class ARXDistributedAnonymizer {
         RANDOM,
         SORTED
     }
+
+    /**
+     * Distribution strategy
+     * @author Fabian Prasser
+     */
+    public static enum DistributionStrategy {
+        LOCAL
+    }
     
     /** O_min*/
     private static final double O_MIN = 0.05d;
@@ -37,6 +45,8 @@ public class ARXDistributedAnonymizer {
     private final int                  nodes;
     /** Partitioning strategy */
     private final PartitioningStrategy partitioningStrategy;
+    /** Distribution strategy*/
+    private final DistributionStrategy distributionStrategy;
     /** Random */
     private final Random               random               = new Random(0xDEADBEEF);
     /** Global transformation */
@@ -46,14 +56,17 @@ public class ARXDistributedAnonymizer {
      * Creates a new instance
      * @param nodes
      * @param partitioningStrategy
+     * @param distributionStrategy
      * @param globalTransformation
      */
     public ARXDistributedAnonymizer(int nodes,
                                     PartitioningStrategy partitioningStrategy,
+                                    DistributionStrategy distributionStrategy,
                                     boolean globalTransformation) {
         this.nodes = nodes;
         this.partitioningStrategy = partitioningStrategy;
         this.globalTransformation = globalTransformation;
+        this.distributionStrategy = distributionStrategy;
     }
     
     /**
@@ -64,8 +77,11 @@ public class ARXDistributedAnonymizer {
      * @return ARXResult
      * @throws IOException
      * @throws RollbackRequiredException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
      */
-    public ARXDistributedResult anonymize(Data data, ARXConfiguration config) throws IOException, RollbackRequiredException {
+    public ARXDistributedResult anonymize(Data data, 
+                                          ARXConfiguration config) throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
         
         // Partition
         List<Data> partitions = null;
@@ -79,43 +95,34 @@ public class ARXDistributedAnonymizer {
         }
         
         // Anonymize
-        List<DataHandle> handles = new ArrayList<>();
+        List<Future<DataHandle>> futures = new ArrayList<>();
+        
+        // Execute
         for (Data partition : partitions) {
-            handles.add(anonymize(partition, config, globalTransformation));
+            switch (distributionStrategy) {
+            case LOCAL:
+                futures.add(new ARXWorkerLocal().anonymize(partition, config, globalTransformation, O_MIN));
+                break;
+            }
+        }
+        
+        // Wait for execution
+        List<DataHandle> handles = new ArrayList<>();
+        while (!futures.isEmpty()) {
+            System.out.println("Waiting for " + futures.size() + " futures");
+            Iterator<Future<DataHandle>> iter = futures.iterator();
+            while (iter.hasNext()) {
+                Future<DataHandle> future = iter.next();
+                if (future.isDone()) {
+                    handles.add(future.get());
+                    iter.remove();
+                }
+            }
+            Thread.sleep(100);
         }
         
         // Merge
         return new ARXDistributedResult(handles);
-    }
-    
-    /**
-     * Anonymize a partition
-     * @param partition
-     * @param config
-     * @param globalTransformation
-     * @throws IOException 
-     * @throws RollbackRequiredException 
-     */
-    private DataHandle anonymize(Data partition, ARXConfiguration _config, boolean globalTransformation) throws IOException, RollbackRequiredException {
-        
-        // Prepare local transformation
-        ARXConfiguration config = _config.clone();
-        if (!globalTransformation) {
-            config.setSuppressionLimit(1d - O_MIN);
-        }
-        
-        // Anonymize
-        ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(partition, config);
-        DataHandle handle = result.getOutput();
-        
-        // Local transformation
-        if (!globalTransformation) {
-            result.optimizeIterativeFast(handle, O_MIN);
-        }
-        
-        // Done
-        return handle;
     }
     
     /**
@@ -151,7 +158,7 @@ public class ARXDistributedAnonymizer {
         List<Data> result = new ArrayList<>();
         for (List<String[]> partition : list) {
             Data _data = Data.create(partition);
-            _data.getDefinition().read(definition);
+            _data.getDefinition().read(definition.clone());
             result.add(_data);
         }
         
@@ -195,7 +202,7 @@ public class ARXDistributedAnonymizer {
             _list.add(header);
             _list.addAll(rows.subList((int)Math.round(start), (int)Math.round(end)));
             Data _data = Data.create(_list);
-            _data.getDefinition().read(definition);
+            _data.getDefinition().read(definition.clone());
             result.add(_data);
             start = end;
             end = end + size;

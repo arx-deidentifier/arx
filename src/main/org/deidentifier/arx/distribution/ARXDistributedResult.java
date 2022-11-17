@@ -9,14 +9,15 @@ import java.util.Map;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsQuality;
+import org.deidentifier.arx.distribution.util.IteratorIterator;
 
 public class ARXDistributedResult {
-
+    
     /** Quality metrics */
     private Map<String, List<Double>> qualityMetrics = new HashMap<>();
     /** Data */
-    private Data                data;
-
+    private Data                      data;
+    
     /**
      * Creates a new instance
      * 

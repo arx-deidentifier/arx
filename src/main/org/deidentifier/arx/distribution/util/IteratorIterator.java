@@ -1,4 +1,4 @@
-package org.deidentifier.arx.distribution;
+package org.deidentifier.arx.distribution.util;
 
 import java.util.Iterator;
 import java.util.List;

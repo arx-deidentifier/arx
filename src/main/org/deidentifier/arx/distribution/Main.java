@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.distribution.ARXDistributedAnonymizer.DistributionStrategy;
 import org.deidentifier.arx.distribution.ARXDistributedAnonymizer.PartitioningStrategy;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.io.CSVHierarchyInput;
@@ -86,8 +88,10 @@ public class Main {
      * @param args the arguments
      * @throws IOException
      * @throws RollbackRequiredException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
      */
-    public static void main(String[] args) throws IOException, RollbackRequiredException {
+    public static void main(String[] args) throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
         
         Data data = createData("adult");
         //data.getDefinition().setAttributeType("occupation", AttributeType.SENSITIVE_ATTRIBUTE);
@@ -97,7 +101,7 @@ public class Main {
         config.setQualityModel(Metric.createLossMetric());
         
         // Anonymize
-        ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(5, PartitioningStrategy.SORTED, false);
+        ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(5, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
         ARXDistributedResult result = anonymizer.anonymize(data, config);
         
         // Print
