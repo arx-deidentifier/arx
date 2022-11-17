@@ -19,14 +19,16 @@ import org.deidentifier.arx.exceptions.RollbackRequiredException;
  */
 public class ARXWorkerLocal implements ARXWorker {
     
-    /** Executor service*/
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-    
     @Override
     public Future<DataHandle> anonymize(final Data partition,
                                         final ARXConfiguration _config,
                                         final boolean globalTransformation,
                                         final double oMin) throws IOException, RollbackRequiredException {
+        
+        System.out.println("Anonymizing partition: " + partition.getHandle().getNumRows());
+        
+        // Executor service
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         
         // Clone
         ARXConfiguration config = _config.clone();
@@ -52,6 +54,7 @@ public class ARXWorkerLocal implements ARXWorker {
                 }
                 
                 // Done
+                executor.shutdown();
                 return handle;
             }
         });

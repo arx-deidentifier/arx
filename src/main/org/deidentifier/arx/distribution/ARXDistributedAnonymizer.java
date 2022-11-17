@@ -84,6 +84,7 @@ public class ARXDistributedAnonymizer {
                                           ARXConfiguration config) throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
         
         // Partition
+        long timePrepare = System.currentTimeMillis();
         List<Data> partitions = null;
         switch (partitioningStrategy) {
         case RANDOM:
@@ -93,11 +94,13 @@ public class ARXDistributedAnonymizer {
             partitions = getPartitionsSorted(data, this.nodes);
             break;
         }
+        timePrepare = System.currentTimeMillis() - timePrepare;
         
         // Anonymize
         List<Future<DataHandle>> futures = new ArrayList<>();
         
         // Execute
+        long timeAnonymize = System.currentTimeMillis();
         for (Data partition : partitions) {
             switch (distributionStrategy) {
             case LOCAL:
@@ -109,7 +112,6 @@ public class ARXDistributedAnonymizer {
         // Wait for execution
         List<DataHandle> handles = new ArrayList<>();
         while (!futures.isEmpty()) {
-            System.out.println("Waiting for " + futures.size() + " futures");
             Iterator<Future<DataHandle>> iter = futures.iterator();
             while (iter.hasNext()) {
                 Future<DataHandle> future = iter.next();
@@ -122,7 +124,8 @@ public class ARXDistributedAnonymizer {
         }
         
         // Merge
-        return new ARXDistributedResult(handles);
+        timeAnonymize = System.currentTimeMillis() - timeAnonymize;
+        return new ARXDistributedResult(handles, timePrepare, timeAnonymize);
     }
     
     /**

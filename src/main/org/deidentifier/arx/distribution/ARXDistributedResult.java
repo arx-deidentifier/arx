@@ -17,15 +17,27 @@ public class ARXDistributedResult {
     private Map<String, List<Double>> qualityMetrics = new HashMap<>();
     /** Data */
     private Data                      data;
-    
+    /** Timing */
+    private long                      timePrepare;
+    /** Timing */
+    private long                      timeAnonymize;
+    /** Timing */
+    private long                      timePostprocess;
+
     /**
      * Creates a new instance
      * 
      * @param handles
+     * @param timeAnonymize 
+     * @param timePrepare 
      */
-    public ARXDistributedResult(List<DataHandle> handles) {
+    public ARXDistributedResult(List<DataHandle> handles, long timePrepare, long timeAnonymize) {
+        
+        this.timePrepare = timePrepare;
+        this.timeAnonymize = timeAnonymize;
         
         // Collect iterators
+        long timePostprocess = System.currentTimeMillis();
         List<Iterator<String[]>> iterators = new ArrayList<>();
         for (DataHandle handle : handles) {
             iterators.add(handle.iterator());
@@ -39,6 +51,9 @@ public class ARXDistributedResult {
             store(qualityMetrics, "GeneralizationIntensity", quality.getGeneralizationIntensity().getArithmeticMean());
             store(qualityMetrics, "Granularity", quality.getGranularity().getArithmeticMean());
         }
+        
+        // Done
+        timePostprocess = System.currentTimeMillis() - timePostprocess;
     }
     
     /**
@@ -58,6 +73,31 @@ public class ARXDistributedResult {
      */
     public Map<String, List<Double>> getQuality() {
         return qualityMetrics;
+    }
+    
+    
+    /**
+     * Returns the time needed for anonymization
+     * @return the timeAnonymize
+     */
+    public long getTimeAnonymize() {
+        return timeAnonymize;
+    }
+
+    /**
+     * Returns the time needed for postprocessing
+     * @return the timePostprocess
+     */
+    public long getTimePostprocess() {
+        return timePostprocess;
+    }
+
+    /**
+     * Returns the time needed for preparation
+     * @return the timePrepare
+     */
+    public long getTimePrepare() {
+        return timePrepare;
     }
 
     /**

@@ -96,17 +96,38 @@ public class Main {
         Data data = createData("adult");
         //data.getDefinition().setAttributeType("occupation", AttributeType.SENSITIVE_ATTRIBUTE);
         
-        ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(5));
-        config.setQualityModel(Metric.createLossMetric());
-        
-        // Anonymize
-        ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(5, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
-        ARXDistributedResult result = anonymizer.anonymize(data, config);
-        
-        // Print
-        for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
-            System.out.println(entry.getKey()+": " + entry.getValue());
+        for (int i=0; i < 10; i++) {
+            ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new KAnonymity(5));
+            config.setQualityModel(Metric.createLossMetric(0d));
+            
+            // Anonymize
+            ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(5, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
+            ARXDistributedResult result = anonymizer.anonymize(data, config);
+            
+            // Print
+            System.out.println("--------------------------");
+            for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
+                System.out.println(entry.getKey()+": " + getAverage(entry.getValue()));
+            }
+            
+            // Timing
+            System.out.println("Preparation time: " + result.getTimePrepare());
+            System.out.println("Anonymization time: " + result.getTimeAnonymize());
+            System.out.println("Postprocessing time: " + result.getTimePostprocess());
         }
+    }
+    
+    /**
+     * Returns the average of the given values
+     * @param values
+     * @return
+     */
+    private static double getAverage(List<Double> values) {
+        double result = 0d;
+        for (Double value : values) {
+            result += value;
+        }
+        return result / (double)values.size();
     }
 }
