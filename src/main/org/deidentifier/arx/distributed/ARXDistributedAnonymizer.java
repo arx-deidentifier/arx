@@ -1,10 +1,29 @@
+/*
+ * ARX Data Anonymization Tool
+ * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.deidentifier.arx.distributed;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -38,8 +57,21 @@ public class ARXDistributedAnonymizer {
         LOCAL
     }
     
+    /**
+     * Strategy for defining common generalization levels
+     * @author Fabian Prasser
+     */
+    public static enum TransformationStrategy {
+        GLOBAL_AVERAGE,
+        GLOBAL_MINIMUM,
+        LOCAL
+    }
+    
     /** O_min*/
     private static final double O_MIN = 0.05d;
+
+    /** Wait time*/
+    private static final int WAIT_TIME = 100;
     
     /** Number of nodes to use */
     private final int                  nodes;
@@ -47,26 +79,26 @@ public class ARXDistributedAnonymizer {
     private final PartitioningStrategy partitioningStrategy;
     /** Distribution strategy*/
     private final DistributionStrategy distributionStrategy;
+    /** Distribution strategy*/
+    private final TransformationStrategy transformationStrategy;
     /** Random */
     private final Random               random               = new Random(0xDEADBEEF);
-    /** Global transformation */
-    private final boolean              globalTransformation;
 
     /**
      * Creates a new instance
      * @param nodes
      * @param partitioningStrategy
      * @param distributionStrategy
-     * @param globalTransformation
+     * @param transformationStrategy
      */
     public ARXDistributedAnonymizer(int nodes,
                                     PartitioningStrategy partitioningStrategy,
                                     DistributionStrategy distributionStrategy,
-                                    boolean globalTransformation) {
+                                    TransformationStrategy transformationStrategy) {
         this.nodes = nodes;
         this.partitioningStrategy = partitioningStrategy;
-        this.globalTransformation = globalTransformation;
         this.distributionStrategy = distributionStrategy;
+        this.transformationStrategy = transformationStrategy;
     }
     
     /**
@@ -85,7 +117,7 @@ public class ARXDistributedAnonymizer {
         
         // Partition
         long timePrepare = System.currentTimeMillis();
-        List<Data> partitions = null;
+        List<DataHandle> partitions = null;
         switch (partitioningStrategy) {
         case RANDOM:
             partitions = getPartitionsRandom(data, this.nodes);
@@ -96,32 +128,47 @@ public class ARXDistributedAnonymizer {
         }
         timePrepare = System.currentTimeMillis() - timePrepare;
         
+        // Start time measurement
+        long timeAnonymize = System.currentTimeMillis();
+        
+        // Global transformation
+        int[] transformation = null;
+        if (transformationStrategy != TransformationStrategy.LOCAL) {
+            transformation = getTransformation(partitions, config, transformationStrategy);
+        }
+        
         // Anonymize
         List<Future<DataHandle>> futures = new ArrayList<>();
-        
-        // Execute
-        long timeAnonymize = System.currentTimeMillis();
-        for (Data partition : partitions) {
+        for (DataHandle partition : partitions) {
             switch (distributionStrategy) {
             case LOCAL:
-                futures.add(new ARXWorkerLocal().anonymize(partition, config, globalTransformation, O_MIN));
+                if (transformation != null) {
+                    
+                    // Get handle
+                    Set<String> quasiIdentifiers = partition.getDefinition().getQuasiIdentifyingAttributes();
+                    
+                    // Fix transformation levels
+                    int count = 0;
+                    for (int column = 0; column < partition.getNumColumns(); column++) {
+                        String attribute = partition.getAttributeName(column);
+                        if (quasiIdentifiers.contains(attribute)) {
+                            int level = transformation[count];
+                            partition.getDefinition().setMinimumGeneralization(attribute, level);
+                            partition.getDefinition().setMaximumGeneralization(attribute, level);
+                            count++;
+                        }
+                    }
+                    
+                    futures.add(new ARXWorkerLocal().anonymize(partition, config));
+                } else {
+                    futures.add(new ARXWorkerLocal().anonymize(partition, config, O_MIN));
+                }
                 break;
             }
         }
         
         // Wait for execution
-        List<DataHandle> handles = new ArrayList<>();
-        while (!futures.isEmpty()) {
-            Iterator<Future<DataHandle>> iter = futures.iterator();
-            while (iter.hasNext()) {
-                Future<DataHandle> future = iter.next();
-                if (future.isDone()) {
-                    handles.add(future.get());
-                    iter.remove();
-                }
-            }
-            Thread.sleep(100);
-        }
+        List<DataHandle> handles = getResults(futures);
         
         // Merge
         timeAnonymize = System.currentTimeMillis() - timeAnonymize;
@@ -129,12 +176,64 @@ public class ARXDistributedAnonymizer {
     }
     
     /**
+     * Retrieves the generalization scheme using the current strategy
+     * @param partitions
+     * @param config
+     * @return
+     * @throws IOException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
+     */
+    private int[] getTransformation(List<DataHandle> partitions, ARXConfiguration config, TransformationStrategy strategy) throws IOException, InterruptedException, ExecutionException {
+        
+        // Calculate schemes
+        List<Future<int[]>> futures = new ArrayList<>();
+        for (DataHandle partition : partitions) {
+            futures.add(new ARXWorkerLocal().transform(partition, config));
+        }
+
+        // Collect schemes
+        List<int[]> schemes = getResults(futures);
+        
+        // Apply strategy
+        switch (transformationStrategy) {
+            case GLOBAL_AVERAGE:
+                // Sum up all levels
+                int[] result = new int[schemes.get(0).length];
+                for (int[] scheme : schemes) {
+                    for (int i=0; i < result.length; i++) {
+                        result[i] += scheme[i];
+                    }
+                }
+                // Divide by number of levels
+                for (int i=0; i < result.length; i++) {
+                    result[i] = (int)Math.round((double)result[i] / (double)schemes.size());
+                }
+                return result;
+            case GLOBAL_MINIMUM:
+                // Find minimum levels
+                result = new int[schemes.get(0).length];
+                Arrays.fill(result, Integer.MAX_VALUE);
+                for (int[] scheme : schemes) {
+                    for (int i=0; i < result.length; i++) {
+                        result[i] = Math.min(result[i], scheme[i]);
+                    }
+                }
+                return result;
+            case LOCAL:
+                throw new IllegalStateException("Must not be executed when doing global transformation");
+            default:
+                throw new IllegalStateException("Unknown transformation strategy");
+        }
+    }
+
+    /**
      * Partitions the dataset randomly
      * @param data
      * @param number
      * @return
      */
-    private List<Data> getPartitionsRandom(Data data, int number) {
+    private List<DataHandle> getPartitionsRandom(Data data, int number) {
         
         // Copy definition
         DataDefinition definition = data.getDefinition();
@@ -158,11 +257,11 @@ public class ARXDistributedAnonymizer {
         }
         
         // Convert to data
-        List<Data> result = new ArrayList<>();
+        List<DataHandle> result = new ArrayList<>();
         for (List<String[]> partition : list) {
             Data _data = Data.create(partition);
             _data.getDefinition().read(definition.clone());
-            result.add(_data);
+            result.add(_data.getHandle());
         }
         
         // Done
@@ -175,13 +274,13 @@ public class ARXDistributedAnonymizer {
      * @param number
      * @return
      */
-    private List<Data> getPartitionsSorted(Data data, int number) {
+    private List<DataHandle> getPartitionsSorted(Data data, int number) {
 
         // Copy definition
         DataDefinition definition = data.getDefinition();
         
         // Prepare
-        List<Data> result = new ArrayList<>();
+        List<DataHandle> result = new ArrayList<>();
         DataHandle handle = data.getHandle();
         
         // TODO: Would make sense to only sort based on key and sensible variables
@@ -206,12 +305,36 @@ public class ARXDistributedAnonymizer {
             _list.addAll(rows.subList((int)Math.round(start), (int)Math.round(end)));
             Data _data = Data.create(_list);
             _data.getDefinition().read(definition.clone());
-            result.add(_data);
+            result.add(_data.getHandle());
             start = end;
             end = end + size;
         }
         
         // Done
         return result;
+    }
+    
+    /**
+     * Collects results from the futures
+     * @param <T>
+     * @param futures
+     * @return
+     * @throws ExecutionException 
+     * @throws InterruptedException 
+     */
+    private <T> List<T> getResults(List<Future<T>> futures) throws InterruptedException, ExecutionException {
+        ArrayList<T> results = new ArrayList<>();
+        while (!futures.isEmpty()) {
+            Iterator<Future<T>> iter = futures.iterator();
+            while (iter.hasNext()) {
+                Future<T> future = iter.next();
+                if (future.isDone()) {
+                    results.add(future.get());
+                    iter.remove();
+                }
+            }
+            Thread.sleep(WAIT_TIME);
+        }
+        return results;
     }
 }

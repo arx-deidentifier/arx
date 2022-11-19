@@ -24,6 +24,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +37,7 @@ import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.DistributionStrategy;
 import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.PartitioningStrategy;
+import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.TransformationStrategy;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
@@ -95,7 +97,52 @@ public class Main {
      * @throws InterruptedException 
      */
     public static void main(String[] args) throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
+        playground();
+    }
+    
+    private static void playground() throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
+
+        Data data = createData("adult");
         
+        // K-Anonymity
+        for (int threads = 1; threads < 5; threads ++) {
+            for (int k : new int[] { 5 }) {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new KAnonymity(k));
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+    
+                // Anonymize
+                ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads,
+                                                                                   PartitioningStrategy.SORTED,
+                                                                                   DistributionStrategy.LOCAL,
+                                                                                   TransformationStrategy.GLOBAL_MINIMUM);
+                ARXDistributedResult result = anonymizer.anonymize(data, config);
+    
+                System.out.println("--------------------------");
+                System.out.println("Records: " + result.getOutput().getNumRows());
+                System.out.println("Number of threads: " + threads);
+                for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
+                    System.out.println(entry.getKey() + ": " + getAverage(entry.getValue()));
+                }
+    
+                // Timing
+                System.out.println("Preparation time: " + result.getTimePrepare());
+                System.out.println("Anonymization time: " + result.getTimeAnonymize());
+                System.out.println("Postprocessing time: " + result.getTimePostprocess());
+            }
+        }
+    }
+    
+    /**
+     * Benchmarking
+     * @throws IOException
+     * @throws RollbackRequiredException
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
+    private static void benchmark() throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
+
         Data data = createData("ihis");
         
         BufferedWriter out = new BufferedWriter(new FileWriter(new File("result.csv")));
@@ -115,9 +162,13 @@ public class Main {
                     ARXConfiguration config = ARXConfiguration.create();
                     config.addPrivacyModel(new KAnonymity(k));
                     config.setQualityModel(Metric.createLossMetric(0d));
+                    config.setSuppressionLimit(1d);
                     
                     // Anonymize
-                    ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
+                    ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads, 
+                                                                                       PartitioningStrategy.SORTED, 
+                                                                                       DistributionStrategy.LOCAL,
+                                                                                       TransformationStrategy.LOCAL);
                     ARXDistributedResult result = anonymizer.anonymize(data, config);
                     
                     // Print
@@ -130,22 +181,12 @@ public class Main {
                         out.write(result.getTimeAnonymize()+"\n");
                         out.flush();
                     }
-//                    System.out.println("--------------------------");
-//                    System.out.println("Number of threads: " + threads);
-//                    for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
-//                        System.out.println(entry.getKey()+": " + getAverage(entry.getValue()));
-//                    }
-//                    
-//                    // Timing
-//                    System.out.println("Preparation time: " + result.getTimePrepare());
-//                    System.out.println("Anonymization time: " + result.getTimeAnonymize());
-//                    System.out.println("Postprocessing time: " + result.getTimePostprocess());
                 }
             }
         }
         
         // L-Diversity
-        data.getDefinition().setAttributeType("salary-class", AttributeType.SENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
         for (int k : new int[] {3, 5}) {
             for (int threads = 1; threads <= 64; threads++) {
                 for (int i = 0; i < 3; i++) {
@@ -153,11 +194,15 @@ public class Main {
                     System.out.println("Run " + run + " of " + (2 * 64 * 3) * 2);
                     
                     ARXConfiguration config = ARXConfiguration.create();
-                    config.addPrivacyModel(new DistinctLDiversity("salary-class", k));
+                    config.addPrivacyModel(new DistinctLDiversity("EDUC", k));
                     config.setQualityModel(Metric.createLossMetric(0d));
+                    config.setSuppressionLimit(1d);
                     
                     // Anonymize
-                    ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads, PartitioningStrategy.SORTED, DistributionStrategy.LOCAL, false);
+                    ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads, 
+                                                                                       PartitioningStrategy.SORTED, 
+                                                                                       DistributionStrategy.LOCAL, 
+                                                                                       TransformationStrategy.LOCAL);
                     ARXDistributedResult result = anonymizer.anonymize(data, config);
                     
                     // Print
