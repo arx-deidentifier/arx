@@ -39,15 +39,40 @@ public class ARXDistributedResult {
     private long                      timeAnonymize;
     /** Timing */
     private long                      timePostprocess;
-
+    
     /**
      * Creates a new instance
      * 
      * @param handles
-     * @param timeAnonymize 
-     * @param timePrepare 
      */
-    public ARXDistributedResult(List<DataHandle> handles, long timePrepare, long timeAnonymize) {
+    public ARXDistributedResult(List<DataHandle> handles) {
+        this(handles, 0, 0, null);
+        
+    }
+
+    /**
+     * Creates a new instance
+     * @param handles
+     * @param timePrepare
+     * @param timeAnonymize
+     */
+    public ARXDistributedResult(List<DataHandle> handles, 
+                                long timePrepare, 
+                                long timeAnonymize) {
+        this(handles, timePrepare, timeAnonymize, null);
+    }
+        
+    /**
+     * Creates a new instance
+     * @param handles
+     * @param timePrepare
+     * @param timeAnonymize
+     * @param qualityMetrics
+     */
+    public ARXDistributedResult(List<DataHandle> handles, 
+                                long timePrepare, 
+                                long timeAnonymize,
+                                Map<String, List<Double>> qualityMetrics) {
         
         this.timePrepare = timePrepare;
         this.timeAnonymize = timeAnonymize;
@@ -56,16 +81,25 @@ public class ARXDistributedResult {
         long timePostprocess = System.currentTimeMillis();
         List<Iterator<String[]>> iterators = new ArrayList<>();
         for (DataHandle handle : handles) {
-            iterators.add(handle.iterator());
+            Iterator<String[]> iterator = handle.iterator();
+            if (!iterators.isEmpty()) {
+                // Skip header
+                iterator.next();
+            }
+            iterators.add(iterator);
         }
         this.data = Data.create(new CombinedIterator<String[]>(iterators));
         
         // Collect statistics
-        for (DataHandle handle : handles) {
-            StatisticsQuality quality = handle.getStatistics().getQualityStatistics();
-            store(qualityMetrics, "AverageClassSize", quality.getAverageClassSize().getValue());
-            store(qualityMetrics, "GeneralizationIntensity", quality.getGeneralizationIntensity().getArithmeticMean());
-            store(qualityMetrics, "Granularity", quality.getGranularity().getArithmeticMean());
+        if (qualityMetrics != null) {
+            this.qualityMetrics.putAll(qualityMetrics);
+        } else {
+            for (DataHandle handle : handles) {
+                StatisticsQuality quality = handle.getStatistics().getQualityStatistics();
+                store(this.qualityMetrics, "AverageClassSize", quality.getAverageClassSize().getValue());
+                store(this.qualityMetrics, "GeneralizationIntensity", quality.getGeneralizationIntensity().getArithmeticMean());
+                store(this.qualityMetrics, "Granularity", quality.getGranularity().getArithmeticMean());
+            }
         }
         
         // Done

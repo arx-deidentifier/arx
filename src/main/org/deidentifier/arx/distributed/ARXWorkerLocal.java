@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.deidentifier.arx.distributed;
 
 import java.io.IOException;
@@ -26,15 +25,19 @@ import java.util.concurrent.Future;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
+
+import cern.colt.Arrays;
 
 /**
  * A local worker running in a local thread
  * @author Fabian Prasser
  */
 public class ARXWorkerLocal implements ARXWorker {
+    
+    /** Sequential execution: for debugging purposes*/
+    private static final boolean DEBUG = false;
     
     @Override
     public Future<DataHandle> anonymize(DataHandle partition,
@@ -55,7 +58,7 @@ public class ARXWorkerLocal implements ARXWorker {
         ARXConfiguration config = _config.clone();
         
         // Execute 
-        return executor.submit(new Callable<DataHandle>() {
+        Future<DataHandle> future = executor.submit(new Callable<DataHandle>() {
             @Override
             public DataHandle call() throws Exception {
                 
@@ -66,12 +69,27 @@ public class ARXWorkerLocal implements ARXWorker {
                 
                 // Anonymize
                 ARXAnonymizer anonymizer = new ARXAnonymizer();
-                ARXResult result = anonymizer.anonymize(getData(partition), config);
+                ARXResult result = anonymizer.anonymize(ARXPartition.getData(partition), config);
                 DataHandle handle = result.getOutput();
                 
+                if (!result.isResultAvailable()) {
+                    
+                    config.setSuppressionLimit(1d);
+                    anonymizer = new ARXAnonymizer();
+                    result = anonymizer.anonymize(ARXPartition.getData(partition), config);
+                    handle = result.getOutput();
+                }
+                
                 // Local transformation
-                if (recordsPerIteration != 0d) {
+                else if (recordsPerIteration != 0d) {
                     result.optimizeIterativeFast(handle, recordsPerIteration);
+                }
+                
+                if (DEBUG) {
+                    System.out.println("Anonymization");
+                    System.out.println(" - Dataset size: " + handle.getNumRows());
+                    System.out.println(" - Records suppressed: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfSuppressedRecords());
+                    System.out.println(" - Transformation scheme: " + Arrays.toString(result.getGlobalOptimum().getTransformation()));
                 }
                 
                 // Done
@@ -79,6 +97,20 @@ public class ARXWorkerLocal implements ARXWorker {
                 return handle;
             }
         });
+        
+        // Wait
+        if (DEBUG) {
+            while (!future.isDone()) {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    // Swallow
+                }
+            }
+        }
+        
+        // Done
+        return future;
     }
 
     @Override
@@ -91,31 +123,40 @@ public class ARXWorkerLocal implements ARXWorker {
         ARXConfiguration config = _config.clone();
         
         // Execute 
-        return executor.submit(new Callable<int[]>() {
+        Future<int[]> future = executor.submit(new Callable<int[]>() {
             @Override
             public int[] call() throws Exception {
                 
                 // Anonymize
                 ARXAnonymizer anonymizer = new ARXAnonymizer();
-                ARXResult result = anonymizer.anonymize(getData(partition), config);
+                ARXResult result = anonymizer.anonymize(ARXPartition.getData(partition), config);
                 int[] transformation = result.getGlobalOptimum().getTransformation();
+                
+                if (DEBUG) {
+                    System.out.println("Anonymization");
+                    System.out.println(" - Dataset size: " + result.getOutput().getNumRows());
+                    System.out.println(" - Records suppressed: " + result.getOutput().getStatistics().getEquivalenceClassStatistics().getNumberOfSuppressedRecords());
+                    System.out.println(" - Transformation scheme: " + Arrays.toString(result.getGlobalOptimum().getTransformation()));
+                }
                 
                 // Done
                 executor.shutdown();
                 return transformation;
             }
         });
-    }
-    
-    /**
-     * Converts handle to data
-     * @param handle
-     * @return
-     */
-    private Data getData(DataHandle handle) {
-        // TODO: Ugly that this is needed, because it is costly
-        Data data = Data.create(handle.iterator());
-        data.getDefinition().read(handle.getDefinition());
-        return data;
+
+        // Wait
+        if (DEBUG) {
+            while (!future.isDone()) {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    // Swallow
+                }
+            }
+        }
+        
+        // Done
+        return future;
     }
 }

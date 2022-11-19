@@ -22,12 +22,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
@@ -81,8 +82,6 @@ public class ARXDistributedAnonymizer {
     private final DistributionStrategy distributionStrategy;
     /** Distribution strategy*/
     private final TransformationStrategy transformationStrategy;
-    /** Random */
-    private final Random               random               = new Random(0xDEADBEEF);
 
     /**
      * Creates a new instance
@@ -115,29 +114,119 @@ public class ARXDistributedAnonymizer {
     public ARXDistributedResult anonymize(Data data, 
                                           ARXConfiguration config) throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
         
-        // Partition
+        // Store definition
+        DataDefinition definition = data.getDefinition().clone();
+        
+        // Sanity check
+        if (data.getHandle().getNumRows() < 2) {
+            throw new IllegalArgumentException("Dataset must contain at least two rows");
+        }
+        if (data.getHandle().getNumRows() < nodes) {
+            throw new IllegalArgumentException("Dataset must contain at least as many records as nodes");
+        }
+        
+        // #########################################
+        // STEP 1: PARTITIONING
+        // #########################################
         long timePrepare = System.currentTimeMillis();
         List<DataHandle> partitions = null;
         switch (partitioningStrategy) {
         case RANDOM:
-            partitions = getPartitionsRandom(data, this.nodes);
+            partitions = ARXPartition.getPartitionsRandom(data, this.nodes);
             break;
         case SORTED:
-            partitions = getPartitionsSorted(data, this.nodes);
+            partitions = ARXPartition.getPartitionsSorted(data, this.nodes);
             break;
         }
         timePrepare = System.currentTimeMillis() - timePrepare;
         
+        // #########################################
+        // STEP 2: ANONYMIZATION
+        // #########################################
+        
         // Start time measurement
         long timeAnonymize = System.currentTimeMillis();
+        
+        // ##########################################
+        // STEP 2a: IF GLOBAL, RETRIEVE COMMON SCHEME
+        // ##########################################
         
         // Global transformation
         int[] transformation = null;
         if (transformationStrategy != TransformationStrategy.LOCAL) {
-            transformation = getTransformation(partitions, config, transformationStrategy);
+            transformation = getTransformation(partitions, 
+                                               config,
+                                               distributionStrategy, 
+                                               transformationStrategy);
         }
         
+        // ###############################################
+        // STEP 2b: PERFORM LOCAL OR GLOBAL TRANSFORMATION
+        // ###############################################
+
         // Anonymize
+        List<Future<DataHandle>> futures = getAnonymization(partitions, 
+                                                            config, 
+                                                            distributionStrategy, 
+                                                            transformation);
+        
+        // Wait for execution
+        List<DataHandle> handles = getResults(futures);
+        
+        // ###############################################
+        // STEP 3: HANDLE NON-MONOTONIC SETTINGS
+        // ###############################################
+        Map<String, List<Double>> qualityMetrics = null;
+        if (config.getMonotonicityOfPrivacy() != Monotonicity.FULL) {
+            
+            // Prepare merged dataset
+            ARXDistributedResult mergedResult = new ARXDistributedResult(handles);
+            Data merged = ARXPartition.getData(mergedResult.getOutput());
+            merged.getDefinition().read(definition);
+            
+            // Partition sorted while keeping sure to assign records 
+            // within equivalence classes to exactly one partition
+            // Also removes all hierarchies
+            partitions = ARXPartition.getPartitionsByClass(merged, nodes);
+            
+            // Fix transformation scheme: all zero
+            config = config.clone();
+            config.setSuppressionLimit(1d);
+            transformation = new int[definition.getQuasiIdentifyingAttributes().size()];
+            
+            // Suppress equivalence classes
+            futures = getAnonymization(partitions, config, distributionStrategy, transformation);
+            
+            // Wait for execution
+            handles = getResults(futures);
+            
+            // We keep the quality metrics, because there is no other
+            // easy way to calculate them later
+            qualityMetrics = mergedResult.getQuality();
+        }
+        
+        // ###############################################
+        // STEP 4: MERGE AND DONE
+        // ###############################################
+        
+        timeAnonymize = System.currentTimeMillis() - timeAnonymize;
+        return new ARXDistributedResult(handles, timePrepare, timeAnonymize, qualityMetrics);
+    }
+    
+    /**
+     * Aonymizes the partitions
+     * @param partitions
+     * @param config
+     * @param distributionStrategy2
+     * @param transformation
+     * @return
+     * @throws RollbackRequiredException 
+     * @throws IOException 
+     */
+    private List<Future<DataHandle>> getAnonymization(List<DataHandle> partitions,
+                                                      ARXConfiguration config,
+                                                      DistributionStrategy distributionStrategy2,
+                                                      int[] transformation) throws IOException, RollbackRequiredException {
         List<Future<DataHandle>> futures = new ArrayList<>();
         for (DataHandle partition : partitions) {
             switch (distributionStrategy) {
@@ -164,104 +253,15 @@ public class ARXDistributedAnonymizer {
                     futures.add(new ARXWorkerLocal().anonymize(partition, config, O_MIN));
                 }
                 break;
+            default:
+                throw new IllegalStateException("Unknown distribution strategy");
             }
         }
         
-        // Wait for execution
-        List<DataHandle> handles = getResults(futures);
-        
-        // Merge
-        timeAnonymize = System.currentTimeMillis() - timeAnonymize;
-        return new ARXDistributedResult(handles, timePrepare, timeAnonymize);
-    }
-    
-    /**
-     * Partitions the dataset randomly
-     * @param data
-     * @param number
-     * @return
-     */
-    private List<DataHandle> getPartitionsRandom(Data data, int number) {
-        
-        // Copy definition
-        DataDefinition definition = data.getDefinition();
-        
-        // Randomly partition
-        DataHandle handle = data.getHandle();
-        Iterator<String[]> iter = handle.iterator();
-        String[] header = iter.next();
-
-        // Lists
-        List<List<String[]>> list = new ArrayList<>();
-        for (int i = 0; i < number; i++) {
-            List<String[]> _list = new ArrayList<>();
-            _list.add(header);
-            list.add(_list);
-        }
-        
-        // Distributed records
-        while (iter.hasNext()) {
-            list.get(random.nextInt(number)).add(iter.next());
-        }
-        
-        // Convert to data
-        List<DataHandle> result = new ArrayList<>();
-        for (List<String[]> partition : list) {
-            Data _data = Data.create(partition);
-            _data.getDefinition().read(definition.clone());
-            result.add(_data.getHandle());
-        }
-        
         // Done
-        return result;
+        return futures;
     }
 
-    /**
-     * Partitions the dataset using ordering
-     * @param data
-     * @param number
-     * @return
-     */
-    private List<DataHandle> getPartitionsSorted(Data data, int number) {
-
-        // Copy definition
-        DataDefinition definition = data.getDefinition();
-        
-        // Prepare
-        List<DataHandle> result = new ArrayList<>();
-        DataHandle handle = data.getHandle();
-        
-        // TODO: Would make sense to only sort based on key and sensible variables
-        handle.sort(true, 0, handle.getNumColumns() - 1);
-        
-        // Convert
-        List<String[]> rows = new ArrayList<>();
-        Iterator<String[]> iter = handle.iterator();
-        String[] header = iter.next();
-        while (iter.hasNext()) {
-            rows.add(iter.next());
-        }
-        
-        // Split
-        // TODO: Check for correctness
-        double size = (double)handle.getNumRows() / (double)number;
-        double start = 0d;
-        double end = size;
-        for (int i = 0; i < number; i++) {
-            List<String[]> _list = new ArrayList<>();
-            _list.add(header);
-            _list.addAll(rows.subList((int)Math.round(start), (int)Math.round(end)));
-            Data _data = Data.create(_list);
-            _data.getDefinition().read(definition.clone());
-            result.add(_data.getHandle());
-            start = end;
-            end = end + size;
-        }
-        
-        // Done
-        return result;
-    }
-    
     /**
      * Collects results from the futures
      * @param <T>
@@ -290,17 +290,26 @@ public class ARXDistributedAnonymizer {
      * Retrieves the transformation scheme using the current strategy
      * @param partitions
      * @param config
+     * @param distributionStrategy
+     * @param transformationStrategy
      * @return
-     * @throws IOException 
-     * @throws ExecutionException 
-     * @throws InterruptedException 
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws ExecutionException
      */
-    private int[] getTransformation(List<DataHandle> partitions, ARXConfiguration config, TransformationStrategy strategy) throws IOException, InterruptedException, ExecutionException {
+    private int[] getTransformation(List<DataHandle> partitions, ARXConfiguration config, DistributionStrategy distributionStrategy, TransformationStrategy transformationStrategy) throws IOException, InterruptedException, ExecutionException {
         
         // Calculate schemes
         List<Future<int[]>> futures = new ArrayList<>();
         for (DataHandle partition : partitions) {
-            futures.add(new ARXWorkerLocal().transform(partition, config));
+            switch (distributionStrategy) {
+            case LOCAL:
+                futures.add(new ARXWorkerLocal().transform(partition, config));
+                break;
+            default:
+                throw new IllegalStateException("Unknown distribution strategy");
+            }
+            
         }
 
         // Collect schemes

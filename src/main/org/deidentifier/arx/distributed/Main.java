@@ -33,8 +33,12 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
+import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.EntropyLDiversity.EntropyEstimator;
+import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.DistributionStrategy;
 import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.PartitioningStrategy;
 import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.TransformationStrategy;
@@ -214,23 +218,25 @@ public class Main {
     private static void playground() throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
 
         Data data = createData("adult");
+        data.getDefinition().setAttributeType("marital-status", AttributeType.SENSITIVE_ATTRIBUTE);
         
         // K-Anonymity
         for (int threads = 1; threads < 5; threads ++) {
-            for (int k : new int[] { 5 }) {
+            for (int k : new int[] { 2 }) {
                 ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new KAnonymity(k));
-                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.addPrivacyModel(new EqualDistanceTCloseness("marital-status", 0.2d));
+                config.setQualityModel(Metric.createLossMetric(0d));
                 config.setSuppressionLimit(1d);
     
                 // Anonymize
                 ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads,
                                                                                    PartitioningStrategy.SORTED,
                                                                                    DistributionStrategy.LOCAL,
-                                                                                   TransformationStrategy.GLOBAL_MINIMUM);
+                                                                                   TransformationStrategy.LOCAL);
                 ARXDistributedResult result = anonymizer.anonymize(data, config);
-    
+                
                 System.out.println("--------------------------");
+                ARXPartition.print(result.getOutput());
                 System.out.println("Records: " + result.getOutput().getNumRows());
                 System.out.println("Number of threads: " + threads);
                 for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
