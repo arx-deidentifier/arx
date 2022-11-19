@@ -58,7 +58,7 @@ public class ARXDistributedAnonymizer {
     }
     
     /**
-     * Strategy for defining common generalization levels
+     * Strategy for defining common transformation levels
      * @author Fabian Prasser
      */
     public static enum TransformationStrategy {
@@ -287,7 +287,7 @@ public class ARXDistributedAnonymizer {
     }
     
     /**
-     * Retrieves the generalization scheme using the current strategy
+     * Retrieves the transformation scheme using the current strategy
      * @param partitions
      * @param config
      * @return

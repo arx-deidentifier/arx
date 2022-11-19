@@ -55,7 +55,7 @@ public interface ARXWorker {
                                         double recordsPerIteration) throws IOException, RollbackRequiredException;
     
     /**
-     * Performs global transformation and returns a generalization scheme
+     * Performs global transformation and returns a transformation scheme
      * @param partition
      * @param config
      * @return
