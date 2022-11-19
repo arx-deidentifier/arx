@@ -41,20 +41,20 @@ import org.deidentifier.arx.exceptions.RollbackRequiredException;
 public class ARXDistributedAnonymizer {
     
     /**
+     * Distribution strategy
+     * @author Fabian Prasser
+     */
+    public static enum DistributionStrategy {
+        LOCAL
+    }
+
+    /**
      * Partitioning strategy
      * @author Fabian Prasser
      */
     public static enum PartitioningStrategy {
         RANDOM,
         SORTED
-    }
-
-    /**
-     * Distribution strategy
-     * @author Fabian Prasser
-     */
-    public static enum DistributionStrategy {
-        LOCAL
     }
     
     /**
@@ -176,58 +176,6 @@ public class ARXDistributedAnonymizer {
     }
     
     /**
-     * Retrieves the generalization scheme using the current strategy
-     * @param partitions
-     * @param config
-     * @return
-     * @throws IOException 
-     * @throws ExecutionException 
-     * @throws InterruptedException 
-     */
-    private int[] getTransformation(List<DataHandle> partitions, ARXConfiguration config, TransformationStrategy strategy) throws IOException, InterruptedException, ExecutionException {
-        
-        // Calculate schemes
-        List<Future<int[]>> futures = new ArrayList<>();
-        for (DataHandle partition : partitions) {
-            futures.add(new ARXWorkerLocal().transform(partition, config));
-        }
-
-        // Collect schemes
-        List<int[]> schemes = getResults(futures);
-        
-        // Apply strategy
-        switch (transformationStrategy) {
-            case GLOBAL_AVERAGE:
-                // Sum up all levels
-                int[] result = new int[schemes.get(0).length];
-                for (int[] scheme : schemes) {
-                    for (int i=0; i < result.length; i++) {
-                        result[i] += scheme[i];
-                    }
-                }
-                // Divide by number of levels
-                for (int i=0; i < result.length; i++) {
-                    result[i] = (int)Math.round((double)result[i] / (double)schemes.size());
-                }
-                return result;
-            case GLOBAL_MINIMUM:
-                // Find minimum levels
-                result = new int[schemes.get(0).length];
-                Arrays.fill(result, Integer.MAX_VALUE);
-                for (int[] scheme : schemes) {
-                    for (int i=0; i < result.length; i++) {
-                        result[i] = Math.min(result[i], scheme[i]);
-                    }
-                }
-                return result;
-            case LOCAL:
-                throw new IllegalStateException("Must not be executed when doing global transformation");
-            default:
-                throw new IllegalStateException("Unknown transformation strategy");
-        }
-    }
-
-    /**
      * Partitions the dataset randomly
      * @param data
      * @param number
@@ -267,7 +215,7 @@ public class ARXDistributedAnonymizer {
         // Done
         return result;
     }
-    
+
     /**
      * Partitions the dataset using ordering
      * @param data
@@ -336,5 +284,57 @@ public class ARXDistributedAnonymizer {
             Thread.sleep(WAIT_TIME);
         }
         return results;
+    }
+    
+    /**
+     * Retrieves the generalization scheme using the current strategy
+     * @param partitions
+     * @param config
+     * @return
+     * @throws IOException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
+     */
+    private int[] getTransformation(List<DataHandle> partitions, ARXConfiguration config, TransformationStrategy strategy) throws IOException, InterruptedException, ExecutionException {
+        
+        // Calculate schemes
+        List<Future<int[]>> futures = new ArrayList<>();
+        for (DataHandle partition : partitions) {
+            futures.add(new ARXWorkerLocal().transform(partition, config));
+        }
+
+        // Collect schemes
+        List<int[]> schemes = getResults(futures);
+        
+        // Apply strategy
+        switch (transformationStrategy) {
+            case GLOBAL_AVERAGE:
+                // Sum up all levels
+                int[] result = new int[schemes.get(0).length];
+                for (int[] scheme : schemes) {
+                    for (int i=0; i < result.length; i++) {
+                        result[i] += scheme[i];
+                    }
+                }
+                // Divide by number of levels
+                for (int i=0; i < result.length; i++) {
+                    result[i] = (int)Math.round((double)result[i] / (double)schemes.size());
+                }
+                return result;
+            case GLOBAL_MINIMUM:
+                // Find minimum levels
+                result = new int[schemes.get(0).length];
+                Arrays.fill(result, Integer.MAX_VALUE);
+                for (int[] scheme : schemes) {
+                    for (int i=0; i < result.length; i++) {
+                        result[i] = Math.min(result[i], scheme[i]);
+                    }
+                }
+                return result;
+            case LOCAL:
+                throw new IllegalStateException("Must not be executed when doing global transformation");
+            default:
+                throw new IllegalStateException("Unknown transformation strategy");
+        }
     }
 }

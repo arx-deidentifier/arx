@@ -100,40 +100,6 @@ public class Main {
         playground();
     }
     
-    private static void playground() throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
-
-        Data data = createData("adult");
-        
-        // K-Anonymity
-        for (int threads = 1; threads < 5; threads ++) {
-            for (int k : new int[] { 5 }) {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new KAnonymity(k));
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-    
-                // Anonymize
-                ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads,
-                                                                                   PartitioningStrategy.SORTED,
-                                                                                   DistributionStrategy.LOCAL,
-                                                                                   TransformationStrategy.GLOBAL_MINIMUM);
-                ARXDistributedResult result = anonymizer.anonymize(data, config);
-    
-                System.out.println("--------------------------");
-                System.out.println("Records: " + result.getOutput().getNumRows());
-                System.out.println("Number of threads: " + threads);
-                for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
-                    System.out.println(entry.getKey() + ": " + getAverage(entry.getValue()));
-                }
-    
-                // Timing
-                System.out.println("Preparation time: " + result.getTimePrepare());
-                System.out.println("Anonymization time: " + result.getTimeAnonymize());
-                System.out.println("Postprocessing time: " + result.getTimePostprocess());
-            }
-        }
-    }
-    
     /**
      * Benchmarking
      * @throws IOException
@@ -243,5 +209,39 @@ public class Main {
             result += value;
         }
         return result / (double)values.size();
+    }
+    
+    private static void playground() throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
+
+        Data data = createData("adult");
+        
+        // K-Anonymity
+        for (int threads = 1; threads < 5; threads ++) {
+            for (int k : new int[] { 5 }) {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new KAnonymity(k));
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+    
+                // Anonymize
+                ARXDistributedAnonymizer anonymizer = new ARXDistributedAnonymizer(threads,
+                                                                                   PartitioningStrategy.SORTED,
+                                                                                   DistributionStrategy.LOCAL,
+                                                                                   TransformationStrategy.GLOBAL_MINIMUM);
+                ARXDistributedResult result = anonymizer.anonymize(data, config);
+    
+                System.out.println("--------------------------");
+                System.out.println("Records: " + result.getOutput().getNumRows());
+                System.out.println("Number of threads: " + threads);
+                for (Entry<String, List<Double>> entry : result.getQuality().entrySet()) {
+                    System.out.println(entry.getKey() + ": " + getAverage(entry.getValue()));
+                }
+    
+                // Timing
+                System.out.println("Preparation time: " + result.getTimePrepare());
+                System.out.println("Anonymization time: " + result.getTimeAnonymize());
+                System.out.println("Postprocessing time: " + result.getTimePostprocess());
+            }
+        }
     }
 }

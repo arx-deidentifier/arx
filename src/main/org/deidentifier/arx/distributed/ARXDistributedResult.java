@@ -26,7 +26,6 @@ import java.util.Map;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsQuality;
-import org.deidentifier.arx.distribution.util.IteratorIterator;
 
 public class ARXDistributedResult {
     
@@ -59,7 +58,7 @@ public class ARXDistributedResult {
         for (DataHandle handle : handles) {
             iterators.add(handle.iterator());
         }
-        this.data = Data.create(new IteratorIterator<String[]>(iterators));
+        this.data = Data.create(new CombinedIterator<String[]>(iterators));
         
         // Collect statistics
         for (DataHandle handle : handles) {
