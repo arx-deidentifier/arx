@@ -146,105 +146,105 @@ public class Main {
         
         // Prepare configs
         List<BenchmarkConfiguration> configs = new ArrayList<>();
-
-        configs.add(new BenchmarkConfiguration() {
-            public String getName() {return "5-anonymity";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new KAnonymity(5));
-                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            public String getName() {return "11-anonymity";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new KAnonymity(5));
-                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            public String getName() {return "distinct-3-diversity";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                Data data = createData("ihis");
-                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
-                return data;
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new DistinctLDiversity("EDUC", 3));
-                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            public String getName() {return "distinct-5-diversity";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                Data data = createData("ihis");
-                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
-                return data;
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new DistinctLDiversity("EDUC", 5));
-                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            public String getName() {return "entropy-3-diversity";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                Data data = createData("ihis");
-                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
-                return data;
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EntropyLDiversity("EDUC", 3));
-                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            public String getName() {return "entropy-5-diversity";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                Data data = createData("ihis");
-                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
-                return data;
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EntropyLDiversity("EDUC", 5));
-                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-
+//
+//        configs.add(new BenchmarkConfiguration() {
+//            public String getName() {return "5-anonymity";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                return createData("ihis");
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new KAnonymity(5));
+//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            public String getName() {return "11-anonymity";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                return createData("ihis");
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new KAnonymity(5));
+//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            public String getName() {return "distinct-3-diversity";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                Data data = createData("ihis");
+//                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+//                return data;
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new DistinctLDiversity("EDUC", 3));
+//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            public String getName() {return "distinct-5-diversity";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                Data data = createData("ihis");
+//                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+//                return data;
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new DistinctLDiversity("EDUC", 5));
+//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            public String getName() {return "entropy-3-diversity";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                Data data = createData("ihis");
+//                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+//                return data;
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new EntropyLDiversity("EDUC", 3));
+//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            public String getName() {return "entropy-5-diversity";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                Data data = createData("ihis");
+//                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+//                return data;
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new EntropyLDiversity("EDUC", 5));
+//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
         configs.add(new BenchmarkConfiguration() {
             public String getName() {return "0.2-closeness";}
             public String getDataName() {return "ihis";}
