@@ -1489,7 +1489,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // For each
         for (PrivacyCriterion c : this.getPrivacyModels()) {
             if (c.isMinimalClassSizeAvailable()) {
-                result = Math.max(result, c.getMinimalClassSize());
+                int size = -1;
+                try {
+                    size = c.getMinimalClassSize();
+                } catch (Exception e) {
+                    // Catches calls to uninitialized instances of DP
+                }
+                result = Math.max(result, size);
             }
         }
 

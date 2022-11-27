@@ -119,7 +119,10 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
     @Override
     public EDDifferentialPrivacy clone() {
-        return new EDDifferentialPrivacy(this.getEpsilon(), this.getDelta(), this.getGeneralizationScheme());
+        return new EDDifferentialPrivacy(this.getEpsilon(), 
+                                         this.getDelta(), 
+                                         this.getGeneralizationScheme(),
+                                         this.isDeterministic());
     }
 
     /**

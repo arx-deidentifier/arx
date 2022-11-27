@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
@@ -153,7 +154,8 @@ public class ARXDistributedAnonymizer {
         
         // Global transformation
         int[] transformation = null;
-        if (transformationStrategy != TransformationStrategy.LOCAL) {
+        if (!config.isPrivacyModelSpecified(EDDifferentialPrivacy.class) &&
+            transformationStrategy != TransformationStrategy.LOCAL) {
             transformation = getTransformation(partitions, 
                                                config,
                                                distributionStrategy, 
@@ -177,7 +179,8 @@ public class ARXDistributedAnonymizer {
         // STEP 3: HANDLE NON-MONOTONIC SETTINGS
         // ###############################################
         Map<String, List<Double>> qualityMetrics = null;
-        if (config.getMonotonicityOfPrivacy() != Monotonicity.FULL) {
+        if (!config.isPrivacyModelSpecified(EDDifferentialPrivacy.class) &&
+             config.getMonotonicityOfPrivacy() != Monotonicity.FULL) {
             
             // Prepare merged dataset
             ARXDistributedResult mergedResult = new ARXDistributedResult(handles);

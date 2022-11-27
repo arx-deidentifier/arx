@@ -26,6 +26,7 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 
 import cern.colt.Arrays;
@@ -81,7 +82,8 @@ public class ARXWorkerLocal implements ARXWorker {
                 }
                 
                 // Local transformation
-                else if (recordsPerIteration != 0d) {
+                else if (!config.isPrivacyModelSpecified(EDDifferentialPrivacy.class) && 
+                          recordsPerIteration != 0d) {
                     result.optimizeIterativeFast(handle, recordsPerIteration);
                 }
                 
