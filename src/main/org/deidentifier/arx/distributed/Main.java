@@ -378,17 +378,180 @@ public class Main {
 //        });
         
         configs.add(new BenchmarkConfiguration() {
-            public String getName() {return "(e10-6, 2)-differential privacy";}
+            final double EPSILON = 1d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
             public String getDataName() {return "ihis";}
             public Data getDataset() throws IOException {
                 return createData("ihis");
             }
             public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
                 ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(2d / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (2d / (double) threads));
-                config.setHeuristicSearchStepLimit(1000);
-                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 2d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 3d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 4d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 5d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 6d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 7d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 8d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 9d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            final double EPSILON = 10d;
+            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                return createData("ihis");
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+                config.setHeuristicSearchStepLimit(300);
+                config.setQualityModel(Metric.createLossMetric(0.5d));
                 config.setSuppressionLimit(1d);
                 return config;
             }
