@@ -1107,6 +1107,24 @@ public class MainWindow implements IView {
             }
         });
 
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.150"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_import_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileImportAllHierarchies(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.170"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_export_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileExportAllHierarchies(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+		
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.19"), //$NON-NLS-1$
