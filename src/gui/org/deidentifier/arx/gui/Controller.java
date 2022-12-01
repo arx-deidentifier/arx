@@ -1471,7 +1471,6 @@ public class Controller implements IView {
                                 Resources.getMessage("Controller.57")); //$NON-NLS-1$
             return;
         }
-        System.out.println("actionMenuFileImportAllHierarchies .......");
         int numAttributes =  model.getInputDefinition().getQuasiIdentifyingAttributes().size();
 
         // Ask for a folder contains all hierarchy files         
@@ -1485,9 +1484,8 @@ public class Controller implements IView {
             File[] listOfFiles = folder.listFiles();
             String fileName = null;
             for (int j = 0; j < listOfFiles.length; j++) {
-              if ((listOfFiles[j].isFile()) && (listOfFiles[j].getName().contains(currentAttribute)) ) {
+              if ((listOfFiles[j].isFile()) && (listOfFiles[j].getName().contains(currentAttribute+"_hrierarchy")) ) {
                 fileName = folderPath +"/"+ listOfFiles[j].getName(); //$NON-NLS-1$
-                System.out.println("File: " + fileName);
                 break;
               } 
             }
@@ -1501,12 +1499,10 @@ public class Controller implements IView {
                 }
                 // Check hierarchy
                 String missingValue = model.getInputConfig().isHierarchyComplete(hierarchy, currentAttribute);
-                if (missingValue != null) {
-                    
+                if (missingValue != null) {                    
                     // Ask whether to proceed
-                    boolean proceed = actionShowQuestionDialog(Resources.getMessage("Controller.160"), //$NON-NLS-1$
-                                                               String.format(Resources.getMessage("Controller.161"), missingValue)); //$NON-NLS-1$
-                    
+                    boolean proceed = actionShowQuestionDialog(currentAttribute+": " + Resources.getMessage("Controller.160"), //$NON-NLS-1$
+                                                               String.format(Resources.getMessage("Controller.161"), missingValue)); //$NON-NLS-1$                    
                     if (!proceed) {
                         return;
                     }
