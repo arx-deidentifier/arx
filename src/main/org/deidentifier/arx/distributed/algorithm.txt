@@ -27,6 +27,16 @@ Step 4: Finalize
 - Check for each privacy model whether local transformation is valid
 - Utility estimation currently ignores step 3
 - Poor performance on differential privacy
+  * Check local vs global differential privacy
+  * If the dataset is split up (potentially: randomly), maybe the Epsilons don't add up?
+  * Ignore or optimize time needed for parameter calculation
+
+=========
+| TODOS |
+=========
+
+- Measure execution times for Step 1-4 separately and plot stacked lines
+- Measure memory consumption over time (likely increases with the number of workers)
 
 ================
 | RELATED WORK |
@@ -37,4 +47,3 @@ Scalable Distributed Data Anonymization for Large Datasets
 - Sara Foresti, Senior Member, IEEE, Giovanni Livraga, Member, IEEE, Gianluca Oldani, Member, IEEE,
 - Stefano Paraboschi, Member, IEEE, Matthew Rossi, Member, IEEE,
 - Pierangela Samarati, Fellow, IEEE
-
