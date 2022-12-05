@@ -34,7 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 /**
@@ -70,9 +69,6 @@ public class ComponentGSSlider {
 
     /** Button */
     private final Button     button;
-
-    /** Label */
-    private final Label      label;
 
     /**
      * Creates a new instance.
@@ -161,27 +157,19 @@ public class ComponentGSSlider {
             }
         });
         
-        
-        // Slider Base
+        // Slider
         Composite sliderBase = new Composite(this.root, SWT.NONE);
         sliderBase.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        sliderBase.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
-
-        // Slider
+        sliderBase.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).create());
+        
         slider = new Scale(sliderBase, SWT.HORIZONTAL);
         slider.setMinimum(MINIMUM);
         slider.setMaximum(MAXIMUM);
         slider.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-        
-        // Label
-        label = new Label(sliderBase, SWT.NONE); 
-        label.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.CENTER).create());
-        label.setText(Float.toString(slider.getSelection()/1000.0F)); //$NON-NLS-1$
-
         slider.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
-                label.setText(Float.toString(slider.getSelection()/1000.0F)); //$NON-NLS-1$
-                canvas.redraw();                
+				slider.setToolTipText(Float.toString(slider.getSelection()/1000.0F)); //$NON-NLS-1$
+                canvas.redraw();
             }
         });
         
@@ -195,11 +183,9 @@ public class ComponentGSSlider {
                 canvas.redraw();
             }
         });
-
+                
         root.pack();
         this.setSelection(0.5d);
-        
-        
     }
     
     /**
