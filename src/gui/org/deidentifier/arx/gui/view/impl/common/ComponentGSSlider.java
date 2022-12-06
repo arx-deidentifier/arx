@@ -168,7 +168,7 @@ public class ComponentGSSlider {
         slider.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         slider.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
-                slider.setToolTipText("Generalization/suppression factor: " + Float.toString(slider.getSelection()/1000.0F)); //$NON-NLS-1$
+                slider.setToolTipText(Resources.getMessage("ViewCodingModel.3") + Float.toString(slider.getSelection()/1000.0F)); //$NON-NLS-1$
                 canvas.redraw();
             }
         });
