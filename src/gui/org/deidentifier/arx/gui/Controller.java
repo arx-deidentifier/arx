@@ -1283,7 +1283,7 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), model.getName() + "_hierarchy_" + model.getSelectedAttribute(), "*.csv"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName() +"__"+ model.getSelectedAttribute()+ "_hierarchy" , "*.csv"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
@@ -1324,7 +1324,7 @@ public class Controller implements IView {
 
         for (int i=0; i< numAttributes; i++) {
             String currentAttribute = (String) model.getInputDefinition().getQuasiIdentifyingAttributes().toArray()[i];               
-            String fileName = folderPath +"/"+  model.getName() +"_"+currentAttribute+ "_hrierarchy.csv"; //$NON-NLS-1$
+            String fileName = folderPath +"/"+  model.getName() +"__"+currentAttribute+ "_hierarchy.csv"; //$NON-NLS-1$
 
             if (fileName == null) {
                 return;
@@ -1484,7 +1484,7 @@ public class Controller implements IView {
             File[] listOfFiles = folder.listFiles();
             String fileName = null;
             for (int j = 0; j < listOfFiles.length; j++) {
-              if ((listOfFiles[j].isFile()) && (listOfFiles[j].getName().contains(currentAttribute+"_hrierarchy")) ) {
+              if ((listOfFiles[j].isFile()) && (listOfFiles[j].getName().contains("__"+currentAttribute+"_hierarchy")) ) {
                 fileName = folderPath +"/"+ listOfFiles[j].getName(); //$NON-NLS-1$
                 break;
               } 
