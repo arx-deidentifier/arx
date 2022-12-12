@@ -366,6 +366,7 @@ public class ViewAttributeWeights implements IView {
             for (int i = 0; i < sortedAttributes.size(); i++) {
                 Label label = new Label(composites.get(i), SWT.CENTER);
                 label.setText(sortedAttributes.get(i));
+                label.setToolTipText(sortedAttributes.get(i));
                 label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
             }
             
