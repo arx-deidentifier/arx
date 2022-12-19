@@ -12,9 +12,9 @@ Step 2b
 - Anonymize all partitions (using all privacy models defined, the utility model defined, the transformation scheme defined etc.)
 - Use average generalization levels, iff the transformation model is global
 
-Step 3 (iff the privacy models include a non-monotonic model
+Step 3 (iff the privacy models include a non-monotonic model)
 - Partition dataset again but make sure that each equivalence class is assigned to just one partition (and not split between partitions; the exact partitioning strategy is irrelevant in this case).
-- Anonymize all partitions by suppressing all equivalence classes that do not meet the privacy models specified.
+- Anonymize all partitions (containing already anonymized data) by suppressing all equivalence classes that do not meet the privacy models specified.
 
 Step 4: Finalize
 - Merge the partitions
