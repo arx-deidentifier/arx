@@ -24,7 +24,7 @@ Step 4: Finalize
 | OPEN ISSUES |
 ===============
 - Global distribution needed for t-closeness, b-likeness et al.
-- Check for each privacy model whether local transformation is valid
+- (Check for each privacy model whether local transformation is valid)
 - Utility estimation currently ignores step 3
 - Poor performance on differential privacy
   * Check local vs global differential privacy
