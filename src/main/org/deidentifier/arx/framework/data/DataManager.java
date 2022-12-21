@@ -33,6 +33,7 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -40,14 +41,15 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
-import org.deidentifier.arx.metric.v2.DomainShareReliable;
 import org.deidentifier.arx.metric.v2.DomainShareRedaction;
-
-import cern.colt.Sorting;
-import cern.colt.function.IntComparator;
+import org.deidentifier.arx.metric.v2.DomainShareReliable;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectDoubleOpenHashMap;
+
+import cern.colt.Sorting;
+import cern.colt.function.IntComparator;
 
 /**
  * Holds all data needed for the anonymization process.
@@ -405,7 +407,44 @@ public class DataManager {
         int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
         return getDistribution(dataAnalyzed.getArray(), index, distinctValues);
     }
-
+    
+    /**
+     * Returns the distribution of the given sensitive attribute in the original dataset. 
+     * Based on the given distribution.
+     * 
+     * @param attribute
+     * @param externalDistribution
+     * @return distribution
+     */
+    public double[] getDistribution(String attribute,
+                                    StatisticsFrequencyDistribution externalDistribution) {
+        
+        // Create map of frequencies provided
+        ObjectDoubleOpenHashMap<String> map = new ObjectDoubleOpenHashMap<>();
+        for (int i = 0; i < externalDistribution.values.length; i++) {
+            map.put(externalDistribution.values[i], externalDistribution.frequency[i]);
+        }
+        
+        // Obtain distribution based on existing data
+        double[] distribution = getDistribution(attribute);
+        
+        // Obtain dictionary for attribute in question
+        int index = dataAnalyzed.getIndexOf(attribute);
+        String[] mapping = dataAnalyzed.getDictionary().getMapping()[index];
+        
+        // Replace frequencies with the ones provided externally
+        for (int i=0; i < distribution.length; i++) {
+            String value = mapping[i];
+            if (!map.containsKey(value)) {
+                throw new IllegalStateException("No frequency provided for value: " + value);
+            }
+            distribution[i] = map.lget();
+        }
+        
+        // Done
+        return distribution;
+    }
+    
     /**
      * Returns the domain shares for all generalized quasi-identifiers
      * @return

@@ -18,6 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -31,12 +32,15 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public class EqualDistanceTCloseness extends TCloseness {
 
-    /**  SVUID */
-    private static final long serialVersionUID = -1383357036299011323L;
+    /** SVUID */
+    private static final long               serialVersionUID = -1383357036299011323L;
 
     /** The original distribution. */
-    private double[]          distribution;
-    
+    private double[]                        distribution;
+
+    /** External distribution, if specified */
+    private StatisticsFrequencyDistribution externalDistribution;
+
     /**
      * Creates a new instance of the t-closeness criterion with equal earth-movers-distance as proposed in:
      * Li N, Li T, Venkatasubramanian S.
@@ -50,15 +54,30 @@ public class EqualDistanceTCloseness extends TCloseness {
         super(attribute, t);
     }
 
+    /**
+     * Allows to explicitly specify a target value distribution
+     * @param attribute
+     * @param t
+     * @param distribution
+     */
+    public EqualDistanceTCloseness(String attribute, double t, StatisticsFrequencyDistribution distribution) {
+        this(attribute, t);
+        this.externalDistribution = distribution;
+    }
+    
     @Override
     public EqualDistanceTCloseness clone() {
-        return new EqualDistanceTCloseness(this.getAttribute(), this.getT());
+        return new EqualDistanceTCloseness(this.getAttribute(), this.getT(), this.externalDistribution);
     }
     
     @Override
     public void initialize(DataManager manager, ARXConfiguration config) {
         super.initialize(manager, config);
-        distribution = manager.getDistribution(attribute);
+        if (externalDistribution != null) {
+            this.distribution = manager.getDistribution(attribute, externalDistribution);
+        } else {
+            this.distribution = manager.getDistribution(attribute);
+        }
     }
 
     @Override

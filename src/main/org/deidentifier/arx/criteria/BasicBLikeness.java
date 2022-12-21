@@ -18,6 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -33,17 +34,19 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  */
 public class BasicBLikeness extends ExplicitPrivacyCriterion {
-
-
-    /** SVUID*/
-    private static final long serialVersionUID = 2528498679732389575L;
+    
+    /** SVUID */
+    private static final long               serialVersionUID = 2528498679732389575L;
 
     /** Parameter */
-    private final double        b;
+    private final double                    b;
 
     /** The original distribution. */
-    private double[]            distribution;
-    
+    private double[]                        distribution;
+
+    /** External distribution, if specified */
+    private StatisticsFrequencyDistribution externalDistribution;
+
     /**
      * Creates a new instance
      *
@@ -57,10 +60,21 @@ public class BasicBLikeness extends ExplicitPrivacyCriterion {
         }
         this.b = beta;
     }
+    
+    /**
+     * Allows to explicitly specify a target value distribution
+     * @param attribute
+     * @param beta
+     * @param distribution
+     */
+    public BasicBLikeness(String attribute, double beta, StatisticsFrequencyDistribution distribution) {
+        this(attribute, beta);
+        this.externalDistribution = distribution;
+    }
 
     @Override
     public BasicBLikeness clone() {
-        return new BasicBLikeness(this.getAttribute(), this.getB());
+        return new BasicBLikeness(this.getAttribute(), this.getB(), this.externalDistribution);
     }
 
     /**
@@ -81,7 +95,11 @@ public class BasicBLikeness extends ExplicitPrivacyCriterion {
     @Override
     public void initialize(DataManager manager, ARXConfiguration config) {
         super.initialize(manager, config);
-        this.distribution = manager.getDistribution(attribute);
+        if (externalDistribution != null) {
+            this.distribution = manager.getDistribution(attribute, externalDistribution);
+        } else {
+            this.distribution = manager.getDistribution(attribute);
+        }
     }
 
     @Override

@@ -35,15 +35,11 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.criteria.AverageReidentificationRisk;
-import org.deidentifier.arx.criteria.DDisclosurePrivacy;
-import org.deidentifier.arx.criteria.DistinctLDiversity;
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EnhancedBLikeness;
-import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
-import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.DistributionStrategy;
 import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.PartitioningStrategy;
 import org.deidentifier.arx.distributed.ARXDistributedAnonymizer.TransformationStrategy;
@@ -245,40 +241,102 @@ public class Main {
 //            }
 //        });
 //        
-//        configs.add(new BenchmarkConfiguration() {
-//            public String getName() {return "0.2-closeness";}
-//            public String getDataName() {return "ihis";}
-//            public Data getDataset() throws IOException {
-//                Data data = createData("ihis");
-//                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
-//                return data;
-//            }
-//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-//                ARXConfiguration config = ARXConfiguration.create();
-//                config.addPrivacyModel(new HierarchicalDistanceTCloseness("EDUC", 0.2d, createHierarchy("ihis", "EDUC")));
-//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-//                config.setSuppressionLimit(1d);
-//                return config;
-//            }
-//        });
-//        
-//        configs.add(new BenchmarkConfiguration() {
-//            public String getName() {return "0.5-closeness";}
-//            public String getDataName() {return "ihis";}
-//            public Data getDataset() throws IOException {
-//                Data data = createData("ihis");
-//                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
-//                return data;
-//            }
-//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-//                ARXConfiguration config = ARXConfiguration.create();
-//                config.addPrivacyModel(new HierarchicalDistanceTCloseness("EDUC", 0.5d, createHierarchy("ihis", "EDUC")));
-//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-//                config.setSuppressionLimit(1d);
-//                return config;
-//            }
-//        });
-//        
+        // -------------------
+        // LOCAL DISTRIBUTION
+        // -------------------
+        
+        configs.add(new BenchmarkConfiguration() {
+            public String getName() {return "0.2-equal-closeness";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                Data data = createData("ihis");
+                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+                return data;
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EqualDistanceTCloseness("EDUC", 0.2d));
+                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            public String getName() {return "0.5-equal-closeness";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                Data data = createData("ihis");
+                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+                return data;
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EqualDistanceTCloseness("EDUC", 0.5d));
+                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        // -------------------
+        // GLOBAL DISTRIBUTION
+        // -------------------
+        
+        configs.add(new BenchmarkConfiguration() {
+            public String getName() {return "0.2-equal-closeness (global distribution)";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                Data data = createData("ihis");
+                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+                return data;
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                
+                // Variable
+                String VARIABLE = "EDUC";
+                
+                // Obtain global distribution
+                StatisticsFrequencyDistribution distribution;
+                DataHandle handle = getDataset().getHandle();
+                int column = handle.getColumnIndexOf(VARIABLE);
+                distribution = handle.getStatistics().getFrequencyDistribution(column);
+                
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EqualDistanceTCloseness(VARIABLE, 0.2d, distribution));
+                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        configs.add(new BenchmarkConfiguration() {
+            public String getName() {return "0.5-equal-closeness (global distribution)";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                Data data = createData("ihis");
+                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+                return data;
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+
+                // Variable
+                String VARIABLE = "EDUC";
+                
+                // Obtain global distribution
+                StatisticsFrequencyDistribution distribution;
+                DataHandle handle = getDataset().getHandle();
+                int column = handle.getColumnIndexOf(VARIABLE);
+                distribution = handle.getStatistics().getFrequencyDistribution(column);
+                
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EqualDistanceTCloseness(VARIABLE, 0.5d, distribution));
+                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
 //        configs.add(new BenchmarkConfiguration() {
 //            public String getName() {return "1-disclosure-privacy";}
 //            public String getDataName() {return "ihis";}
@@ -313,39 +371,101 @@ public class Main {
 //            }
 //        });
 //
-//        configs.add(new BenchmarkConfiguration() {
-//            public String getName() {return "1-enhanced-likeness";}
-//            public String getDataName() {return "ihis";}
-//            public Data getDataset() throws IOException {
-//                Data data = createData("ihis");
-//                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
-//                return data;
-//            }
-//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-//                ARXConfiguration config = ARXConfiguration.create();
-//                config.addPrivacyModel(new EnhancedBLikeness("EDUC", 1));
-//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-//                config.setSuppressionLimit(1d);
-//                return config;
-//            }
-//        });
-//
-//        configs.add(new BenchmarkConfiguration() {
-//            public String getName() {return "2-enhanced-likeness";}
-//            public String getDataName() {return "ihis";}
-//            public Data getDataset() throws IOException {
-//                Data data = createData("ihis");
-//                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
-//                return data;
-//            }
-//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-//                ARXConfiguration config = ARXConfiguration.create();
-//                config.addPrivacyModel(new EnhancedBLikeness("EDUC", 2));
-//                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
-//                config.setSuppressionLimit(1d);
-//                return config;
-//            }
-//        });
+        // -------------------
+        // LOCAL DISTRIBUTION
+        // -------------------
+        
+        configs.add(new BenchmarkConfiguration() {
+            public String getName() {return "1-enhanced-likeness";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                Data data = createData("ihis");
+                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+                return data;
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EnhancedBLikeness("EDUC", 1));
+                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+
+        configs.add(new BenchmarkConfiguration() {
+            public String getName() {return "2-enhanced-likeness";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                Data data = createData("ihis");
+                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+                return data;
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EnhancedBLikeness("EDUC", 2));
+                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+        
+        // -------------------
+        // GLOBAL DISTRIBUTION
+        // -------------------
+        
+        configs.add(new BenchmarkConfiguration() {
+            public String getName() {return "1-enhanced-likeness (global distribution)";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                Data data = createData("ihis");
+                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+                return data;
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+                
+                // Variable
+                String VARIABLE = "EDUC";
+                
+                // Obtain global distribution
+                StatisticsFrequencyDistribution distribution;
+                DataHandle handle = getDataset().getHandle();
+                int column = handle.getColumnIndexOf(VARIABLE);
+                distribution = handle.getStatistics().getFrequencyDistribution(column);
+                
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EnhancedBLikeness(VARIABLE, 1, distribution));
+                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
+
+        configs.add(new BenchmarkConfiguration() {
+            public String getName() {return "2-enhanced-likeness (global distribution)";}
+            public String getDataName() {return "ihis";}
+            public Data getDataset() throws IOException {
+                Data data = createData("ihis");
+                data.getDefinition().setAttributeType("EDUC", AttributeType.SENSITIVE_ATTRIBUTE);
+                return data;
+            }
+            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+
+                // Variable
+                String VARIABLE = "EDUC";
+                
+                // Obtain global distribution
+                StatisticsFrequencyDistribution distribution;
+                DataHandle handle = getDataset().getHandle();
+                int column = handle.getColumnIndexOf(VARIABLE);
+                distribution = handle.getStatistics().getFrequencyDistribution(column);
+                
+                ARXConfiguration config = ARXConfiguration.create();
+                config.addPrivacyModel(new EnhancedBLikeness(VARIABLE, 2, distribution));
+                config.setQualityModel(Metric.createLossMetric(local ? 0d : 0.5d));
+                config.setSuppressionLimit(1d);
+                return config;
+            }
+        });
 //
 //        configs.add(new BenchmarkConfiguration() {
 //            public String getName() {return "0.05-average-risk";}
@@ -376,186 +496,96 @@ public class Main {
 //                return config;
 //            }
 //        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 1d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 2d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 3d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 4d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 5d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 6d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 7d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 8d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 9d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
-        
-        configs.add(new BenchmarkConfiguration() {
-            final double EPSILON = 10d;
-            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
-            public String getDataName() {return "ihis";}
-            public Data getDataset() throws IOException {
-                return createData("ihis");
-            }
-            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
-                ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
-                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
-                config.setHeuristicSearchStepLimit(300);
-                config.setQualityModel(Metric.createLossMetric(0.5d));
-                config.setSuppressionLimit(1d);
-                return config;
-            }
-        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            final double EPSILON = 1d;
+//            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                return createData("ihis");
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+//                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+//                config.setHeuristicSearchStepLimit(300);
+//                config.setQualityModel(Metric.createLossMetric(0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            final double EPSILON = 2d;
+//            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                return createData("ihis");
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+//                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+//                config.setHeuristicSearchStepLimit(300);
+//                config.setQualityModel(Metric.createLossMetric(0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            final double EPSILON = 3d;
+//            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                return createData("ihis");
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+//                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+//                config.setHeuristicSearchStepLimit(300);
+//                config.setQualityModel(Metric.createLossMetric(0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            final double EPSILON = 4d;
+//            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                return createData("ihis");
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+//                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+//                config.setHeuristicSearchStepLimit(300);
+//                config.setQualityModel(Metric.createLossMetric(0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
+//        
+//        configs.add(new BenchmarkConfiguration() {
+//            final double EPSILON = 5d;
+//            public String getName() {return "(e10-6, "+EPSILON+")-differential privacy";}
+//            public String getDataName() {return "ihis";}
+//            public Data getDataset() throws IOException {
+//                return createData("ihis");
+//            }
+//            public ARXConfiguration getConfig(boolean local, int threads) throws IOException {
+//                ARXConfiguration config = ARXConfiguration.create();
+//                config.addPrivacyModel(new EDDifferentialPrivacy(EPSILON / (double) threads, 0.000001d, null, true));
+//                config.setDPSearchBudget(0.1d * (EPSILON / (double) threads));
+//                config.setHeuristicSearchStepLimit(300);
+//                config.setQualityModel(Metric.createLossMetric(0.5d));
+//                config.setSuppressionLimit(1d);
+//                return config;
+//            }
+//        });
         
         // Configs
         for (BenchmarkConfiguration benchmark : configs) {
@@ -654,8 +684,15 @@ public class Main {
         // K-Anonymity
         for (int threads = 1; threads < 5; threads ++) {
             for (int k : new int[] { 2 }) {
+                
+                // Obtain global distribution
+                StatisticsFrequencyDistribution distribution;
+                int column = data.getHandle().getColumnIndexOf("marital-status");
+                distribution = data.getHandle().getStatistics().getFrequencyDistribution(column);
+                
+                // Use global distribution for t-closeness
                 ARXConfiguration config = ARXConfiguration.create();
-                config.addPrivacyModel(new EqualDistanceTCloseness("marital-status", 0.2d));
+                config.addPrivacyModel(new EqualDistanceTCloseness("marital-status", 0.2d, distribution));
                 config.setQualityModel(Metric.createLossMetric(0d));
                 config.setSuppressionLimit(1d);
     

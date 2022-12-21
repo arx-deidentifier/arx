@@ -18,6 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -34,15 +35,18 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
 
-    /** SVUID*/
-    private static final long serialVersionUID = 5319052409590347904L;
+    /** SVUID */
+    private static final long               serialVersionUID = 5319052409590347904L;
 
     /** Parameter */
-    private final double        b;
+    private final double                    b;
 
     /** The original distribution. */
-    private double[]            distribution;
-    
+    private double[]                        distribution;
+
+    /** External distribution, if specified */
+    private StatisticsFrequencyDistribution externalDistribution;
+
     /**
      * Creates a new instance
      *
@@ -56,10 +60,21 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
         }
         this.b = beta;
     }
-
+    
+    /**
+     * Allows to explicitly specify a target value distribution
+     * @param attribute
+     * @param beta
+     * @param distribution
+     */
+    public EnhancedBLikeness(String attribute, double beta, StatisticsFrequencyDistribution distribution) {
+        this(attribute, beta);
+        this.externalDistribution = distribution;
+    }
+    
     @Override
     public EnhancedBLikeness clone() {
-        return new EnhancedBLikeness(this.getAttribute(), this.getB());
+        return new EnhancedBLikeness(this.getAttribute(), this.getB(), this.externalDistribution);
     }
 
     /**
@@ -80,7 +95,11 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
     @Override
     public void initialize(DataManager manager, ARXConfiguration config) {
         super.initialize(manager, config);
-        this.distribution = manager.getDistribution(attribute);
+        if (externalDistribution != null) {
+            this.distribution = manager.getDistribution(attribute, externalDistribution);
+        } else {
+            this.distribution = manager.getDistribution(attribute);
+        }
     }
 
     @Override
