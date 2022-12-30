@@ -50,7 +50,25 @@ public class ARXPartition {
         data.getDefinition().read(handle.getDefinition());
         return data;
     }
-
+    
+    /**
+     * Merges several handles
+     * @param handles
+     * @return
+     */
+    public static Data getData(List<DataHandle> handles) {
+        // TODO: Ugly that this is needed, because it is costly
+        List<Iterator<String[]>> iterators = new ArrayList<>();
+        for (DataHandle handle : handles) {
+            Iterator<String[]> iterator = handle.iterator();
+            if (!iterators.isEmpty()) {
+                // Skip header
+                iterator.next();
+            }
+            iterators.add(iterator);
+        }
+        return Data.create(new CombinedIterator<String[]>(iterators));
+    }
     /**
      * Partitions the dataset making sure that records from one equivalence
      * class are assigned to exactly one partition. Will also remove all hierarchies.

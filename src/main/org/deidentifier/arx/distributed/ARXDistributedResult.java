@@ -17,15 +17,12 @@
 
 package org.deidentifier.arx.distributed;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.aggregates.StatisticsQuality;
 
 public class ARXDistributedResult {
     
@@ -39,27 +36,31 @@ public class ARXDistributedResult {
     private long                      timeAnonymize;
     /** Timing */
     private long                      timePostprocess;
-    
+    /** Max memory consumption */
+    private long                      maxMemoryConsumption = Long.MIN_VALUE;
+
     /**
      * Creates a new instance
      * 
-     * @param handles
+     * @param data
      */
-    public ARXDistributedResult(List<DataHandle> handles) {
-        this(handles, 0, 0, null);
+    public ARXDistributedResult(Data data) {
+        this(data, 0, 0, 0, null, Long.MIN_VALUE);
         
     }
 
     /**
      * Creates a new instance
-     * @param handles
+     * @param data
      * @param timePrepare
      * @param timeAnonymize
+     * @param timePostprocess
      */
-    public ARXDistributedResult(List<DataHandle> handles, 
+    public ARXDistributedResult(Data data, 
                                 long timePrepare, 
-                                long timeAnonymize) {
-        this(handles, timePrepare, timeAnonymize, null);
+                                long timeAnonymize,
+                                long timePostprocess) {
+        this(data, timePrepare, timeAnonymize, timePostprocess, null, Long.MIN_VALUE);
     }
         
     /**
@@ -67,45 +68,41 @@ public class ARXDistributedResult {
      * @param handles
      * @param timePrepare
      * @param timeAnonymize
+     * @param timePostprocess
      * @param qualityMetrics
+     * @param maxMemoryConsumption
      */
-    public ARXDistributedResult(List<DataHandle> handles, 
+    public ARXDistributedResult(Data data, 
                                 long timePrepare, 
                                 long timeAnonymize,
-                                Map<String, List<Double>> qualityMetrics) {
+                                long timePostprocess,
+                                Map<String, List<Double>> qualityMetrics,
+                                long maxMemoryConsumption) {
         
+        // Store
         this.timePrepare = timePrepare;
         this.timeAnonymize = timeAnonymize;
-        
-        // Collect iterators
-        long timePostprocess = System.currentTimeMillis();
-        List<Iterator<String[]>> iterators = new ArrayList<>();
-        for (DataHandle handle : handles) {
-            Iterator<String[]> iterator = handle.iterator();
-            if (!iterators.isEmpty()) {
-                // Skip header
-                iterator.next();
-            }
-            iterators.add(iterator);
-        }
-        this.data = Data.create(new CombinedIterator<String[]>(iterators));
+        this.timePostprocess = timePostprocess;
+        this.maxMemoryConsumption = maxMemoryConsumption;
+        this.data = data;
         
         // Collect statistics
         if (qualityMetrics != null) {
             this.qualityMetrics.putAll(qualityMetrics);
-        } else {
-            for (DataHandle handle : handles) {
-                StatisticsQuality quality = handle.getStatistics().getQualityStatistics();
-                store(this.qualityMetrics, "AverageClassSize", quality.getAverageClassSize().getValue());
-                store(this.qualityMetrics, "GeneralizationIntensity", quality.getGeneralizationIntensity().getArithmeticMean());
-                store(this.qualityMetrics, "Granularity", quality.getGranularity().getArithmeticMean());
-            }
         }
         
         // Done
         timePostprocess = System.currentTimeMillis() - timePostprocess;
     }
     
+    /**
+     * Returns the maximum memory consumed in bytes
+     * @return the max memory consumed in bytes
+     */
+    public long getMaxMemoryConsumption() {
+        return maxMemoryConsumption;
+    }
+
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method will fork the buffer, 
      * allowing to obtain multiple handles to different representations of the data set. Note that only one instance can
@@ -116,7 +113,8 @@ public class ARXDistributedResult {
     public DataHandle getOutput() {
         return data.getHandle();
     }
-
+    
+    
     /**
      * Returns quality estimates
      * @return
@@ -124,8 +122,7 @@ public class ARXDistributedResult {
     public Map<String, List<Double>> getQuality() {
         return qualityMetrics;
     }
-    
-    
+
     /**
      * Returns the time needed for anonymization
      * @return the timeAnonymize
@@ -149,17 +146,12 @@ public class ARXDistributedResult {
     public long getTimePrepare() {
         return timePrepare;
     }
-
+    
     /**
-     * Store metrics
-     * @param map
-     * @param label
-     * @param value
+     * Returns whether max memory measurement is available
+     * @return
      */
-    private void store(Map<String, List<Double>> map, String label, double value) {
-        if (!map.containsKey(label)) {
-            map.put(label, new ArrayList<Double>());
-        }
-        map.get(label).add(value);
+    public boolean isMaxMemoryAvailable() {
+        return maxMemoryConsumption != Long.MIN_VALUE;
     }
 }

@@ -20,6 +20,7 @@ package org.deidentifier.arx.distributed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,11 @@ import java.util.concurrent.Future;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.aggregates.StatisticsQuality;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 
 /**
@@ -68,21 +70,23 @@ public class ARXDistributedAnonymizer {
         GLOBAL_MINIMUM,
         LOCAL
     }
-    
-    /** O_min*/
-    private static final double O_MIN = 0.05d;
 
-    /** Wait time*/
-    private static final int WAIT_TIME = 100;
-    
+    /** O_min */
+    private static final double          O_MIN     = 0.05d;
+
+    /** Wait time */
+    private static final int             WAIT_TIME = 100;
+
     /** Number of nodes to use */
-    private final int                  nodes;
+    private final int                    nodes;
     /** Partitioning strategy */
-    private final PartitioningStrategy partitioningStrategy;
-    /** Distribution strategy*/
-    private final DistributionStrategy distributionStrategy;
-    /** Distribution strategy*/
+    private final PartitioningStrategy   partitioningStrategy;
+    /** Distribution strategy */
+    private final DistributionStrategy   distributionStrategy;
+    /** Distribution strategy */
     private final TransformationStrategy transformationStrategy;
+    /** Track memory consumption */
+    private final boolean                trackMemoryConsumption;
 
     /**
      * Creates a new instance
@@ -95,10 +99,27 @@ public class ARXDistributedAnonymizer {
                                     PartitioningStrategy partitioningStrategy,
                                     DistributionStrategy distributionStrategy,
                                     TransformationStrategy transformationStrategy) {
+        this(nodes, partitioningStrategy, distributionStrategy, transformationStrategy, false);
+    }
+    
+    /**
+     * Creates a new instance
+     * @param nodes
+     * @param partitioningStrategy
+     * @param distributionStrategy
+     * @param transformationStrategy
+     * @param trackMemoryConsumption Handle with care. Will negatively impact execution times.
+     */
+    public ARXDistributedAnonymizer(int nodes,
+                                    PartitioningStrategy partitioningStrategy,
+                                    DistributionStrategy distributionStrategy,
+                                    TransformationStrategy transformationStrategy,
+                                    boolean trackMemoryConsumption) {
         this.nodes = nodes;
         this.partitioningStrategy = partitioningStrategy;
         this.distributionStrategy = distributionStrategy;
         this.transformationStrategy = transformationStrategy;
+        this.trackMemoryConsumption = trackMemoryConsumption;
     }
     
     /**
@@ -115,6 +136,12 @@ public class ARXDistributedAnonymizer {
     public ARXDistributedResult anonymize(Data data, 
                                           ARXConfiguration config) throws IOException, RollbackRequiredException, InterruptedException, ExecutionException {
         
+        // Track memory consumption
+        MemoryTracker memoryTracker = null;
+        if (trackMemoryConsumption) {
+            memoryTracker = new MemoryTracker();
+        }
+        
         // Store definition
         DataDefinition definition = data.getDefinition().clone();
         
@@ -129,6 +156,7 @@ public class ARXDistributedAnonymizer {
         // #########################################
         // STEP 1: PARTITIONING
         // #########################################
+        
         long timePrepare = System.currentTimeMillis();
         List<DataHandle> partitions = null;
         switch (partitioningStrategy) {
@@ -175,15 +203,25 @@ public class ARXDistributedAnonymizer {
         // Wait for execution
         List<DataHandle> handles = getResults(futures);
         
+        // We now obtain the quality metrics, because it will be hard to do so later
+        // TODO: This means that they do not consider the following steps if the are performed
+        Map<String, List<Double>> qualityMetrics = new HashMap<>();
+        for (DataHandle handle : handles) {
+            StatisticsQuality quality = handle.getStatistics().getQualityStatistics();
+            storeQuality(qualityMetrics, "AverageClassSize", quality.getAverageClassSize().getValue());
+            storeQuality(qualityMetrics, "GeneralizationIntensity", quality.getGeneralizationIntensity().getArithmeticMean());
+            storeQuality(qualityMetrics, "Granularity", quality.getGranularity().getArithmeticMean());
+        }
+        
         // ###############################################
         // STEP 3: HANDLE NON-MONOTONIC SETTINGS
         // ###############################################
-        Map<String, List<Double>> qualityMetrics = null;
+        
         if (!config.isPrivacyModelSpecified(EDDifferentialPrivacy.class) &&
              config.getMonotonicityOfPrivacy() != Monotonicity.FULL) {
             
             // Prepare merged dataset
-            ARXDistributedResult mergedResult = new ARXDistributedResult(handles);
+            ARXDistributedResult mergedResult = new ARXDistributedResult(ARXPartition.getData(handles));
             Data merged = ARXPartition.getData(mergedResult.getOutput());
             merged.getDefinition().read(definition);
             
@@ -202,18 +240,27 @@ public class ARXDistributedAnonymizer {
             
             // Wait for execution
             handles = getResults(futures);
-            
-            // We keep the quality metrics, because there is no other
-            // easy way to calculate them later
-            qualityMetrics = mergedResult.getQuality();
         }
         
         // ###############################################
-        // STEP 4: MERGE AND DONE
+        // STEP 4: FINALIZE
         // ###############################################
         
         timeAnonymize = System.currentTimeMillis() - timeAnonymize;
-        return new ARXDistributedResult(handles, timePrepare, timeAnonymize, qualityMetrics);
+        
+        // Merge
+        long timePostprocess = System.currentTimeMillis();
+        Data result = ARXPartition.getData(handles);
+        timePostprocess = timePostprocess - System.currentTimeMillis();
+        
+        // Track memory consumption
+        long maxMemory = Long.MIN_VALUE;
+        if (trackMemoryConsumption) {
+            maxMemory = memoryTracker.getMaxBytesUsed();
+        }
+        
+        // Done
+        return new ARXDistributedResult(result, timePrepare, timeAnonymize, timePostprocess, qualityMetrics, maxMemory);
     }
     
     /**
@@ -348,5 +395,18 @@ public class ARXDistributedAnonymizer {
             default:
                 throw new IllegalStateException("Unknown transformation strategy");
         }
+    }
+
+    /**
+     * Store metrics
+     * @param map
+     * @param label
+     * @param value
+     */
+    private void storeQuality(Map<String, List<Double>> map, String label, double value) {
+        if (!map.containsKey(label)) {
+            map.put(label, new ArrayList<Double>());
+        }
+        map.get(label).add(value);
     }
 }
