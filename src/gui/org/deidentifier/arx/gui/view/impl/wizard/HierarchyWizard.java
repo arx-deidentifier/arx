@@ -353,7 +353,8 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         final String ERROR_TEXT = Resources.getMessage("HierarchyWizard.12"); //$NON-NLS-1$
         
         // Dialog
-        String file = controller.actionShowSaveFileDialog(getShell(), "*.ahs"); //$NON-NLS-1$
+        String file = controller.actionShowSaveFileDialog(getShell(), controller.getModel().getName() + "_hierarchy_" + controller.getModel().getSelectedAttribute(), "*.ahs"); //$NON-NLS-1$
+
         if (file == null) return;
 
         // Save
