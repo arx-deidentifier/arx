@@ -1282,7 +1282,7 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), model.getName() +  "_hierarchy_" + model.getSelectedAttribute(), "*.csv"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName() + "_hierarchy_" + model.getSelectedAttribute(), "*.csv"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
