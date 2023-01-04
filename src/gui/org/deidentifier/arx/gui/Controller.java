@@ -57,6 +57,11 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilderDate;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderPriorityBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
@@ -1299,8 +1304,53 @@ public class Controller implements IView {
             main.showErrorDialog(main.getShell(),
                                  Resources.getMessage("Controller.50"), e); //$NON-NLS-1$
         }
+        
+        // Save functional hierarchy as well
+        actionExportFunctionalHierarchy(file);
     }
 
+    /**
+     * Save functional hierarchy of the selected attribute when saving the hierarchy.
+     * TODO: Suggestions: 
+     *          - Adding this part to the actionMenuFileExportHierarchy
+     *          -   or, Create new menu item
+     *          - The saving and loading should be handled in the API
+     *              but is teems complicated due to the design of the wizard.    
+     */
+    public void actionExportFunctionalHierarchy(String file) {
+        String attrib = model.getSelectedAttribute();
+        String filePath = file.replace("csv", "ahs"); //$NON-NLS-1$ //$NON-NLS-1$
+        final String ERROR_HEADER = Resources.getMessage("HierarchyWizard.11"); //$NON-NLS-1$
+        final String ERROR_TEXT = Resources.getMessage("HierarchyWizard.12"); //$NON-NLS-1$
+       
+        // Save
+        try {
+            // Select
+            HierarchyBuilder<?> builder = null;
+            if (model.getInputConfig().getHierarchyBuilder(attrib) instanceof HierarchyBuilderDate){
+                builder = (HierarchyBuilder<?>) model.getInputConfig().getHierarchyBuilder(attrib);
+            } else if (model.getInputConfig().getHierarchyBuilder(attrib) instanceof HierarchyBuilderOrderBased){
+                builder = (HierarchyBuilder<?>) model.getInputConfig().getHierarchyBuilder(attrib);
+            } else if (model.getInputConfig().getHierarchyBuilder(attrib) instanceof HierarchyBuilderIntervalBased){
+                builder = (HierarchyBuilder<?>) model.getInputConfig().getHierarchyBuilder(attrib);
+            } else if (model.getInputConfig().getHierarchyBuilder(attrib) instanceof HierarchyBuilderRedactionBased){
+                builder = (HierarchyBuilder<?>) model.getInputConfig().getHierarchyBuilder(attrib);
+            } else if (model.getInputConfig().getHierarchyBuilder(attrib) instanceof HierarchyBuilderPriorityBased){
+                builder = (HierarchyBuilder<?>) model.getInputConfig().getHierarchyBuilder(attrib);
+            } else {
+                actionShowInfoDialog(main.getShell(), ERROR_HEADER, ERROR_TEXT);
+                return;  
+            } 
+
+            // Save
+            builder.save(filePath);
+        } catch (Exception e){
+            e.printStackTrace();
+            actionShowInfoDialog(main.getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());
+            return;
+        }
+    }
+    
     /**
      * File->Import data.
      */
@@ -1403,8 +1453,74 @@ public class Controller implements IView {
                 update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
             }
         }
+        // load functional hierarchy if found!
+        actionImportFunctionalHierarchy(path);
+        
     }
 
+    /**
+     *  Import functional hierarchy.
+     *  If .ahs file exist, it will be used to get better loss calculation
+     *  TODO: Suggestion: A function should be added to the API and used in HierarchyWizard class and here
+     *                       instead of repeating code 
+     */
+    public void actionImportFunctionalHierarchy(String filePath) {
+        
+        // Note: API unfortunately does not support load
+        
+        final String ERROR_HEADER = Resources.getMessage("HierarchyWizard.5"); //$NON-NLS-1$
+        final String ERROR_TEXT = Resources.getMessage("HierarchyWizard.6"); //$NON-NLS-1$
+        
+        // .ahs File path
+        String file = filePath.replace("csv", "ahs"); //$NON-NLS-1$
+        
+        // Current attribute 
+        String attrib =model.getSelectedAttribute();
+        
+        // Load
+        HierarchyBuilder<?> loaded = null;
+        try {
+            loaded = HierarchyBuilder.create(file);
+        } catch (Exception e){
+            actionShowInfoDialog(main.getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());
+            return;
+        }
+        
+        // Checks
+        if (loaded == null) return;
+        DataHandle inputHandle = model.getInputConfig().getInput().getHandle();
+        
+        //TODO:  There should be a function to get all rows of a column or all columns of a row 
+        String[] atrribData = new String[inputHandle.getNumRows()];
+        for (int i=0; i< inputHandle.getNumRows(); i++){
+                atrribData[i] = inputHandle.getValue(i,inputHandle.getColumnIndexOf(attrib));
+            }        
+
+        if (loaded.getType() == HierarchyBuilder.Type.REDACTION_BASED) {            
+            HierarchyBuilderRedactionBased<?> builder = (HierarchyBuilderRedactionBased<?>)loaded;            
+            builder.prepare(atrribData); 
+            model.getInputConfig().setHierarchyBuilder(attrib, builder);
+        } else if (loaded.getType() == HierarchyBuilder.Type.DATE_BASED) {  
+            HierarchyBuilderDate builder = (HierarchyBuilderDate)loaded;
+            builder.prepare(atrribData); 
+            model.getInputConfig().setHierarchyBuilder(attrib, builder);
+        } else if (loaded.getType() == HierarchyBuilder.Type.INTERVAL_BASED) {  
+            HierarchyBuilderIntervalBased<?> builder = (HierarchyBuilderIntervalBased<?>)loaded;      
+            builder.prepare(atrribData); 
+            model.getInputConfig().setHierarchyBuilder(attrib, builder);
+        } else if (loaded.getType() == HierarchyBuilder.Type.ORDER_BASED) {  
+            HierarchyBuilderOrderBased<?> builder = (HierarchyBuilderOrderBased<?>)loaded;
+            builder.prepare(atrribData); 
+            model.getInputConfig().setHierarchyBuilder(attrib, builder);
+        } else if (loaded.getType() == HierarchyBuilder.Type.PRIORITY_BASED) {  
+            HierarchyBuilderPriorityBased<?> builder = (HierarchyBuilderPriorityBased<?>)loaded;
+            builder.prepare(atrribData); 
+            model.getInputConfig().setHierarchyBuilder(attrib, builder);            
+        } else {
+            actionShowInfoDialog(main.getShell(), ERROR_HEADER, ERROR_TEXT);
+            return;
+        }
+    }
     /**
      * File->New project.
      */
