@@ -39,6 +39,13 @@ import org.deidentifier.arx.DataType;
 public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<T> implements Serializable {
 
     /**
+     * A constructor to use the load function, see example 24.
+     */
+    public HierarchyBuilderGroupingBased(){
+        super(Type.ORDER_BASED);
+    }
+    
+    /**
      * This class represents a fanout parameter.
      *
      * @author Fabian Prasser

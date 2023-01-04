@@ -40,6 +40,14 @@ import org.deidentifier.arx.DataType;
 public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> { // NO_UCD
 
     /**
+     * A constructor to use the load function, see example 24.
+     */
+    public HierarchyBuilderOrderBased(){
+        super();
+        this.comparator = null;
+    }
+    
+    /**
      * A serializable comparator.
      *
      * @author Fabian Prasser

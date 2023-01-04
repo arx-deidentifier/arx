@@ -43,6 +43,13 @@ import org.deidentifier.arx.DataType;
 public class HierarchyBuilderPriorityBased<T> extends HierarchyBuilder<T> implements Serializable {
     
     /**
+     * A constructor to use the load function, see example 24.
+     */
+    public HierarchyBuilderPriorityBased(){
+        super(Type.PRIORITY_BASED);
+    }
+    
+    /**
      * For priorities
      * @author Fabian Prasser
      */

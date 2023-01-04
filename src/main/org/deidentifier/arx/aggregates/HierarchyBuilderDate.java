@@ -47,6 +47,14 @@ import org.deidentifier.arx.DataType.ARXDate;
 public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Serializable { // NO_UCD
 
     /**
+     * A constructor to use the load function, see example 24.
+     */
+    public HierarchyBuilderDate(){
+            super(Type.DATE_BASED);
+            this.datatype = null;
+    }
+    
+    /**
      * A format-class for localization
      * 
      * @author Fabian Prasser

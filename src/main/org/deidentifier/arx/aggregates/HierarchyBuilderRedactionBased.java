@@ -40,6 +40,13 @@ import com.carrotsearch.hppc.CharOpenHashSet;
 public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> implements Serializable { // NO_UCD
 
     /**
+     * A constructor to use the load function.
+     */
+    public HierarchyBuilderRedactionBased(){
+        super(Type.REDACTION_BASED);
+    }
+    
+    /**
      * Order
      */
     public static enum Order {

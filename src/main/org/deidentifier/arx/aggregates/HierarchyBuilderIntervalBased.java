@@ -41,6 +41,13 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBased<T> { // NO_UCD
     
     /**
+     * A constructor to use the load function, see example 24.
+     */
+    public HierarchyBuilderIntervalBased(){
+        super();
+    }
+    
+    /**
      * This class represents an node.
      *
      * @author Fabian Prasser

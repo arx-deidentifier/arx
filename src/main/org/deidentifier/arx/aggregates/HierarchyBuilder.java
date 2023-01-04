@@ -25,6 +25,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.DataHandle;
 
 /**
  * Base class for hierarchy builders. Hierarchies can be built in two ways:<br>
@@ -188,4 +189,62 @@ public abstract class HierarchyBuilder<T> implements Serializable {
     public void save(String file) throws IOException{
         save(new File(file));
     }
+    /**
+     * Load the specification of a builder from a given file.
+     *
+     * @param file: path of the .ahs file
+     * @param attrib: attribute name
+     * @param inputHandle: input data handle
+     * @throws IOException
+     */
+    public void load(String file, String attrib, DataHandle inputHandle) throws IOException{
+
+        try {            
+            HierarchyBuilder<?> loaded = HierarchyBuilder.create(file);
+
+            HierarchyBuilderIntervalBased<?> builderIB = null;
+            HierarchyBuilderRedactionBased<?> builderRB = null;            
+            HierarchyBuilderOrderBased<?> builderOB = null;
+            HierarchyBuilderPriorityBased<?> builderPB = null;
+            HierarchyBuilderDate builderDB = null;
+            
+            //TODO:  There should be a function to get all rows of a column or all columns of a row 
+            String[] atrribData = new String[inputHandle.getNumRows()];
+            for (int i=0; i< inputHandle.getNumRows(); i++){
+                    atrribData[i] = inputHandle.getValue(i,inputHandle.getColumnIndexOf(attrib));
+                } 
+            
+            if (loaded.getType() == Type.REDACTION_BASED) {                
+                builderRB = (HierarchyBuilderRedactionBased<?>)loaded;
+                builderRB.prepare(atrribData);
+                builderRB.build();
+                inputHandle.getDefinition().setHierarchy(attrib, builderRB);
+            } else  if (loaded.getType() == Type.INTERVAL_BASED) {                
+                builderIB = (HierarchyBuilderIntervalBased<?>)loaded;                
+                builderIB.prepare(atrribData);
+                builderIB.build();
+                inputHandle.getDefinition().setHierarchy(attrib, builderIB);
+            } else if (loaded.getType() == Type.ORDER_BASED) {                
+                builderOB = (HierarchyBuilderOrderBased<?>)loaded;                
+                builderOB.prepare(atrribData);
+                builderOB.build();
+                inputHandle.getDefinition().setHierarchy(attrib, builderOB);
+            } else if (loaded.getType() == Type.PRIORITY_BASED) {                
+                builderPB = (HierarchyBuilderPriorityBased<?>)loaded;                
+                builderPB.prepare(atrribData);
+                builderPB.build();
+                inputHandle.getDefinition().setHierarchy(attrib, builderPB);
+            } else if (loaded.getType() == Type.DATE_BASED) {                
+                builderDB = (HierarchyBuilderDate)loaded;                
+                builderDB.prepare(atrribData);
+                builderDB.build();
+                inputHandle.getDefinition().setHierarchy(attrib, builderDB);
+            } else {
+                System.out.println("UNKNOWn builder type! ");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
