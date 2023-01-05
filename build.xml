@@ -369,7 +369,17 @@
             </manifest>
         </jar>
     </target>
-
+    <target name="jar-linux-aarch64" depends="compile, buildExternalLibs">
+        <jar destfile="jars/arx-${arx.version}-gtk-64.jar">
+            <fileset dir="build/gui" defaultexcludes="no" />
+            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+        	<zipfileset src="lib/ant/eclipse/org.eclipse.swt.gtk.linux.aarch64-3.116.100.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <manifest>
+                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
+            </manifest>
+        </jar>
+    </target>
     <target name="jar-osx" depends="compile, buildExternalLibs">
         <jar destfile="jars/arx-${arx.version}-osx-64.jar">
             <fileset dir="build/gui" defaultexcludes="no" />
@@ -424,7 +434,7 @@
         </jar>
     </target>
 
-    <target name="jars" depends="jar-win, jar-linux, jar-osx, jar-osx-aarch64, jar-libs, jar-docs">
+    <target name="jars" depends="jar-win, jar-linux, jar-linux-aarch64, jar-osx, jar-osx-aarch64, jar-libs, jar-docs">
         <antcall target="end-clean" />
     </target>
 </project>
