@@ -370,7 +370,7 @@
         </jar>
     </target>
     <target name="jar-linux-aarch64" depends="compile, buildExternalLibs">
-        <jar destfile="jars/arx-${arx.version}-gtk-64.jar">
+        <jar destfile="jars/arx-${arx.version}-gtk-aarch64.jar">
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
@@ -392,7 +392,7 @@
         </jar>
     </target>
     <target name="jar-osx-aarch64" depends="compile, buildExternalLibs">
-        <jar destfile="jars/arx-${arx.version}-aarch64.jar">
+        <jar destfile="jars/arx-${arx.version}-osx-aarch64.jar">
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
