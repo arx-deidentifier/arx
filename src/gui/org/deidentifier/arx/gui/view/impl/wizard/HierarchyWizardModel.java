@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
@@ -33,6 +34,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderPriorityBased;
 import org.deidentifier.arx.gui.resources.Resources;
 
 /**
@@ -59,6 +61,9 @@ public class HierarchyWizardModel<T> {
     private HierarchyWizardModelDate         dateModel;
 
     /** Var. */
+    private HierarchyWizardModelPriority<T>  priorityModel;
+    
+    /** Var. */
     private final DataType<T>                dataType;
 
     /** Var. */
@@ -70,8 +75,9 @@ public class HierarchyWizardModel<T> {
      * @param dataType
      * @param locale
      * @param data
+     * @param frequency
      */
-    public HierarchyWizardModel(DataType<T> dataType, Locale locale, String[] data){
+    public HierarchyWizardModel(DataType<T> dataType, Locale locale, String[] data, Map<String, Integer> frequency){
         
         // Store
         this.data = data;
@@ -83,6 +89,7 @@ public class HierarchyWizardModel<T> {
         // Create models
         orderModel = new HierarchyWizardModelOrder<T>(dataType, locale, getOrderData());
         redactionModel = new HierarchyWizardModelRedaction<T>(dataType, data);
+        priorityModel = new HierarchyWizardModelPriority<T>(dataType, data, frequency);
         
         if (dataType instanceof DataTypeWithRatioScale){
             if (data.length > 1 || data[0] != DataType.NULL_VALUE) {
@@ -126,6 +133,8 @@ public class HierarchyWizardModel<T> {
             return (HierarchyBuilder<T>)dateModel.getBuilder(serializable);
         } else if (type == Type.ORDER_BASED) {
             return orderModel.getBuilder(serializable);
+        } else if (type == Type.PRIORITY_BASED) {
+            return priorityModel.getBuilder(serializable);
         } else {
             throw new IllegalArgumentException(Resources.getMessage("HierarchyWizardModel.0")); //$NON-NLS-1$
         }
@@ -154,6 +163,8 @@ public class HierarchyWizardModel<T> {
             return dateModel.getHierarchy();
         } else if (type == Type.ORDER_BASED) {
             return orderModel.getHierarchy();
+        } else if (type == Type.PRIORITY_BASED) {
+            return priorityModel.getHierarchy();
         } else {
             throw new RuntimeException(Resources.getMessage("HierarchyWizardModel.1")); //$NON-NLS-1$
         }
@@ -196,6 +207,15 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
+     * Returns the model of the order-based builder.
+     *
+     * @return
+     */
+    public HierarchyWizardModelPriority<T> getPriorityModel() {
+        return priorityModel;
+    }
+
+    /**
      * Returns the type.
      *
      * @return
@@ -228,6 +248,11 @@ public class HierarchyWizardModel<T> {
             if (dateModel != null){
                 this.dateModel.parse((HierarchyBuilder<Date>) builder);
                 this.type = Type.DATE_BASED;
+            }
+        } else if (builder.getType() == Type.PRIORITY_BASED) {
+            if (priorityModel != null){
+                this.priorityModel.parse((HierarchyBuilderPriorityBased<T>) builder);
+                this.type = Type.PRIORITY_BASED;
             }
         } else {
             throw new IllegalArgumentException(Resources.getMessage("HierarchyWizardModel.2")); //$NON-NLS-1$

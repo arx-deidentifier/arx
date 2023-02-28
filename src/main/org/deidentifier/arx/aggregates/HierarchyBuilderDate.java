@@ -189,7 +189,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         /**  Granularity */
         QUARTER_YEAR("QQQ yyyy"),
         /**  Granularity */
-        WEEKDAY("u"),
+        WEEKDAY("e"),
         /**  Granularity */
         WEEK("w"),
         /**  Granularity */
@@ -253,7 +253,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      * @param granularities
      * @return
      */
-    public static HierarchyBuilder<Date> create(DataType<Date> type, Granularity... granularities){
+    public static HierarchyBuilderDate create(DataType<Date> type, Granularity... granularities){
         return create(type, null, new Format(), granularities);
     }
     
@@ -265,7 +265,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      * @param granularities
      * @return
      */
-    public static HierarchyBuilder<Date> create(DataType<Date> type,
+    public static HierarchyBuilderDate create(DataType<Date> type,
                                                 TimeZone timeZone,
                                                 Format format,
                                                 Granularity... granularities){
@@ -282,7 +282,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      * @param granularities
      * @return
      */
-    public static HierarchyBuilder<Date> create(DataType<Date> type,
+    public static HierarchyBuilderDate create(DataType<Date> type,
                                                 TimeZone timeZone,
                                                 Format format,
                                                 Date bottomCoding,
@@ -300,7 +300,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
-    public static HierarchyBuilder<Date> create(File file) throws IOException{
+    public static HierarchyBuilderDate create(File file) throws IOException{
         ObjectInputStream ois = null;
         try {
             ois = new ObjectInputStream(new FileInputStream(file));

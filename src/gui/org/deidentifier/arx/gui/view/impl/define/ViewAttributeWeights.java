@@ -43,6 +43,7 @@ import org.eclipse.nebula.widgets.pagination.collections.PageListHelper;
 import org.eclipse.nebula.widgets.pagination.collections.PageResult;
 import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -364,7 +365,7 @@ public class ViewAttributeWeights implements IView {
             
             // Create labels
             for (int i = 0; i < sortedAttributes.size(); i++) {
-                Label label = new Label(composites.get(i), SWT.CENTER);
+                CLabel label = new CLabel(composites.get(i), SWT.CENTER);
                 label.setText(sortedAttributes.get(i));
                 label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
             }
