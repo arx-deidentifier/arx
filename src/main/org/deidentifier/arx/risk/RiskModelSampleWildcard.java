@@ -152,7 +152,7 @@ public class RiskModelSampleWildcard {
         int progressCount = 0;
         int numRecords = 0;
         while (group != null) {
-            progress.value = (int)Math.round((0.3d + (double)(progressCount++) / (double)progressMax * 0.6d) * 100d); 
+            progress.value = (int)Math.round((0.3d + (double)progressCount++ / (double)progressMax * 0.6d) * 100d); 
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
@@ -171,7 +171,7 @@ public class RiskModelSampleWildcard {
         group = groups.first();
         progressCount = 0;
         while (group != null) {
-            progress.value = (int)Math.round((0.9d + (double)(progressCount++) / (double)progressMax * 0.1d) * 100d);
+            progress.value = (int)Math.round((0.9d + (double)progressCount++ / (double)progressMax * 0.1d) * 100d);
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
