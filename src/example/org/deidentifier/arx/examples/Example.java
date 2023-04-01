@@ -34,14 +34,21 @@ import org.deidentifier.arx.DataHandle;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class Example {
+public final class Example {
+    
+    /**
+     * Not to be instantiated
+     */
+    private Example() {
+        // Empty by design
+    }
 
     /**
      * Prints a given data handle.
      *
      * @param handle
      */
-    protected static void print(DataHandle handle) {
+    static void print(DataHandle handle) {
         final Iterator<String[]> itHandle = handle.iterator();
         print(itHandle);
     }
@@ -51,7 +58,7 @@ public abstract class Example {
      *
      * @param iterator
      */
-    protected static void print(Iterator<String[]> iterator) {
+    static void print(Iterator<String[]> iterator) {
         while (iterator.hasNext()) {
             System.out.print("   ");
             System.out.println(Arrays.toString(iterator.next()));
@@ -63,7 +70,7 @@ public abstract class Example {
      *
      * @param array
      */
-    protected static void printArray(String[][] array) {
+    static void printArray(String[][] array) {
         System.out.print("{");
         for (int j=0; j<array.length; j++){
             String[] next = array[j];
@@ -88,7 +95,7 @@ public abstract class Example {
      *
      * @param handle
      */
-    protected static void printHandle(DataHandle handle) {
+    static void printHandle(DataHandle handle) {
         final Iterator<String[]> itHandle = handle.iterator();
         printIterator(itHandle);
     }
@@ -98,7 +105,7 @@ public abstract class Example {
      *
      * @param iterator
      */
-    protected static void printIterator(Iterator<String[]> iterator) {
+    static void printIterator(Iterator<String[]> iterator) {
         while (iterator.hasNext()) {
             String[] next = iterator.next();
             System.out.print("[");
@@ -119,7 +126,7 @@ public abstract class Example {
      * @param result
      * @param data
      */
-    protected static void printResult(final ARXResult result, final Data data) {
+    static void printResult(final ARXResult result, final Data data) {
 
         // Print time
         final DecimalFormat df1 = new DecimalFormat("#####0.00");
@@ -145,8 +152,9 @@ public abstract class Example {
             generalizations[i] = new StringBuffer();
             identifiers[i].append(qis.get(i));
             generalizations[i].append(optimum.getGeneralization(qis.get(i)));
-            if (data.getDefinition().isHierarchyAvailable(qis.get(i)))
+            if (data.getDefinition().isHierarchyAvailable(qis.get(i))) {
                 generalizations[i].append("/").append(data.getDefinition().getHierarchy(qis.get(i))[0].length - 1);
+            }
             lengthI = Math.max(lengthI, identifiers[i].length());
             lengthG = Math.max(lengthG, generalizations[i].length());
         }
