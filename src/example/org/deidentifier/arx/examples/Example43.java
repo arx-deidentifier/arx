@@ -120,13 +120,13 @@ public class Example43 extends Example {
      */
     private static void analyzeData(DataHandle handle) {
         
-        double THRESHOLD = 0.5d;
+        double threshold = 0.5d;
         
         ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
-        RiskModelSampleSummary risks = builder.getSampleBasedRiskSummary(THRESHOLD);
+        RiskModelSampleSummary risks = builder.getSampleBasedRiskSummary(threshold);
         
-        System.out.println(" * Baseline risk threshold: " + getPrecent(THRESHOLD));
+        System.out.println(" * Baseline risk threshold: " + getPrecent(threshold));
         System.out.println(" * Prosecutor attacker model");
         System.out.println("   - Records at risk: " + getPrecent(risks.getProsecutorRisk().getRecordsAtRisk()));
         System.out.println("   - Highest risk: " + getPrecent(risks.getProsecutorRisk().getHighestRisk()));

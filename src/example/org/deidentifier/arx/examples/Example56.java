@@ -115,10 +115,10 @@ public class Example56 extends Example {
      */
     private static void analyzeData(DataHandle handle) {
         
-        double THRESHOLD = 0.5d;
+        double threshold = 0.5d;
         
         RiskEstimateBuilder builder = handle.getRiskEstimator();
-        RiskModelSampleWildcard risks = builder.getSampleBasedRiskSummaryWildcard(THRESHOLD);
+        RiskModelSampleWildcard risks = builder.getSampleBasedRiskSummaryWildcard(threshold);
         
         System.out.println(" * Wildcard risk model");
         System.out.println("   - User-specified threshold: " + getPrecent(risks.getRiskThreshold()));

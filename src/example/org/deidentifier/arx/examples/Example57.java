@@ -100,11 +100,11 @@ public class Example57 extends Example {
     */
    private static void analyzeData(DataHandle handle) {
        
-       double THRESHOLD = 0.1d;
+       double threshold = 0.1d;
        
        long time = System.currentTimeMillis();
        RiskEstimateBuilder builder = handle.getRiskEstimator();
-       RiskModelSampleWildcard risks = builder.getSampleBasedRiskSummaryWildcard(THRESHOLD);
+       RiskModelSampleWildcard risks = builder.getSampleBasedRiskSummaryWildcard(threshold);
        time = System.currentTimeMillis() - time;
        
        System.out.println(" * Wildcard risk model evaluated in " + time + " ms");
@@ -113,10 +113,10 @@ public class Example57 extends Example {
        System.out.println("   - Highest risk: " + getPrecent(risks.getHighestRisk()));
        System.out.println("   - Average risk: " + getPrecent(risks.getAverageRisk()));
        
-       RiskModelSampleSummary risks2 = builder.getSampleBasedRiskSummary(THRESHOLD);
+       RiskModelSampleSummary risks2 = builder.getSampleBasedRiskSummary(threshold);
        
        System.out.println(" * Risks without considering wildcards");
-       System.out.println("   - User-specified threshold: " + getPrecent(THRESHOLD));
+       System.out.println("   - User-specified threshold: " + getPrecent(threshold));
        System.out.println("   - Records at risk: " + getPrecent(risks2.getProsecutorRisk().getRecordsAtRisk()));
        System.out.println("   - Highest risk: " + getPrecent(risks2.getProsecutorRisk().getHighestRisk()));
        System.out.println("   - Average risk: " + getPrecent(risks2.getProsecutorRisk().getSuccessRate()));
