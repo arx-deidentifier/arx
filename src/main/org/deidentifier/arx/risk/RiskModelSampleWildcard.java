@@ -140,7 +140,7 @@ public class RiskModelSampleWildcard {
         }
         
         // Calculate groups
-        Groupify<TupleWrapper> groups = getGroups(handle, identifiers, 0d, 0.3d, wildcard, stop, progress);
+        Groupify<TupleWrapper> groups = getGroups(handle, identifiers, 0d, 0.3d, stop, progress);
         
         // Map of original frequencies
         Map<Group<TupleWrapper>, Integer> frequencies = new HashMap<>();
@@ -300,7 +300,6 @@ public class RiskModelSampleWildcard {
      * @param qis
      * @param offset
      * @param factor
-     * @param wildcard
      * @param stop
      * @param progress
      * @return
@@ -309,7 +308,6 @@ public class RiskModelSampleWildcard {
                                              Set<String> qis,
                                              double offset,
                                              double factor,
-                                             String wildcard,
                                              WrappedBoolean stop,
                                              WrappedInteger progress) {
 
