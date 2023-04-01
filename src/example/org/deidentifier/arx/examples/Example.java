@@ -34,15 +34,8 @@ import org.deidentifier.arx.DataHandle;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public final class Example {
+public class Example {
     
-    /**
-     * Not to be instantiated
-     */
-    private Example() {
-        // Empty by design
-    }
-
     /**
      * Prints a given data handle.
      *
