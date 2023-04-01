@@ -115,14 +115,14 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 	}
 
     @Override
-    public void parse(ModelCriterion criterion, boolean _default) {
+    public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelTClosenessCriterion)) {
             return;
         }
         ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
         this.t = other.t;
         this.variant = other.variant;
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.setEnabled(other.isEnabled());
         }
     }

@@ -96,14 +96,14 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion, boolean _default) {
+    public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelDPresenceCriterion)) {
             return;
         }
         ModelDPresenceCriterion other = (ModelDPresenceCriterion)criterion;
         this.dmax = other.dmax;
         this.dmin = other.dmin;
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.setEnabled(other.isEnabled());
         }
     }

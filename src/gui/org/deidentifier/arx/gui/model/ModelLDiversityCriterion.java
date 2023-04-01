@@ -142,7 +142,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion, boolean _default) {
+    public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelLDiversityCriterion)) {
             return;
         }
@@ -150,7 +150,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
         this.l = other.l;
         this.c = other.c;
         this.variant = other.variant;
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.setEnabled(other.isEnabled());
         }
     }

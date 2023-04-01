@@ -102,7 +102,7 @@ public class ModelBLikenessCriterion extends ModelExplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion, boolean _default) {
+    public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelBLikenessCriterion)) {
             return;
         }

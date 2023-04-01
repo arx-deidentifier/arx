@@ -141,14 +141,14 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion, boolean _default) {
+    public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelRiskBasedCriterion)) {
             return;
         }
         ModelRiskBasedCriterion other = (ModelRiskBasedCriterion)criterion;
         this.threshold = other.threshold;
         this.variant = other.variant;
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.setEnabled(other.isEnabled());
         }
     }

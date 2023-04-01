@@ -77,13 +77,13 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion, boolean _default) {
+    public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelKAnonymityCriterion)) {
             return;
         }
         ModelKAnonymityCriterion other = (ModelKAnonymityCriterion)criterion;
         this.k = other.k;
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.setEnabled(other.isEnabled());
         }
     }

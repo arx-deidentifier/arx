@@ -111,7 +111,7 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion, boolean _default) {
+    public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelKMapCriterion)) {
             return;
         }
@@ -119,7 +119,7 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
         this.k = other.k;
         this.setEstimator(other.estimator);
         this.significanceLevel = other.significanceLevel;
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.setEnabled(other.isEnabled());
         }
     }

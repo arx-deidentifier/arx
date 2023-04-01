@@ -119,14 +119,14 @@ public class ModelProfitabilityCriterion extends ModelImplicitCriterion {
     }
     
     @Override
-	public void parse(ModelCriterion criterion, boolean _default) {
+	public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelProfitabilityCriterion)) {
             return;
         }
         ModelProfitabilityCriterion other = (ModelProfitabilityCriterion)criterion;
         this.allowAttacks = other.allowAttacks;
         this.attackerModel = other.attackerModel;
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.setEnabled(other.isEnabled());
         }
 
