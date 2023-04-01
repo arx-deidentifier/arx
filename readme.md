@@ -45,7 +45,7 @@ See [here](https://github.com/arx-deidentifier/arx/blob/master/contributing.md) 
 License
 ------
 
-ARX (C) 2012 - 2021 Fabian Prasser and Contributors.
+ARX (C) 2012 - 2023 Fabian Prasser and Contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
