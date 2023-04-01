@@ -76,10 +76,10 @@ public abstract class AbstractILMultiDimensionalReduced extends AbstractILMultiD
 
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
-        double _min = convert(min).aggregate;
-        double _max = convert(max).aggregate;
-        if (_max - _min == 0d) return 0d;
-        else return (this.aggregate - _min) / (_max - _min);
+        double tempMin = convert(min).aggregate;
+        double tempMax = convert(max).aggregate;
+        if (tempMax - tempMin == 0d) return 0d;
+        else return (this.aggregate - tempMin) / (tempMax - tempMin);
     }
 
     @Override

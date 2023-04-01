@@ -90,10 +90,10 @@ public class ILScore extends InformationLoss<BigFraction> {
     
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
-        BigFraction _min = convert(min).getValue();
-        BigFraction _max = convert(max).getValue();
-        if (_max.subtract(_min).equals(new BigFraction(0))) return 0d;
-        else return (getValue().subtract(_min)).divide(_max.subtract(_min)).doubleValue();
+        BigFraction tempMin = convert(min).getValue();
+        BigFraction tempMax = convert(max).getValue();
+        if (tempMax.subtract(tempMin).equals(new BigFraction(0))) return 0d;
+        else return (getValue().subtract(tempMin)).divide(tempMax.subtract(tempMin)).doubleValue();
     }
 
     @Override

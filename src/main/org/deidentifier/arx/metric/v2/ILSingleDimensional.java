@@ -102,10 +102,10 @@ public class ILSingleDimensional extends InformationLoss<Double> {
 
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
-        double _min = convert(min).value;
-        double _max = convert(max).value;
-        if (_max - _min == 0d) return 0d;
-        else return (this.value - _min) / (_max - _min);
+        double tempMin = convert(min).value;
+        double tempMax = convert(max).value;
+        if (tempMax - tempMin == 0d) return 0d;
+        else return (this.value - tempMin) / (tempMax - tempMin);
     }
 
     @Override
