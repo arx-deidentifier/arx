@@ -197,8 +197,8 @@ public class TestAnonymizationCellSuppression {
         // Setup anonymization
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        double o_min = 0.01d;
-        double maxOutliers = 1.0d - o_min;
+        double oMin = 0.01d;
+        double maxOutliers = 1.0d - oMin;
         config.setSuppressionLimit(maxOutliers);
         config.setQualityModel(Metric.createLossMetric(0d));
         if (risks.recordsAtRisk == 0d) {
@@ -221,7 +221,7 @@ public class TestAnonymizationCellSuppression {
         DataHandle output = result.getOutput();
         if (result.isOptimizable(output)) {
             try {
-                result.optimizeIterativeFast(output, o_min);
+                result.optimizeIterativeFast(output, oMin);
             } catch (RollbackRequiredException e) {
                 throw new RuntimeException(e);
             }

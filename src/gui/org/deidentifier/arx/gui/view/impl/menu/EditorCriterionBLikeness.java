@@ -128,7 +128,7 @@ public class EditorCriterionBLikeness extends EditorCriterion<ModelBLikenessCrit
 
 
     @Override
-    protected void parse(ModelBLikenessCriterion model, boolean _default) {
+    protected void parse(ModelBLikenessCriterion model, boolean defaultParameters) {
         knobB.setValue(model.getB());
         updateLabel(labelB, model.getB());
         btnEnhanced.setSelection(model.isEnhanced());

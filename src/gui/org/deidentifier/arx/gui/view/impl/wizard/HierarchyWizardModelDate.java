@@ -128,12 +128,12 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
     }
 
     @Override
-    public void parse(HierarchyBuilder<Date> _builder) {
+    public void parse(HierarchyBuilder<Date> hierarchyBuilder) {
         
-        if (!(_builder instanceof HierarchyBuilderDate)) {
+        if (!(hierarchyBuilder instanceof HierarchyBuilderDate)) {
             return;
         }
-        HierarchyBuilderDate builder = (HierarchyBuilderDate)_builder; 
+        HierarchyBuilderDate builder = (HierarchyBuilderDate)hierarchyBuilder; 
         this.granularities = new ArrayList<>(Arrays.asList(builder.getGranularities()));
         this.format = builder.getFormat();
         this.timeZone = builder.getTimeZone();

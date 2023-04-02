@@ -127,7 +127,7 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     }
 
     @Override
-    protected void parse(ModelTClosenessCriterion model, boolean _default) {
+    protected void parse(ModelTClosenessCriterion model, boolean defaultParameters) {
         knobT.setValue(model.getT());
         updateLabel(labelT, model.getT());
         comboVariant.select(model.getVariant());

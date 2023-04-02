@@ -99,7 +99,7 @@ public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDis
 
 
     @Override
-    protected void parse(ModelDDisclosurePrivacyCriterion model, boolean _default) {
+    protected void parse(ModelDDisclosurePrivacyCriterion model, boolean defaultParameters) {
         
         knobD.setValue(model.getD());
         updateLabel(labelD, model.getD());

@@ -119,18 +119,18 @@ public class HierarchyWizardModelPriority<T> extends HierarchyWizardModelAbstrac
     
     @SuppressWarnings("unchecked")
     @Override
-    public void parse(HierarchyBuilder<T> _builder) {
+    public void parse(HierarchyBuilder<T> hierarchyBuilder) {
         
-        if (!(_builder instanceof HierarchyBuilderPriorityBased)) {
+        if (!(hierarchyBuilder instanceof HierarchyBuilderPriorityBased)) {
             return;
         }
-        HierarchyBuilderPriorityBased<?> builder = ((HierarchyBuilderPriorityBased<?>)_builder);
+        HierarchyBuilderPriorityBased<?> builder = ((HierarchyBuilderPriorityBased<?>)hierarchyBuilder);
         
         if (builder.getDataType() != null && !builder.getDataType().equals(this.dataType)) {
             return;
         }
         
-        this.maxLevels = ((HierarchyBuilderPriorityBased<?>)_builder).getMaxLevels();
+        this.maxLevels = ((HierarchyBuilderPriorityBased<?>)hierarchyBuilder).getMaxLevels();
         if (builder.getPriorities() != null) {
             this.frequency = builder.getPriorities();
             if (builder.getPriority() == HierarchyBuilderPriorityBased.Priority.HIGHEST_TO_LOWEST) {

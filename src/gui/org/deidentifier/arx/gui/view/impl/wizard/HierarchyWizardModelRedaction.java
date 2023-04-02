@@ -155,12 +155,12 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     @Override
-    public void parse(HierarchyBuilder<T> _builder) {
+    public void parse(HierarchyBuilder<T> hierarchyBuilder) {
         
-        if (!(_builder instanceof HierarchyBuilderRedactionBased)) {
+        if (!(hierarchyBuilder instanceof HierarchyBuilderRedactionBased)) {
             return;
         }
-        HierarchyBuilderRedactionBased<T> builder = (HierarchyBuilderRedactionBased<T>)_builder; 
+        HierarchyBuilderRedactionBased<T> builder = (HierarchyBuilderRedactionBased<T>)hierarchyBuilder; 
         this.redactionOrder = builder.getRedactionOrder();
         this.alignmentOrder = builder.getAligmentOrder();
         this.redactionCharacter = builder.getRedactionCharacter();

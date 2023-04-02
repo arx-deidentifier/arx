@@ -284,7 +284,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     }
 
     @Override
-    protected void parse(ModelDifferentialPrivacyCriterion model, boolean _default) {
+    protected void parse(ModelDifferentialPrivacyCriterion model, boolean defaultParameters) {
         
         updateLabel(labelEpsilon, model.getEpsilon());
         updateLabel(labelDelta, model.getDelta());
@@ -292,7 +292,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         knobDelta.setValue(model.getDelta());
         knobEpsilon.setValue(model.getEpsilon());
         knobEpsilonGeneralization.setValue(model.getEpsilonGeneralizationFraction() * 100d);
-        if (!_default) {
+        if (!defaultParameters) {
             if (model.getGeneralization() == null) {
                 comboGeneralization.select(0);
             } else {

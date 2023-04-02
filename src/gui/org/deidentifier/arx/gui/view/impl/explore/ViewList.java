@@ -271,12 +271,12 @@ public class ViewList extends ViewSolutionSpace {
         }
         
         // Define
-        final int WIDTH = 16;
-        final int HEIGHT = 16;
+        final int width = 16;
+        final int height = 16;
 
         // "Fix" for Bug #50163
-        Image image = IS_LINUX ? getTransparentImage(table.getDisplay(), WIDTH, HEIGHT) : 
-                                 new Image(table.getDisplay(), WIDTH, HEIGHT);
+        Image image = IS_LINUX ? getTransparentImage(table.getDisplay(), width, height) : 
+                                 new Image(table.getDisplay(), width, height);
         
         // Prepare
         GC gc = new GC(image);
@@ -284,10 +284,10 @@ public class ViewList extends ViewSolutionSpace {
 
         // Render
 		if (!IS_LINUX) {
-			gc.fillRectangle(0, 0, WIDTH, HEIGHT);
+			gc.fillRectangle(0, 0, width, height);
 		} else {
 			gc.setAntialias(SWT.ON);
-			gc.fillOval(0, 0, WIDTH, HEIGHT);
+			gc.fillOval(0, 0, width, height);
 			gc.setAntialias(SWT.OFF);
 		}
 		

@@ -104,7 +104,7 @@ public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCr
     /**
      * Parse
      */
-    protected void parse(ModelKAnonymityCriterion model, boolean _default) {
+    protected void parse(ModelKAnonymityCriterion model, boolean defaultParameters) {
         updateLabel(labelK, model.getK());
         knobK.setValue(model.getK());
     }

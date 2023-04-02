@@ -563,9 +563,9 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Actual table for {@link #tableViewerPreview} */
         tablePreview = tableViewerPreview.getTable();
-        GridData gd_tablePreview = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
-        gd_tablePreview.heightHint = 150;
-        tablePreview.setLayoutData(gd_tablePreview);
+        GridData gdTablePreview = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+        gdTablePreview.heightHint = 150;
+        tablePreview.setLayoutData(gdTablePreview);
         tablePreview.setLinesVisible(true);
         tablePreview.setVisible(false);
 

@@ -163,7 +163,7 @@ public class EditorCriterionKMap extends EditorCriterion<ModelKMapCriterion> {
      * Parse
      */
     @Override
-    protected void parse(ModelKMapCriterion model, boolean _default) {
+    protected void parse(ModelKMapCriterion model, boolean defaultParameters) {
         updateLabel(labelK, model.getK());
         knobK.setValue(model.getK());
         if (model.getEstimator() == null) {

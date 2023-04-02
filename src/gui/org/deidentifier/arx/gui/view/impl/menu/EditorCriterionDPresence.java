@@ -145,7 +145,7 @@ public class EditorCriterionDPresence extends EditorCriterion<ModelDPresenceCrit
     /**
      * Parses the input
      */
-    protected void parse(ModelDPresenceCriterion model, boolean _default) {
+    protected void parse(ModelDPresenceCriterion model, boolean defaultParameters) {
         updateLabel(labelDMin, model.getDmin());
         knobDMin.setValue(model.getDmin());
         updateLabel(labelDMax, model.getDmax());

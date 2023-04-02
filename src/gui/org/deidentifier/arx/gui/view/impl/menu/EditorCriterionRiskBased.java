@@ -153,7 +153,7 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
     /**
      * Parses the input
      */
-    protected void parse(ModelRiskBasedCriterion model, boolean _default) {
+    protected void parse(ModelRiskBasedCriterion model, boolean defaultParameters) {
         updateLabel(labelThreshold, model.getThreshold());
         knobThreshold.setValue(model.getThreshold());
         switch(model.getVariant()) {

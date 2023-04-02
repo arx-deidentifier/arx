@@ -202,7 +202,7 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
     }
 
     @Override
-    protected void parse(ModelLDiversityCriterion model, boolean _default) {
+    protected void parse(ModelLDiversityCriterion model, boolean defaultParameters) {
         
         // Set c and l
         updateLabel(labelC, model.getC());
