@@ -56,19 +56,29 @@ public class ILSingleDimensional extends InformationLoss<Double> {
         } else {
             double otherValue = convert(other).value;
             double thisValue = value;
-            return thisValue == otherValue ? 0 : (thisValue < otherValue ? -1
-                    : +1);
+            if (thisValue == otherValue) {
+                return 0; 
+            } else if (thisValue < otherValue) {
+                return -1;
+            } else {
+                return +1;
+            }
         }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         ILSingleDimensional other = (ILSingleDimensional) obj;
-        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) return false;
-        return true;
+        return Double.doubleToLongBits(value) == Double.doubleToLongBits(other.value);
     }
 
     @Override
@@ -104,8 +114,12 @@ public class ILSingleDimensional extends InformationLoss<Double> {
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
         double tempMin = convert(min).value;
         double tempMax = convert(max).value;
-        if (tempMax - tempMin == 0d) return 0d;
-        else return (this.value - tempMin) / (tempMax - tempMin);
+        if (tempMax - tempMin == 0d) {
+            return 0d;
+        }
+        else {
+            return (this.value - tempMin) / (tempMax - tempMin);
+        }
     }
 
     @Override
@@ -120,7 +134,9 @@ public class ILSingleDimensional extends InformationLoss<Double> {
      * @return
      */
     private ILSingleDimensional convert(InformationLoss<?> other) {
-        if (other == null) return null;
+        if (other == null) {
+            return null;
+        }
         if (!other.getClass().equals(this.getClass())) {
             throw new IllegalArgumentException("Incompatible class (" +
                                                other.getClass().getSimpleName() +
