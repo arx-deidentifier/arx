@@ -81,8 +81,11 @@ public class DebugData {
      */
     private String getDebugData(Hierarchy hierarchy){
         
-        if (hierarchy==null || hierarchy.getHierarchy()==null || hierarchy.getHierarchy().length==0) return "empty"; //$NON-NLS-1$
-        else return "height="+hierarchy.getHierarchy()[0].length; //$NON-NLS-1$
+        if (hierarchy == null || hierarchy.getHierarchy() == null || hierarchy.getHierarchy().length == 0) {
+            return "empty"; //$NON-NLS-1$
+        } else {
+            return "height=" + hierarchy.getHierarchy()[0].length; //$NON-NLS-1$
+        }
     }
 
     /**
