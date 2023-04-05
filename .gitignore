@@ -16,5 +16,7 @@ target
 .classpath
 .project
 /build
+/target
 .DS_Store
 /.pmd
+.vscode
