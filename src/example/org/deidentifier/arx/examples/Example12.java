@@ -64,7 +64,7 @@ public class Example12 extends Example {
         data.add("i", "Iris", "48970", "52", "France", "1");
 
         // Define research subset
-        DataSelector selector = DataSelector.create(data)
+        DataSelector selector = DataSelector.create(data) //NOPMD
                                 .begin()
                                     .field("identifier").equals("b")
                                     .and()

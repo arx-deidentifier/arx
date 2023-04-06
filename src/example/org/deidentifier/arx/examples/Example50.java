@@ -100,7 +100,7 @@ public class Example50 extends Example {
         
         // We select all records with "sex=Male" to serve as the dataset which we will de-identify.
         // The overall dataset serves as our population table.
-        DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male"));
+        DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male")); //NOPMD
         
         // Config from PLOS|ONE paper
         solve(data, ARXCostBenefitConfiguration.create()

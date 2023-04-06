@@ -154,18 +154,13 @@ public class Example28 extends Example {
     }
     
     private static String[] getExampleData() {
-        
-        String[] data = new String[] {
-                                       "34",
-                                       "66",
-                                       "70",
-                                       "34",
-                                       "70",
-                                       "NULL",
-                                       
+        return new String[] { "34",
+                              "66",
+                              "70",
+                              "34",
+                              "70",
+                              "NULL",
         };
-        
-        return data;
     }
     
     /**

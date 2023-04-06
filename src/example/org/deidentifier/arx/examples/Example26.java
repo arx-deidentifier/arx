@@ -49,8 +49,7 @@ public class Example26 extends Example {
      * @return
      */
     private static String[] getExampleData() {
-
-        String[] data = new String[]{
+        return new String[]{
                 "40.764725",
                 "40.646866",
                 "40.786007",
@@ -58,10 +57,7 @@ public class Example26 extends Example {
                 "40.644527",
                 "40.749702",
                 "40.764137",
-
         };
-
-        return data;
     }
 
     /**

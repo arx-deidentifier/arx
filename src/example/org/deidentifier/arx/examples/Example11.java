@@ -64,7 +64,7 @@ public class Example11 extends Example {
         data.add("i", "Iris", "48970", "52", "France", "1");
 
         // Define research subset
-        DataSelector selector = DataSelector.create(data).field("sen").equals("1");
+        DataSelector selector = DataSelector.create(data).field("sen").equals("1"); //NOPMD
         DataSubset subset = DataSubset.create(data, selector);
 
         // Define hierarchies

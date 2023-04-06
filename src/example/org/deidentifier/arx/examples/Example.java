@@ -34,7 +34,7 @@ import org.deidentifier.arx.DataHandle;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Example {
+public class Example { //NOPMD
     
     /**
      * Prints a given data handle.
