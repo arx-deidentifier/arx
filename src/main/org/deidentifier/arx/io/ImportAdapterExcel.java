@@ -123,15 +123,18 @@ public class ImportAdapterExcel extends ImportAdapter {
             row = iterator.next();
             if (config.getContainsHeader()) {
                 if (!iterator.hasNext()) {
+                    workbook.close();
                     throw new IOException("File contains nothing but header");
                 }
             }
         } else {
+            workbook.close();
             throw new IOException("File contains no data");
         }
 
         // Create header
         header = createHeader();
+        workbook.close();
     }
 
     /**
