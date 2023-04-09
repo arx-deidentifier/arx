@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -109,7 +110,7 @@ public class ImportAdapterExcel extends ImportAdapter {
             throw new IllegalArgumentException("File type not supported");
         }
 
-        workbook.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
+        workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
         Sheet sheet = workbook.getSheetAt(config.getSheetIndex());
         iterator = sheet.iterator();
 
@@ -185,7 +186,7 @@ public class ImportAdapterExcel extends ImportAdapter {
         String[] result = new String[indexes.length];
         for (int i = 0; i < indexes.length; i++) {
 
-            row.getCell(indexes[i]).setCellType(Cell.CELL_TYPE_STRING);
+            row.getCell(indexes[i]).setCellType(CellType.STRING);
             result[i] = IOUtil.trim(row.getCell(indexes[i]).getStringCellValue());
 
             if (!dataTypes[i].isValid(result[i])) {
@@ -252,7 +253,7 @@ public class ImportAdapterExcel extends ImportAdapter {
 
             ImportColumn column = columns.get(i);
 
-            row.getCell(((ImportColumnExcel) column).getIndex()).setCellType(Cell.CELL_TYPE_STRING);
+            row.getCell(((ImportColumnExcel) column).getIndex()).setCellType(CellType.STRING);
             String name = IOUtil.trim(row.getCell(((ImportColumnExcel) column).getIndex()).getStringCellValue());
 
             if (config.getContainsHeader() && !name.equals("")) {
