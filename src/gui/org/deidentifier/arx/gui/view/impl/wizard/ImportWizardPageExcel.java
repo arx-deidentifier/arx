@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -315,9 +315,9 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Actual table for {@link #tableViewerPreview} */
         tablePreview = tableViewerPreview.getTable();
-        GridData gd_tablePreview = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
-        gd_tablePreview.heightHint = 150;
-        tablePreview.setLayoutData(gd_tablePreview);
+        GridData gdTablePreview = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+        gdTablePreview.heightHint = 150;
+        tablePreview.setLayoutData(gdTablePreview);
         tablePreview.setLinesVisible(true);
         tablePreview.setVisible(false);
 

@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -332,7 +332,7 @@ public class ViewPropertiesInput extends ViewProperties {
         final Property attributes = new Property(Resources.getMessage("PropertiesView.12"), new String[] { String.valueOf(data.getNumColumns()) }); //$NON-NLS-1$
         
         // For handling high-dimensional data
-        final int MAX_ATTRIBUTES = 128;
+        final int maxAttributes = 128;
         
         // Print identifying attributes
         final Property identifying = new Property(attributes, Resources.getMessage("PropertiesView.13"), new String[] { String.valueOf(definition.getIdentifyingAttributes().size()) }); //$NON-NLS-1$
@@ -340,11 +340,11 @@ public class ViewPropertiesInput extends ViewProperties {
         for (String s : getOrdered(data, definition.getIdentifyingAttributes())) {
             final String[] values = new String[] { s, "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             values[1] = definition.getDataType(s).toString();
-            if (index < MAX_ATTRIBUTES) {
+            if (index < maxAttributes) {
                 new Property(identifying, Resources.getMessage("PropertiesView.19") + (index++), values); //$NON-NLS-1$
             } else {
                 Arrays.fill(values, ""); //$NON-NLS-1$
-                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                values[0] = (definition.getIdentifyingAttributes().size() - maxAttributes) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
                 new Property(identifying, "...", values); //$NON-NLS-1$
                 break;
             }
@@ -377,11 +377,11 @@ public class ViewPropertiesInput extends ViewProperties {
                 values[7] = definition.getMicroAggregationFunction(s).getLabel();
             }
             values[6] = SWTUtil.getPrettyString(config.getAttributeWeight(s));
-            if (index < MAX_ATTRIBUTES) {
+            if (index < maxAttributes) {
                 new Property(quasiIdentifying, Resources.getMessage("PropertiesView.26") + (index++), values); //$NON-NLS-1$
             } else {
                 Arrays.fill(values, ""); //$NON-NLS-1$
-                values[0] = (definition.getQuasiIdentifyingAttributes().size() - MAX_ATTRIBUTES) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                values[0] = (definition.getQuasiIdentifyingAttributes().size() - maxAttributes) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
                 new Property(quasiIdentifying, "...", values); //$NON-NLS-1$
                 break;
             }
@@ -400,11 +400,11 @@ public class ViewPropertiesInput extends ViewProperties {
                 values[1] = definition.getDataType(s).toString();
                 values[2] = String.valueOf(height);
             }
-            if (index < MAX_ATTRIBUTES) {
+            if (index < maxAttributes) {
                 new Property(sensitive, Resources.getMessage("PropertiesView.33") + (index++), values); //$NON-NLS-1$
             } else {
                 Arrays.fill(values, ""); //$NON-NLS-1$
-                values[0] = (definition.getSensitiveAttributes().size() - MAX_ATTRIBUTES) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                values[0] = (definition.getSensitiveAttributes().size() - maxAttributes) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
                 new Property(sensitive, "...", values); //$NON-NLS-1$
                 break;
             }
@@ -418,11 +418,11 @@ public class ViewPropertiesInput extends ViewProperties {
             final String[] values = new String[] { s, "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             values[0] = s;
             values[1] = definition.getDataType(s).toString();
-            if (index < MAX_ATTRIBUTES) {
+            if (index < maxAttributes) {
                 new Property(insensitive, Resources.getMessage("PropertiesView.40") + (index++), values); //$NON-NLS-1$
             } else {
                 Arrays.fill(values, ""); //$NON-NLS-1$
-                values[0] = (definition.getInsensitiveAttributes().size() - MAX_ATTRIBUTES) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                values[0] = (definition.getInsensitiveAttributes().size() - maxAttributes) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
                 new Property(insensitive, "...", values); //$NON-NLS-1$
                 break;
             }

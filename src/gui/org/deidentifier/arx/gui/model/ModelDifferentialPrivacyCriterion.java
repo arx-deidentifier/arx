@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,7 +119,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion, boolean _default) {
+    public void parse(ModelCriterion criterion, boolean defaultConfiguration) {
         if (!(criterion instanceof ModelDifferentialPrivacyCriterion)) {
             return;
         }
@@ -127,10 +127,10 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         this.epsilon = other.epsilon;
         this.delta = other.delta;
         this.epsilonGeneralizationFraction = other.epsilonGeneralizationFraction;
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.generalization = (other.generalization == null) ? null : other.generalization.clone();
         }
-        if (!_default) {
+        if (!defaultConfiguration) {
             this.setEnabled(other.isEnabled());
         }
     }

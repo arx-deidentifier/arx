@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,12 +128,12 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
     }
 
     @Override
-    public void parse(HierarchyBuilder<Date> _builder) {
+    public void parse(HierarchyBuilder<Date> hierarchyBuilder) {
         
-        if (!(_builder instanceof HierarchyBuilderDate)) {
+        if (!(hierarchyBuilder instanceof HierarchyBuilderDate)) {
             return;
         }
-        HierarchyBuilderDate builder = (HierarchyBuilderDate)_builder; 
+        HierarchyBuilderDate builder = (HierarchyBuilderDate)hierarchyBuilder; 
         this.granularities = new ArrayList<>(Arrays.asList(builder.getGranularities()));
         this.format = builder.getFormat();
         this.timeZone = builder.getTimeZone();

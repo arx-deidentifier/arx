@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class ComponentGSSlider {
         COLOR_LIGHT = new Color(parent.getDisplay(), 230, 230, 230);
         COLOR_MEDIUM = new Color(parent.getDisplay(), 200, 200, 200);
         COLOR_DARK = new Color(parent.getDisplay(), 128, 128, 128);
-        final Color COLOR_TEXT = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+        final Color textColor = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
         
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(3, 3).create());
@@ -96,8 +96,8 @@ public class ComponentGSSlider {
         });
         
         // Triangle view
-        final int WIDTH = 3;
-        final int OFFSET = 10;
+        final int overallWidth = 3;
+        final int overallOffset = 10;
         this.canvas = new Canvas(root, SWT.DOUBLE_BUFFERED);
         this.canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         this.canvas.addPaintListener(new PaintListener() {
@@ -108,46 +108,46 @@ public class ComponentGSSlider {
                 e.gc.setAdvanced(true);
                 e.gc.setAntialias(SWT.ON);
                 
-                final Color COLOR_BACKGROUND = root.getBackground();
+                final Color backgroundColor = root.getBackground();
                 final Point size = canvas.getSize();
                 final int width = size.x;
                 final int height = size.y;
-                final int x = (int) Math.round(getSelection() * (double) (width - OFFSET / 2 - WIDTH * 2 + 2));
+                final int x = (int) Math.round(getSelection() * (double) (width - overallOffset / 2 - overallWidth * 2 + 2));
 
                 int[] left = new int[] {0, 0, 
-                                        width-OFFSET/2, 0,
-                                        0, height - OFFSET};
-                int[] right = new int[] {width-OFFSET/2, OFFSET/2,
-                                         width-OFFSET/2, height - OFFSET/2,
-                                         0, height - OFFSET/2};
+                                        width-overallOffset/2, 0,
+                                        0, height - overallOffset};
+                int[] right = new int[] {width-overallOffset/2, overallOffset/2,
+                                         width-overallOffset/2, height - overallOffset/2,
+                                         0, height - overallOffset/2};
                 int[] center = new int[] {left[2], left[3],
                                           left[4], left[5],
                                           right[4], right[5],
                                           right[0], right[1]};
                 
                 e.gc.setForeground(COLOR_DARK);
-                e.gc.setBackground(COLOR_BACKGROUND);
+                e.gc.setBackground(backgroundColor);
                 e.gc.fillRectangle(0, 0, width, height);
 
                 e.gc.setBackground(COLOR_MEDIUM);
                 e.gc.fillPolygon(left);
 
-                e.gc.setForeground(COLOR_TEXT);
-                e.gc.drawText(Resources.getMessage("ViewCodingModel.0"), OFFSET, OFFSET); //$NON-NLS-1$
+                e.gc.setForeground(textColor);
+                e.gc.drawText(Resources.getMessage("ViewCodingModel.0"), overallOffset, overallOffset); //$NON-NLS-1$
 
                 e.gc.setBackground(COLOR_LIGHT);
                 e.gc.fillPolygon(right);
 
                 final String string = Resources.getMessage("ViewCodingModel.1"); //$NON-NLS-1$
-                e.gc.setForeground(COLOR_TEXT);
+                e.gc.setForeground(textColor);
                 Point extent = e.gc.textExtent(string);
-                e.gc.drawText(string, width - OFFSET - extent.x, height - OFFSET - extent.y);
+                e.gc.drawText(string, width - overallOffset - extent.x, height - overallOffset - extent.y);
 
                 e.gc.setForeground(COLOR_DARK);
                 e.gc.setLineWidth(3);
-                e.gc.drawLine(WIDTH + x - 1, 0, WIDTH + x - 1, height - OFFSET / 2);
+                e.gc.drawLine(overallWidth + x - 1, 0, overallWidth + x - 1, height - overallOffset / 2);
 
-                e.gc.setBackground(COLOR_BACKGROUND);
+                e.gc.setBackground(backgroundColor);
                 e.gc.fillPolygon(center);
 
                 e.gc.setForeground(COLOR_DARK);

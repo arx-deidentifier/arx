@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -46,7 +46,7 @@ public class Example48 extends Example {
     public static void main(String[] args) throws IOException {
 
         // Load data
-        DataSource source = DataSource.createCSVSource("data/test2.csv", Charset.forName("UTF-8"), ';', true);
+        DataSource source = DataSource.createCSVSource("data/test2.csv", StandardCharsets.UTF_8, ';', true);
         source.addColumn("ZIPCode", DataType.STRING);
         source.addColumn("Age", DataType.INTEGER);
         source.addColumn("Salary", DataType.INTEGER); // in k
@@ -54,8 +54,8 @@ public class Example48 extends Example {
         Data data = Data.create(source);
         
         // Load hierarchies
-        Hierarchy zipcode = Hierarchy.create("data/test2_hierarchy_ZIPCode.csv", Charset.forName("UTF-8"), ';');
-        Hierarchy age = Hierarchy.create("data/test2_hierarchy_Age.csv", Charset.forName("UTF-8"), ';');
+        Hierarchy zipcode = Hierarchy.create("data/test2_hierarchy_ZIPCode.csv", StandardCharsets.UTF_8, ';');
+        Hierarchy age = Hierarchy.create("data/test2_hierarchy_Age.csv", StandardCharsets.UTF_8, ';');
         
         // Define
         data.getDefinition().setAttributeType("ZIPCode", zipcode);

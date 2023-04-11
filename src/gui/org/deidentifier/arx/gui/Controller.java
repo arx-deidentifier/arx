@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -282,7 +282,7 @@ public class Controller implements IView {
             }
         }
         Collections.sort(explicit, new Comparator<ModelExplicitCriterion>(){
-            public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
+            @Override public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
                 return o1.getAttribute().compareTo(o2.getAttribute());
             }
         });
@@ -295,7 +295,7 @@ public class Controller implements IView {
             }
         }
         Collections.sort(riskBased, new Comparator<ModelRiskBasedCriterion>(){
-            public int compare(ModelRiskBasedCriterion o1, ModelRiskBasedCriterion o2) {
+            @Override public int compare(ModelRiskBasedCriterion o1, ModelRiskBasedCriterion o2) {
                 return o1.getLabel().compareTo(o2.getLabel());
             }
         });
@@ -508,7 +508,9 @@ public class Controller implements IView {
     public void actionDataShowGroups() {
 
         // Break if no output
-        if (model.getOutput() == null) return;
+        if (model.getOutput() == null) {
+            return;
+        }
 
         this.model.getViewConfig().setMode(Mode.GROUPED);
         this.updateViewConfig(false);
@@ -525,7 +527,9 @@ public class Controller implements IView {
     public void actionDataSort(boolean input) {
 
         // Break if no attribute selected
-        if (model.getSelectedAttribute() == null) return;
+        if (model.getSelectedAttribute() == null) {
+            return;
+        }
 
         if (input) {
             this.model.getViewConfig().setMode(Mode.SORTED_INPUT);
@@ -546,7 +550,9 @@ public class Controller implements IView {
     public void actionDataToggleSubset() {
 
         // Break if no output
-        if (model.getOutput() == null) return;
+        if (model.getOutput() == null) {
+            return;
+        }
 
         // Update
         boolean val = !model.getViewConfig().isSubset();
@@ -1149,7 +1155,7 @@ public class Controller implements IView {
             try {
                 Desktop.getDesktop().open(worker.getResult());
             } catch (Exception e) {
-                // Drop silently
+                return; // Ignore
             }
         }
     }
@@ -1410,7 +1416,7 @@ public class Controller implements IView {
      */
     public void actionMenuFileNew() {
 
-        if ((model != null) && model.isModified()) {
+        if (model != null && model.isModified()) {
             if (main.showQuestionDialog(main.getShell(),
                                         Resources.getMessage("Controller.61"), //$NON-NLS-1$
                                         Resources.getMessage("Controller.62"))) { //$NON-NLS-1$
@@ -1437,7 +1443,7 @@ public class Controller implements IView {
     public void actionMenuFileOpen() {
 
         // Check
-        if ((model != null) && model.isModified()) {
+        if (model != null && model.isModified()) {
             if (main.showQuestionDialog(main.getShell(),
                                         Resources.getMessage("Controller.63"), //$NON-NLS-1$
                                         Resources.getMessage("Controller.64"))) { //$NON-NLS-1$
@@ -1510,7 +1516,9 @@ public class Controller implements IView {
      * Shows the "debug" dialog.
      */
     public void actionMenuHelpDebug() {
-        if (model != null && model.isDebugEnabled()) main.showDebugDialog();
+        if (model != null && model.isDebugEnabled()) {
+            main.showDebugDialog();
+        }
     }
 
     /**
@@ -2000,7 +2008,9 @@ public class Controller implements IView {
      */
     public void actionSubsetQuery() {
         DialogQueryResult result = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
-        if (result == null) return;
+        if (result == null) {
+            return;
+        }
 
         Data data = model.getInputConfig().getInput();
         DataSelector selector = result.selector;
@@ -2134,7 +2144,9 @@ public class Controller implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        if (model != null && model.isDebugEnabled()) this.debug.addEvent(event);
+        if (model != null && model.isDebugEnabled()) {
+            this.debug.addEvent(event);
+        }
         final Map<ModelPart, Set<IView>> dlisteners = getListeners();
         if (dlisteners.get(event.part) != null) {
             for (final IView listener : dlisteners.get(event.part)) {
@@ -2161,7 +2173,7 @@ public class Controller implements IView {
                     error = error.getCause();
                 }
             }
-            if ((error instanceof IllegalArgumentException) || (error instanceof IOException)) {
+            if (error instanceof IllegalArgumentException || error instanceof IOException) {
                 main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.71"), error.getMessage()); //$NON-NLS-1$
             } else {
                 main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.76"), error); //$NON-NLS-1$
@@ -2195,7 +2207,7 @@ public class Controller implements IView {
         // Nothing to fix
         if (config instanceof ImportConfigurationCSV) {
             ImportConfigurationCSV csvconfig = (ImportConfigurationCSV) config;
-            model.setInputBytes(new File((csvconfig).getFileLocation()).length());
+            model.setInputBytes(new File(csvconfig.getFileLocation()).length());
             model.getCSVSyntax().setDelimiter(csvconfig.getDelimiter());
             model.getCSVSyntax().setEscape(csvconfig.getEscape());
             model.getCSVSyntax().setLinebreak(csvconfig.getLinebreak());
@@ -2255,7 +2267,7 @@ public class Controller implements IView {
                     error = error.getCause();
                 }
             }
-            if ((error instanceof IllegalArgumentException) || (error instanceof IOException)) {
+            if (error instanceof IllegalArgumentException || error instanceof IOException) {
                 main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.72"), error.getMessage()); //$NON-NLS-1$
             } else {
                 main.showErrorDialog(main.getShell(),
@@ -2313,7 +2325,9 @@ public class Controller implements IView {
 
         ModelViewConfig config = model.getViewConfig();
 
-        if (!force && !config.isChanged()) return;
+        if (!force && !config.isChanged()) {
+            return;
+        }
 
         DataHandle handle = (config.getMode() == Mode.SORTED_INPUT) ?
                 model.getInputConfig().getInput().getHandle() :

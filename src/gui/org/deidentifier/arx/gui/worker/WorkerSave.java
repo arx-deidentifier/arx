@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -243,10 +243,10 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getQuote(), model.getCSVSyntax().getQuote());
         
         String linebreak = "UNIX"; //$NON-NLS-1$
-        char[] _linebreak = model.getCSVSyntax().getLinebreak();
-        if (_linebreak.length == 1 && _linebreak[0] == '\r') {
+        char[] tempLinebreak = model.getCSVSyntax().getLinebreak();
+        if (tempLinebreak.length == 1 && tempLinebreak[0] == '\r') {
             linebreak = "MAC"; //$NON-NLS-1$
-        } else if (_linebreak.length == 2){
+        } else if (tempLinebreak.length == 2){
             linebreak = "WINDOWS"; //$NON-NLS-1$
         }
         writer.write(vocabulary.getLinebreak(), linebreak);

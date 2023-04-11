@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ public class Example52 extends Example {
         
         // We select all records with "sex=Male" to serve as the dataset which we will de-identify.
         // The overall dataset serves as our population table.
-        DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male"));
+        DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male")); //NOPMD
         
         // Config from PLOS|ONE paper
         solve(data, ARXCostBenefitConfiguration.create()

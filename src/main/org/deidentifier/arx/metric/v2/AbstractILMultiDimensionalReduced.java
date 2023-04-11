@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,10 +76,10 @@ public abstract class AbstractILMultiDimensionalReduced extends AbstractILMultiD
 
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
-        double _min = convert(min).aggregate;
-        double _max = convert(max).aggregate;
-        if (_max - _min == 0d) return 0d;
-        else return (this.aggregate - _min) / (_max - _min);
+        double tempMin = convert(min).aggregate;
+        double tempMax = convert(max).aggregate;
+        if (tempMax - tempMin == 0d) return 0d;
+        else return (this.aggregate - tempMin) / (tempMax - tempMin);
     }
 
     @Override

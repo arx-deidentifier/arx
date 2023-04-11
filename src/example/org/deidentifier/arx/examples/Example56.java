@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,10 +115,10 @@ public class Example56 extends Example {
      */
     private static void analyzeData(DataHandle handle) {
         
-        double THRESHOLD = 0.5d;
+        double threshold = 0.5d;
         
         RiskEstimateBuilder builder = handle.getRiskEstimator();
-        RiskModelSampleWildcard risks = builder.getSampleBasedRiskSummaryWildcard(THRESHOLD);
+        RiskModelSampleWildcard risks = builder.getSampleBasedRiskSummaryWildcard(threshold);
         
         System.out.println(" * Wildcard risk model");
         System.out.println("   - User-specified threshold: " + getPrecent(risks.getRiskThreshold()));

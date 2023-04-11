@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,18 +154,13 @@ public class Example28 extends Example {
     }
     
     private static String[] getExampleData() {
-        
-        String[] data = new String[] {
-                                       "34",
-                                       "66",
-                                       "70",
-                                       "34",
-                                       "70",
-                                       "NULL",
-                                       
+        return new String[] { "34",
+                              "66",
+                              "70",
+                              "34",
+                              "70",
+                              "NULL",
         };
-        
-        return data;
     }
     
     /**

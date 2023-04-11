@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,48 +153,48 @@ public class TestSorting extends AbstractTest {
             
             if (i%2==0) {
                 
-                final RowSet _subset = rows;
+                final RowSet tempSubset = rows;
                 result.getOutput().sort(new Swapper() {
 
                     @Override
                     public void swap(int arg0, int arg1) {
-                        _subset.swap(arg0, arg1);
+                        tempSubset.swap(arg0, arg1);
                     }
                     
                 }, i%4==0, fields.get(0), fields.get(1));
                 
             } else if (i%3 == 0) {
 
-                final RowSet _subset = rows;
+                final RowSet tempSubset = rows;
                 data.getHandle().getView().sort(new Swapper() {
 
                     @Override
                     public void swap(int arg0, int arg1) {
-                        _subset.swap(arg0, arg1);
+                        tempSubset.swap(arg0, arg1);
                     }
                     
                 }, i%6==0, fields.get(0));
                 
             } else if (i%5 == 0) {
 
-                final RowSet _subset = rows;
+                final RowSet tempSubset = rows;
                 result.getOutput().getView().sort(new Swapper() {
 
                     @Override
                     public void swap(int arg0, int arg1) {
-                        _subset.swap(arg0, arg1);
+                        tempSubset.swap(arg0, arg1);
                     }
                     
                 }, i%10==0, fields.get(0), fields.get(1));
                 
             } else if (i%7 == 0) {
 
-                final RowSet _subset = rows;
+                final RowSet tempSubset = rows;
                 data.getHandle().sort(new Swapper() {
 
                     @Override
                     public void swap(int arg0, int arg1) {
-                        _subset.swap(arg0, arg1);
+                        tempSubset.swap(arg0, arg1);
                     }
                     
                 }, i%14==0, fields.get(0), fields.get(1), fields.get(2));

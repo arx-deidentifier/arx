@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,23 @@ public class ComponentStatusLabel extends Canvas {
     /** A string inserted in the middle of text that has been shortened. */
     private static final String                  ELLIPSIS       = "..."; //$NON-NLS-1$
 
+    /** Field */
+    private static int                           DRAW_FLAGS     = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT |
+                                                                  SWT.DRAW_DELIMITER;
+
+    /**
+     * Checkstyle method.
+     *
+     * @param style
+     * @return
+     */
+    private static int checkStyle(int style) {
+        if ((style & SWT.BORDER) != 0) style |= SWT.SHADOW_IN;
+        int mask = SWT.SHADOW_IN | SWT.SHADOW_OUT | SWT.SHADOW_NONE | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
+        style = style & mask;
+        return style |= SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED;
+    }
+
     /** The alignment. Either CENTER, RIGHT, LEFT. Default is LEFT */
     private int                                  align          = SWT.LEFT;
 
@@ -110,23 +127,6 @@ public class ComponentStatusLabel extends Canvas {
 
     /** Field */
     private ComponentStatusLabelGIFHandler       thread         = null;
-
-    /** Field */
-    private static int                           DRAW_FLAGS     = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT |
-                                                                  SWT.DRAW_DELIMITER;
-
-    /**
-     * Checkstyle method.
-     *
-     * @param style
-     * @return
-     */
-    private static int checkStyle(int style) {
-        if ((style & SWT.BORDER) != 0) style |= SWT.SHADOW_IN;
-        int mask = SWT.SHADOW_IN | SWT.SHADOW_OUT | SWT.SHADOW_NONE | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
-        style = style & mask;
-        return style |= SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED;
-    }
     
     /**
      * Creates a new instance
@@ -539,7 +539,7 @@ public class ComponentStatusLabel extends Canvas {
             }
 
             public void getKeyboardShortcut(AccessibleEvent e) {
-                char mnemonic = _findMnemonic(ComponentStatusLabel.this.text);
+                char mnemonic = internalFindMnemonic(ComponentStatusLabel.this.text);
                 if (mnemonic != '\0') {
                     e.result = "Alt+" + mnemonic; //$NON-NLS-1$
                 }
@@ -676,7 +676,7 @@ public class ComponentStatusLabel extends Canvas {
      * @param string
      * @return
      */
-    char _findMnemonic(String string) {
+    char internalFindMnemonic(String string) {
         if (string == null) return '\0';
         int index = 0;
         int length = string.length();
@@ -719,7 +719,7 @@ public class ComponentStatusLabel extends Canvas {
      * @param event
      */
     void onMnemonic(TraverseEvent event) {
-        char mnemonic = _findMnemonic(text);
+        char mnemonic = internalFindMnemonic(text);
         if (mnemonic == '\0') return;
         if (Character.toLowerCase(event.character) != mnemonic) return;
         Composite control = this.getParent();

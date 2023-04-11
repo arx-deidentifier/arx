@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     }
 
     @Override
-    protected void parse(ModelTClosenessCriterion model, boolean _default) {
+    protected void parse(ModelTClosenessCriterion model, boolean defaultParameters) {
         knobT.setValue(model.getT());
         updateLabel(labelT, model.getT());
         comboVariant.select(model.getVariant());

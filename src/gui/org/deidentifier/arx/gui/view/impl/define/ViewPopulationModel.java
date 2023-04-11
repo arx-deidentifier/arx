@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,7 +155,7 @@ public class ViewPopulationModel implements IView {
         btn1.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                String _value = controller.actionShowInputDialog(parent.getShell(), 
+                String tempValue = controller.actionShowInputDialog(parent.getShell(), 
                                                                 Resources.getMessage("ViewPopulationModel.1"),  //$NON-NLS-1$
                                                                 Resources.getMessage("ViewPopulationModel.2"),  //$NON-NLS-1$
                                                                 text.getToolTipText(), 
@@ -174,10 +174,10 @@ public class ViewPopulationModel implements IView {
                                                                             return Resources.getMessage("ViewPopulationModel.7"); //$NON-NLS-1$
                                                                         }
                                                                     }});
-                if (_value != null) {
+                if (tempValue != null) {
                     
                     DataHandle handle = model.getInputConfig().getInput().getHandle();
-                    long populationSize = (long)Math.round((double)handle.getNumRows() / Double.valueOf(_value));
+                    long populationSize = (long)Math.round((double)handle.getNumRows() / Double.valueOf(tempValue));
                     if (populationSize == model.getRiskModel().getPopulationSize()) {
                         return;
                     }
@@ -218,7 +218,7 @@ public class ViewPopulationModel implements IView {
                 
                 final DataHandle handle = model.getInputConfig().getInput().getHandle();
                 
-                String _value = controller.actionShowInputDialog(parent.getShell(), 
+                String tempValue = controller.actionShowInputDialog(parent.getShell(), 
                                                                 Resources.getMessage("ViewPopulationModel.9"),  //$NON-NLS-1$
                                                                 Resources.getMessage("ViewPopulationModel.10") + handle.getNumRows(),  //$NON-NLS-1$
                                                                 text2.getToolTipText(), 
@@ -237,9 +237,9 @@ public class ViewPopulationModel implements IView {
                                                                             return Resources.getMessage("ViewPopulationModel.12"); //$NON-NLS-1$
                                                                         }
                                                                     }});
-                if (_value != null) {
+                if (tempValue != null) {
                     
-                    long value = Long.valueOf(_value);
+                    long value = Long.valueOf(tempValue);
                     model.getRiskModel().setPopulationSize(value);
 
                     for (int i=0; i<combo.getItemCount(); i++) {

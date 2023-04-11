@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,7 +140,7 @@ public class RiskModelSampleWildcard {
         }
         
         // Calculate groups
-        Groupify<TupleWrapper> groups = getGroups(handle, identifiers, 0d, 0.3d, wildcard, stop, progress);
+        Groupify<TupleWrapper> groups = getGroups(handle, identifiers, 0d, 0.3d, stop, progress);
         
         // Map of original frequencies
         Map<Group<TupleWrapper>, Integer> frequencies = new HashMap<>();
@@ -152,7 +152,7 @@ public class RiskModelSampleWildcard {
         int progressCount = 0;
         int numRecords = 0;
         while (group != null) {
-            progress.value = (int)Math.round((0.3d + (double)(progressCount++) / (double)progressMax * 0.6d) * 100d); 
+            progress.value = (int)Math.round((0.3d + (double)progressCount++ / (double)progressMax * 0.6d) * 100d); 
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
@@ -171,7 +171,7 @@ public class RiskModelSampleWildcard {
         group = groups.first();
         progressCount = 0;
         while (group != null) {
-            progress.value = (int)Math.round((0.9d + (double)(progressCount++) / (double)progressMax * 0.1d) * 100d);
+            progress.value = (int)Math.round((0.9d + (double)progressCount++ / (double)progressMax * 0.1d) * 100d);
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
@@ -300,7 +300,6 @@ public class RiskModelSampleWildcard {
      * @param qis
      * @param offset
      * @param factor
-     * @param wildcard
      * @param stop
      * @param progress
      * @return
@@ -309,7 +308,6 @@ public class RiskModelSampleWildcard {
                                              Set<String> qis,
                                              double offset,
                                              double factor,
-                                             String wildcard,
                                              WrappedBoolean stop,
                                              WrappedInteger progress) {
 

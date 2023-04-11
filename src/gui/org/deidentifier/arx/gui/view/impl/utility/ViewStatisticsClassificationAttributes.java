@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -703,7 +703,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         item.setEnabled(enabled);
 
         // Items
-        for (final String _function : new String[] { "x", //$NON-NLS-1$
+        for (final String tempFunction : new String[] { "x", //$NON-NLS-1$
                                                      "x^2", //$NON-NLS-1$
                                                      "sqrt(x)", //$NON-NLS-1$
                                                      "log(x)", //$NON-NLS-1$
@@ -712,19 +712,19 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
                                                      LABEL_CATEGORICAL }) {
 
             item = new MenuItem(featureScaling, SWT.NONE);
-            item.setText(_function);
+            item.setText(tempFunction);
             item.setEnabled(enabled);
             item.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent arg0) {
                     String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(data);
-                    if ((function == null && _function != null) || !_function.equals(function)) {
-                        if (_function.equals(LABEL_CATEGORICAL)) {
+                    if ((function == null && tempFunction != null) || !tempFunction.equals(function)) {
+                        if (tempFunction.equals(LABEL_CATEGORICAL)) {
                             model.getClassificationModel().setScalingFunction(data, null);
                             state.scaling.put(data, null);
                         } else {
-                            model.getClassificationModel().setScalingFunction(data, _function);
-                            state.scaling.put(data, _function);
+                            model.getClassificationModel().setScalingFunction(data, tempFunction);
+                            state.scaling.put(data, tempFunction);
                         }
                         features.refreshPage();
                         controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
@@ -745,7 +745,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
                     if (function == null || function.equals("")) { //$NON-NLS-1$
                         function = LABEL_CATEGORICAL;
                     }
-                    String _function = controller.actionShowInputDialog(features.getShell(),
+                    String tempFunction = controller.actionShowInputDialog(features.getShell(),
                                                                         Resources.getMessage("ViewClassificationAttributes.113"), //$NON-NLS-1$
                                                                         Resources.getMessage("ViewClassificationAttributes.114"), //$NON-NLS-1$
                                                                         function,
@@ -758,8 +758,8 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
                                                                                        arg0.equals(LABEL_CATEGORICAL) ? null : Resources.getMessage("ViewClassificationAttributes.115"); //$NON-NLS-1$
                                                                             }
                                                                         });
-                    if (!function.equals(_function)) {
-                        if (_function == null || function.equals("") || function.equals(LABEL_CATEGORICAL)) { //$NON-NLS-1$
+                    if (!function.equals(tempFunction)) {
+                        if (tempFunction == null || function.equals("") || function.equals(LABEL_CATEGORICAL)) { //$NON-NLS-1$
                             model.getClassificationModel().setScalingFunction(data, null);
                             state.scaling.put(data, null);
                         } else {

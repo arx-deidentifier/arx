@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,7 @@ public class Example26 extends Example {
      * @return
      */
     private static String[] getExampleData() {
-
-        String[] data = new String[]{
+        return new String[]{
                 "40.764725",
                 "40.646866",
                 "40.786007",
@@ -58,10 +57,7 @@ public class Example26 extends Example {
                 "40.644527",
                 "40.749702",
                 "40.764137",
-
         };
-
-        return data;
     }
 
     /**

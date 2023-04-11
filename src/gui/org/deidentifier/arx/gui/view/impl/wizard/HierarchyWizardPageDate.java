@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,9 +142,9 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
                 // Update format text field
                 Granularity g = (Granularity)table.getSelection()[0].getData();
                 if (g.isFormatSupported()) {
-                    String _format = model.getFormat().get(g);
-                    _format = _format != null ? _format : g.getDefaultFormat();
-                    text.setText(_format);
+                    String tempFormat = model.getFormat().get(g);
+                    tempFormat = tempFormat != null ? tempFormat : g.getDefaultFormat();
+                    text.setText(tempFormat);
                     text.setEnabled(true);
                 } else {
                     text.setText(""); //$NON-NLS-1$
@@ -290,9 +290,9 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
         for (String id : ids) {
             items.add(TimeZone.getTimeZone(id).getDisplayName());
         }
-        List<String> _items = new ArrayList<String>(items);
-        Collections.sort(_items);
-        combo.setItems(_items.toArray(new String[_items.size()]));
+        List<String> tempItems = new ArrayList<String>(items);
+        Collections.sort(tempItems);
+        combo.setItems(tempItems.toArray(new String[tempItems.size()]));
     }
     
     /**

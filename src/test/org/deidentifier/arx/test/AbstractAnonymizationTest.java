@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -517,10 +517,10 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             }
             String testClass = this.getClass().getSimpleName();
             
-            final int REPETITIONS = 5;
+            final int repetitions = 5;
             long time = System.currentTimeMillis();
             long time2 = 0;
-            for (int i = 0; i < REPETITIONS; i++) {
+            for (int i = 0; i < repetitions; i++) {
                 data.getHandle().release();
                 result = anonymizer.anonymize(data, testCase.config);
                 if (testCase.hashcode != -1) {
@@ -533,8 +533,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 }
                 time2 += result.getTime();
             }
-            time = (System.currentTimeMillis() - time) / REPETITIONS;
-            time2 /= REPETITIONS;
+            time = (System.currentTimeMillis() - time) / repetitions;
+            time2 /= repetitions;
             
             StringBuilder line = new StringBuilder();
             line.append(ARXAnonymizer.VERSION);

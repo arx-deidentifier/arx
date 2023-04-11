@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,17 +82,17 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
         this.layout = new JHCLayout(2,10,20,2,15,2);
         
         // Update font settings
-        Font font = jhc.getFont();
-        if (font != null) {
-            FontData[] fd = font.getFontData();
+        Font jhcFont = jhc.getFont();
+        if (jhcFont != null) {
+            FontData[] fd = jhcFont.getFontData();
             if (fd != null && fd.length>0){
                 fd[0].setHeight(8);
-                final Font _font = new Font(jhc.getDisplay(), fd[0]);
-                jhc.setFont(_font);
+                final Font targetFont = new Font(jhc.getDisplay(), fd[0]);
+                jhc.setFont(targetFont);
                 parent.addDisposeListener(new DisposeListener(){
                     public void widgetDisposed(DisposeEvent arg0) {
-                        if (_font != null && !_font.isDisposed()) {
-                            _font.dispose();
+                        if (targetFont != null && !targetFont.isDisposed()) {
+                            targetFont.dispose();
                         }
                     }
                 });

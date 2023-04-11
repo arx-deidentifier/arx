@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -233,10 +233,10 @@ public class ViewAttributeWeights implements IView {
         // Create ordered list of QIs
         DataDefinition definition = model.getInputDefinition();
         if (definition != null) {
-            Set<String> _qis = definition.getQuasiIdentifyingAttributes();
+            Set<String> tempQIs = definition.getQuasiIdentifyingAttributes();
             
             // Break if nothing has changed
-            if (this.attributes.equals(_qis)) {
+            if (this.attributes.equals(tempQIs)) {
                 return;
             }
             
@@ -244,7 +244,7 @@ public class ViewAttributeWeights implements IView {
             DataHandle handle = model.getInputConfig().getInput().getHandle();
             for (int i=0; i<handle.getNumColumns(); i++){
                 String attr = handle.getAttributeName(i);
-                if (_qis.contains(attr)){
+                if (tempQIs.contains(attr)){
                     sortedAttributes.add(attr);
                 }
             }
@@ -265,10 +265,10 @@ public class ViewAttributeWeights implements IView {
         }
         
         // For handling high-dimensional data
-        final int MAX_KNOBS = 32;
+        final int maxKnobs = 32;
         
         // High-dimensional setting
-        if (sortedAttributes.size() > MAX_KNOBS) {
+        if (sortedAttributes.size() > maxKnobs) {
 
             // Create layout
             panel.setLayout(SWTUtil.createGridLayout(1, true));
@@ -326,14 +326,14 @@ public class ViewAttributeWeights implements IView {
                                                                              Resources.getMessage("ViewAttributeWeights.4") + attribute, //$NON-NLS-1$
                                                                              weight);
                             if (result != null) {
-                                double _weight = -1d;
+                                double tempWeight = -1d;
                                 try {
-                                    _weight = Double.valueOf(result);
+                                    tempWeight = Double.valueOf(result);
                                 } catch (Exception e) {
                                     // Ignore
                                 }
-                                if (_weight >= 0d && _weight <= 1d) {
-                                    model.getInputConfig().setAttributeWeight(attribute, _weight);
+                                if (tempWeight >= 0d && tempWeight <= 1d) {
+                                    model.getInputConfig().setAttributeWeight(attribute, tempWeight);
                                     paginationTable.getViewer().update(attribute, null);
                                 }
                             }
@@ -445,7 +445,7 @@ public class ViewAttributeWeights implements IView {
         panel.redraw();
         root.setExpandHorizontal(true);
         root.setExpandVertical(true);
-        if (sortedAttributes.size() <= MAX_KNOBS) {
+        if (sortedAttributes.size() <= maxKnobs) {
             root.setMinWidth(MIN_SPACE * sortedAttributes.size());
         }
         root.setVisible(!sortedAttributes.isEmpty());

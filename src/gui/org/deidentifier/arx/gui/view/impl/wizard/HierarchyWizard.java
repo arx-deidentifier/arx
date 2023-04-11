@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,23 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
          */
         public void update();
     }
+
+    /** Text */
+    private static final String             ERROR_LOAD_HEADER = Resources.getMessage("HierarchyWizard.5");  //$NON-NLS-1$
+    /** Text */
+    private static final String             ERROR_LOAD_TEXT   = Resources.getMessage("HierarchyWizard.6");  //$NON-NLS-1$
+    /** Text */
+    private static final String             ERROR_RATIO_TEXT  = Resources.getMessage("HierarchyWizard.7");  //$NON-NLS-1$
+    /** Text */
+    private static final String             ERROR_TYPE_TEXT   = Resources.getMessage("HierarchyWizard.8");  //$NON-NLS-1$
+    /** Text */
+    private static final String             ERROR_APPLY_TEXT  = Resources.getMessage("HierarchyWizard.9");  //$NON-NLS-1$
+    /** Text */
+    private static final String             ERROR_DATE_TEXT   = Resources.getMessage("HierarchyWizard.10"); //$NON-NLS-1$
+    /** Text */
+    private static final String             ERROR_SAVE_HEADER = Resources.getMessage("HierarchyWizard.11"); //$NON-NLS-1$
+    /** Text */
+    private static final String             ERROR_SAVE_TEXT   = Resources.getMessage("HierarchyWizard.12"); //$NON-NLS-1$
 
     /** Var. */
     private HierarchyWizardModel<T>         model;
@@ -258,13 +275,6 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      */
     private void load(){
 
-        final String ERROR_HEADER = Resources.getMessage("HierarchyWizard.5"); //$NON-NLS-1$
-        final String ERROR_TEXT = Resources.getMessage("HierarchyWizard.6"); //$NON-NLS-1$
-        final String ERROR_RATIO_TEXT = Resources.getMessage("HierarchyWizard.7"); //$NON-NLS-1$
-        final String ERROR_TYPE_TEXT = Resources.getMessage("HierarchyWizard.8"); //$NON-NLS-1$
-        final String ERROR_APPLY_TEXT = Resources.getMessage("HierarchyWizard.9"); //$NON-NLS-1$
-        final String ERROR_DATE_TEXT = Resources.getMessage("HierarchyWizard.10"); //$NON-NLS-1$
-        
         // Dialog
         String file = controller.actionShowOpenFileDialog(getShell(), "*.ahs"); //$NON-NLS-1$
         if (file == null) return;
@@ -274,7 +284,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         try {
             builder = HierarchyBuilder.create(file);
         } catch (Exception e){
-            controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());
+            controller.actionShowInfoDialog(getShell(), ERROR_LOAD_HEADER, ERROR_LOAD_TEXT+e.getMessage());
             return;
         }
         
@@ -282,20 +292,20 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         if (builder == null) return;
         else if (builder.getType() == Type.DATE_BASED) {
             if (!(model.getDataType() instanceof ARXDate)) {
-                controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_DATE_TEXT);
+                controller.actionShowInfoDialog(getShell(), ERROR_LOAD_HEADER, ERROR_DATE_TEXT);
                 return;
             }
         } else if (builder.getType() == Type.INTERVAL_BASED) {
             if (!(model.getDataType() instanceof DataTypeWithRatioScale)) {
-                controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_RATIO_TEXT);
+                controller.actionShowInfoDialog(getShell(), ERROR_LOAD_HEADER, ERROR_RATIO_TEXT);
                 return;
             } else if (!((HierarchyBuilderIntervalBased<?>)builder).getDataType().equals(model.getDataType())){
-                controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TYPE_TEXT);
+                controller.actionShowInfoDialog(getShell(), ERROR_LOAD_HEADER, ERROR_TYPE_TEXT);
                 return;
             }
         } else if (builder.getType() == Type.ORDER_BASED) {
             if (!((HierarchyBuilderOrderBased<?>)builder).getDataType().equals(model.getDataType())){
-                controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TYPE_TEXT);
+                controller.actionShowInfoDialog(getShell(), ERROR_LOAD_HEADER, ERROR_TYPE_TEXT);
                 return;
             }
         }
@@ -304,7 +314,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         try {
             model.parse(builder);
         } catch (Exception e){
-            controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_APPLY_TEXT+e.getMessage());
+            controller.actionShowInfoDialog(getShell(), ERROR_LOAD_HEADER, ERROR_APPLY_TEXT+e.getMessage());
             return;
         }
         
@@ -349,9 +359,6 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     @SuppressWarnings("unchecked")
     private void save(){
         
-        final String ERROR_HEADER = Resources.getMessage("HierarchyWizard.11"); //$NON-NLS-1$
-        final String ERROR_TEXT = Resources.getMessage("HierarchyWizard.12"); //$NON-NLS-1$
-        
         // Dialog
         String file = controller.actionShowSaveFileDialog(getShell(), "*.ahs"); //$NON-NLS-1$
         if (file == null) return;
@@ -376,7 +383,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             builder.save(file);
         } catch (Exception e){
             e.printStackTrace();
-            controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());
+            controller.actionShowInfoDialog(getShell(), ERROR_SAVE_HEADER, ERROR_SAVE_TEXT+e.getMessage());
             return;
         }
     }

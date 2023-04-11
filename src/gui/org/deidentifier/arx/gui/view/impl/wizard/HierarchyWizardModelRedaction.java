@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,12 +155,12 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     @Override
-    public void parse(HierarchyBuilder<T> _builder) {
+    public void parse(HierarchyBuilder<T> hierarchyBuilder) {
         
-        if (!(_builder instanceof HierarchyBuilderRedactionBased)) {
+        if (!(hierarchyBuilder instanceof HierarchyBuilderRedactionBased)) {
             return;
         }
-        HierarchyBuilderRedactionBased<T> builder = (HierarchyBuilderRedactionBased<T>)_builder; 
+        HierarchyBuilderRedactionBased<T> builder = (HierarchyBuilderRedactionBased<T>)hierarchyBuilder; 
         this.redactionOrder = builder.getRedactionOrder();
         this.alignmentOrder = builder.getAligmentOrder();
         this.redactionCharacter = builder.getRedactionCharacter();

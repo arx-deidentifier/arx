@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,19 +56,29 @@ public class ILSingleDimensional extends InformationLoss<Double> {
         } else {
             double otherValue = convert(other).value;
             double thisValue = value;
-            return thisValue == otherValue ? 0 : (thisValue < otherValue ? -1
-                    : +1);
+            if (thisValue == otherValue) {
+                return 0; 
+            } else if (thisValue < otherValue) {
+                return -1;
+            } else {
+                return +1;
+            }
         }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         ILSingleDimensional other = (ILSingleDimensional) obj;
-        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) return false;
-        return true;
+        return Double.doubleToLongBits(value) == Double.doubleToLongBits(other.value);
     }
 
     @Override
@@ -102,10 +112,14 @@ public class ILSingleDimensional extends InformationLoss<Double> {
 
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
-        double _min = convert(min).value;
-        double _max = convert(max).value;
-        if (_max - _min == 0d) return 0d;
-        else return (this.value - _min) / (_max - _min);
+        double tempMin = convert(min).value;
+        double tempMax = convert(max).value;
+        if (tempMax - tempMin == 0d) {
+            return 0d;
+        }
+        else {
+            return (this.value - tempMin) / (tempMax - tempMin);
+        }
     }
 
     @Override
@@ -120,7 +134,9 @@ public class ILSingleDimensional extends InformationLoss<Double> {
      * @return
      */
     private ILSingleDimensional convert(InformationLoss<?> other) {
-        if (other == null) return null;
+        if (other == null) {
+            return null;
+        }
         if (!other.getClass().equals(this.getClass())) {
             throw new IllegalArgumentException("Incompatible class (" +
                                                other.getClass().getSimpleName() +

@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -227,12 +227,12 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
             String line = reader.readLine();
-            Set<String> _elements = new HashSet<String>();
-            _elements.addAll(Arrays.asList(elements));
+            Set<String> tempElements = new HashSet<String>();
+            tempElements.addAll(Arrays.asList(elements));
 
             while (line != null) {
                 list.add(line);
-                if (list.size() > _elements.size() || !_elements.contains(line)) {
+                if (list.size() > tempElements.size() || !tempElements.contains(line)) {
                     // The file contains more or additional values (lines) than present in the attribute's domain
                 	controller.actionShowInfoDialog(getShell(),
                             Resources.getMessage("DialogOrderSelection.16"),
@@ -242,7 +242,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 line = reader.readLine();
             }
             
-            if (list.size() != _elements.size()) {
+            if (list.size() != tempElements.size()) {
             	// The file contains less values (lines) than present in the attribute's domain
                 controller.actionShowInfoDialog(getShell(),
                                                 Resources.getMessage("DialogOrderSelection.16"),

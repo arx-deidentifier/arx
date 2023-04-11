@@ -1,6 +1,6 @@
 /*
  * ARX Data Anonymization Tool
- * Copyright 2012 - 2022 Fabian Prasser and contributors
+ * Copyright 2012 - 2023 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -450,7 +450,7 @@ public class MainWindow implements IView {
         }
 
         // Init
-        final String DEFAULT = Resources.getMessage("MainWindow.7"); //$NON-NLS-1$
+        final String defaultFormat = Resources.getMessage("MainWindow.7"); //$NON-NLS-1$
         
         // Validator
         final IValidator<String[]> validator = new IValidator<String[]>() {
@@ -458,7 +458,7 @@ public class MainWindow implements IView {
             public String isValid(final String[] state) {
                 DataType<?> type;
                 try {
-                    if (state[0].equals(DEFAULT) || state[1] == null) {
+                    if (state[0].equals(defaultFormat) || state[1] == null) {
                         type = description.newInstance();
                     } else {
                         type = description.newInstance(state[0], getLocale(state[1]));
@@ -480,8 +480,8 @@ public class MainWindow implements IView {
         String initial2 = locale == null ? "" : locale.getLanguage().toUpperCase();
         if (preselected != null && validator.isValid(new String[]{preselected, initial2}) == null) {
             initial1 = preselected;
-        } else if (validator.isValid(new String[]{DEFAULT, initial2}) == null) {
-            initial1 = DEFAULT;
+        } else if (validator.isValid(new String[]{defaultFormat, initial2}) == null) {
+            initial1 = defaultFormat;
         } else {
             for (final String format : description.getExampleFormats()) {
                 if (validator.isValid(new String[]{format, initial2}) == null) {
@@ -492,13 +492,13 @@ public class MainWindow implements IView {
         }
         // Extract list of formats
         List<String> formats = new ArrayList<String>();
-        formats.add(DEFAULT);
+        formats.add(defaultFormat);
         formats.addAll(description.getExampleFormats());
         
         // Extract list of locales
         Set<String> set = new HashSet<String>();
-        for (Locale _locale : Locale.getAvailableLocales()) {
-            set.add(_locale.getLanguage().toUpperCase());
+        for (Locale tempLocale : Locale.getAvailableLocales()) {
+            set.add(tempLocale.getLanguage().toUpperCase());
         }
         List<String> locales = new ArrayList<>(set);
         Collections.sort(locales);
