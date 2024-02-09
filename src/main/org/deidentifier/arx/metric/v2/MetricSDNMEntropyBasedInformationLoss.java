@@ -83,7 +83,12 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         // IL = log(share_1 * share_2 * ... * share_n) / maxIL + 1
         //
         // For attributes transformed with microaggregation, we set share_i to 1/#distinct-values-in-eq-class and size_i to the #distinct-values-in-dataset
-
+        
+        // If there is no information, no information can be lost
+        if (maxIL == 0 || Double.isNaN(maxIL) || Double.isInfinite(maxIL)) {
+            return 0d;
+        }
+        
         int[] generalization = transformation.getGeneralization();
         double infoLoss = 1d;
         entry.read();
