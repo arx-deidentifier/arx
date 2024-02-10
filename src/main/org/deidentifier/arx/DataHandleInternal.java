@@ -230,14 +230,14 @@ public class DataHandleInternal {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-
+    
     /**
      * Gets the value
      */
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-    
+
     /**
      * Returns the internal id of the given value
      * @param column
@@ -255,7 +255,7 @@ public class DataHandleInternal {
     public DataHandleInternal getView() {
         return new DataHandleInternal(handle.getView());
     }
-
+    
     /**
      * Returns whether the handle is anonymous
      * @return
@@ -302,5 +302,13 @@ public class DataHandleInternal {
         } else {
             return this.handle instanceof DataHandleOutput;
         }
+    }
+
+    /**
+     * Returns whether a subset is available
+     * @return
+     */
+    public boolean isSubsetAvailable() {
+        return this.getNumRows() != this.getView().getNumRows();
     }
 }

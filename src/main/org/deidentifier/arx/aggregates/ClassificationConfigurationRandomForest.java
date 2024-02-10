@@ -99,6 +99,7 @@ public class ClassificationConfigurationRandomForest extends ARXClassificationCo
      * @param maximumNumberOfLeafNodes
      * @param subsample
      * @param splitRule
+     * @param useTrainingTestSet
      */
     protected ClassificationConfigurationRandomForest(boolean deterministic,
                                                     int maxRecords,
@@ -110,8 +111,9 @@ public class ClassificationConfigurationRandomForest extends ARXClassificationCo
                                                     int minimumSizeOfLeafNodes,
                                                     int maximumNumberOfLeafNodes,
                                                     double subsample,
-                                                    SplitRule splitRule) {
-        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength);
+                                                    SplitRule splitRule,
+                                                    boolean useTrainingTestSet) {
+        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength, useTrainingTestSet);
         this.numberOfTrees = numberOfTrees;
         this.numberOfVariablesToSplit = numberOfVariablesToSplit;
         this.minimumSizeOfLeafNodes = minimumSizeOfLeafNodes;
@@ -132,7 +134,8 @@ public class ClassificationConfigurationRandomForest extends ARXClassificationCo
                                                          minimumSizeOfLeafNodes,
                                                          maximumNumberOfLeafNodes,
                                                          subsample,
-                                                         splitRule);
+                                                         splitRule,
+                                                         super.isUseTrainingTestSet());
     }
     
     /**

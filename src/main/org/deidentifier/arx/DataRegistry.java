@@ -236,7 +236,10 @@ class DataRegistry {
         } else {
             this.inputSubset = null;
         }
-        this.input.setView(this.inputSubset);
+        this.input.setSubset(this.inputSubset);
+        if (this.inputSubset != null) {
+            this.inputSubset.setSuperset(this.input);
+        }
     }
 
     /**
@@ -251,7 +254,10 @@ class DataRegistry {
         } else {
             this.outputSubset.remove(node);
         }
-        this.output.get(node).setView(this.outputSubset.get(node));
+        this.output.get(node).setSubset(this.outputSubset.get(node));
+        if (this.outputSubset.get(node) != null) {
+            this.outputSubset.get(node).setSuperset(this.output.get(node));
+        }
     }
 
     /**
