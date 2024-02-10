@@ -128,7 +128,10 @@ public class ModelEvent {
         RESPONSE_VARIABLES,
 
         /**  ATTRIBUTE_TYPE */
-        ATTRIBUTE_TYPE_BULK_UPDATE
+        ATTRIBUTE_TYPE_BULK_UPDATE,
+        
+        /** SHOW NULL OR SUPPRESSED IN ANALYSIS */
+        SHOW_SPECIAL_VALUES
     }
 
     /** The part of the model that has changed. */
