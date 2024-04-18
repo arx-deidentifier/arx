@@ -409,6 +409,7 @@ public class CSVDataOutput {
         format.setNormalizedNewline(CSVSyntax.getNormalizedLinebreak(linebreak));
 
         CsvWriterSettings settings = new CsvWriterSettings();
+        settings.setSkipEmptyLines(false);
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
