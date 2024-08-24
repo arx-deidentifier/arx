@@ -17,15 +17,21 @@
 package org.deidentifier.arx.framework.check.distribution;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
+
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntDoubleOpenHashMap;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -459,7 +465,6 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
     }
 
-
     /**
      * This class calculates the mode for a given distribution.
      * 
@@ -580,6 +585,223 @@ public abstract class DistributionAggregateFunction implements Serializable {
                 }
             }
             return mode;
+        }
+    }
+
+    /**
+     * This class calculates the mode for a given distribution falling back to drawing from multiple values that would qualify as
+     * mode using the provided distribution
+     * 
+     * @author Fabian Prasser
+     * 
+     */
+    public static class DistributionAggregateFunctionModeWithDistributionFallback extends DistributionAggregateFunction {
+
+        /** SVUID. */
+        private static final long    serialVersionUID = 6285156778817664604L;
+
+		/** Minimum */
+        private double               minimum          = 0d;
+
+        /** Maximum */
+        private double               maximum          = 0d;
+        
+        /** Distribution*/
+        private Map<String, Double>  distribution;
+        
+        /** Integer distribution*/
+        private IntDoubleOpenHashMap intDistribution;
+
+        /** The seed to use*/
+        private Long                 seed;
+        
+        /** The random source to use*/
+        private Random               random;
+
+        /**
+         * Instantiates.
+         * 
+         * @param ignoreMissingData
+         * @param distribution
+         * @param seed Maybe null
+         */
+        public DistributionAggregateFunctionModeWithDistributionFallback(boolean ignoreMissingData,
+        																 Map<String, Double> distribution,
+        																 Long seed) {
+            super(ignoreMissingData, true);
+            this.distribution = distribution;
+            this.seed = seed;
+            if (this.seed == null) {
+                this.random = new SecureRandom();
+            } else {
+                this.random = new Random(this.seed);
+            }
+        }
+
+        /**
+         * Clone constructor
+         * @param ignoreMissingData
+         * @param minimum
+         * @param maximum
+         * @param distribution
+         * @param seed Maybe null
+         */
+        private DistributionAggregateFunctionModeWithDistributionFallback(boolean ignoreMissingData,
+                                                                          double minimum,
+                                                                          double maximum,
+                                                                          Map<String, Double> distribution,
+                                                                          Long seed) {
+            this(ignoreMissingData, distribution, seed);
+            this.minimum = minimum;
+            this.maximum = maximum;
+        }
+
+        @Override
+        public <T> String aggregate(Distribution distribution) {
+
+            // Determine mode
+            int mode = getModeWithDistributionFallback(distribution);
+            return mode == -1 ? DataType.NULL_VALUE : dictionary[mode];
+        }
+
+        /**
+         * Clone method
+         */
+        public DistributionAggregateFunctionModeWithDistributionFallback clone() {
+        	DistributionAggregateFunctionModeWithDistributionFallback result = new DistributionAggregateFunctionModeWithDistributionFallback(this.ignoreMissingData,
+                                                                                                                                            this.minimum,
+                                                                                                                                            this.maximum,
+                                                                                                                                            this.distribution,
+                                                                                                                                            this.seed);
+            if (dictionary != null) {
+                result.initialize(dictionary, type);
+            }
+            return result;
+        }
+
+        @Override
+        public <T> double getError(Distribution distribution) {
+            
+            if (!(type instanceof DataTypeWithRatioScale)) {
+                return 0d;
+            }
+            
+            @SuppressWarnings("unchecked")
+            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
+            DoubleArrayList list = new DoubleArrayList();
+            Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, rType);
+            while (it.hasNext()) {
+                Double value = it.next();
+                value = value == null ? (ignoreMissingData ? null : 0d) : value;
+                if (value != null) {
+                    list.add(value);
+                }
+            }
+            
+            // Determine and check mode
+            int mode = getModeWithDistributionFallback(distribution);
+            if (mode == -1) {
+                return 1d;
+            }
+            
+            // Compute error
+            return getNMSE(minimum, maximum, Arrays.copyOf(list.elements(), list.size()), 
+                                             rType.toDouble(rType.parse(dictionary[mode])));
+        }
+
+        @Override
+        public void initialize(String[] dictionary, DataType<?> type) {
+            super.initialize(dictionary, type);
+            if (type instanceof DataTypeWithRatioScale) {
+                double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
+                this.minimum = values[0];
+                this.maximum = values[1];
+            }
+            intDistribution = new IntDoubleOpenHashMap();
+            int index = 0;
+            for (String value : dictionary) {
+                Double frequency = this.distribution.get(value);
+                if (frequency != null) {
+                    intDistribution.put(index, frequency);
+                }
+                index++;
+            }
+        }
+        
+        /**
+         * Returns the index of the most frequent element from the distribution. Draws from the most frequent items if 
+         * there are multiple, using the provided distribution. Returns -1 if there is no such element.
+         * @param distribution
+         * @return
+         */
+        private int getModeWithDistributionFallback(Distribution distribution) {
+
+            // Prepare
+            int[] buckets = distribution.getBuckets();
+            int max = -1;
+            IntArrayList mode = new IntArrayList();
+
+            // Iterate through distribution, collecting the mode
+            for (int i = 0; i < buckets.length; i += 2) {
+                int value = buckets[i];
+                int frequency = buckets[i + 1];
+                if (value != -1) {
+                    // Same frequency
+                    if (Math.abs(max - frequency) < 1e-9) {
+                        mode.add(value);
+                    // More frequent
+                    } else if (frequency > max) {
+                        max = frequency;
+                        mode.clear();
+                        mode.add(value);
+                    }
+                }
+            }
+            
+            // Weird
+            if (mode.isEmpty()) {
+            	return -1;
+
+                // Exactly one mode
+            } else if (mode.size() == 1) {
+                return mode.get(0);
+
+            // Need to draw from distribution
+            } else {
+
+                // Collect frequencies
+                DoubleArrayList frequencies = new DoubleArrayList();
+                for (int i = 0; i < mode.size(); i++) {
+                    int code = mode.get(i);
+                    if (this.intDistribution.containsKey(code)) {
+                        frequencies.add(this.intDistribution.get(code));
+                    } else {
+                        frequencies.add(0d);
+                    }
+                }
+
+                // Convert frequencies to cumulative frequencies
+                for (int i = 1; i < frequencies.size(); i++) {
+                    frequencies.set(i, frequencies.get(i) + frequencies.get(i - 1));
+                }
+
+                // Normalize
+                double maxFrequency = frequencies.get(frequencies.size() - 1);
+                for (int i = 0; i < frequencies.size(); i++) {
+                    frequencies.set(i, frequencies.get(i) / maxFrequency);
+                }
+                
+                // Draw
+                double r = random.nextDouble();
+                for (int i = 0; i < frequencies.size(); i++) {
+                    if (r <= frequencies.get(i)) {
+                        return mode.get(i);
+                    }
+                }
+            }
+
+            // Should never happen
+            return -1;
         }
     }
 

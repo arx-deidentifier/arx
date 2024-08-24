@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean;
@@ -35,6 +36,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionInterval;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMedian;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMode;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionModeWithDistributionFallback;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionSet;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
@@ -732,6 +734,18 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
         public static MicroAggregationFunction createMode() {
             return createMode(true);
         }
+
+        /**
+         * Creates a microaggregation function returning the mode. If more than one value qualifies as mode,
+         * the function draws from the qualifying values using the provided distribution. Ignores missing data.
+         * 
+         * @param distribution Map from values to frequencies
+         * @param seed Seed to use for drawing, can be null
+         * @return
+         */
+        public static MicroAggregationFunction createModeWithDistributionFallback(Map<String, Double> distribution, long seed) {
+            return createModeWithDistributionFallback(true, distribution, seed);
+        }
         
         /**
          * Creates a microaggregation function returning the mode.
@@ -743,6 +757,23 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
             return new MicroAggregationFunction(new DistributionAggregateFunctionMode(ignoreMissingData),
                                                 DataScale.NOMINAL, "Mode");
         }
+
+        /**
+         * Creates a microaggregation function returning the mode. If more than one value qualifies as mode,
+         * the function draws from the qualifying values using the provided distribution.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @param distribution Map from values to frequencies
+         * @param seed Seed to use for drawing, can be null
+         * @return
+         */
+        public static MicroAggregationFunction createModeWithDistributionFallback(boolean ignoreMissingData,
+                                                                                  Map<String, Double> distribution,
+                                                                                  Long seed) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionModeWithDistributionFallback(ignoreMissingData, distribution, seed),
+                                                DataScale.NOMINAL, "Mode with distribution fallback");
+        }
+        
         /**
          * Creates a microaggregation function returning sets. This variant will ignore missing data.
          */

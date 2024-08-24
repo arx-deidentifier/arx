@@ -16,6 +16,9 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * A frequency distribution.
  *
@@ -43,5 +46,17 @@ public class StatisticsFrequencyDistribution {
         this.values = items;
         this.count = count;
         this.frequency = frequency;
+    }
+    
+    /**
+     * Returns the distribution as a map
+     * @return
+     */
+    public Map<String, Double> asMap() {
+        Map<String, Double> map = new LinkedHashMap<>();
+        for (int i = 0; i < frequency.length; i++) {
+            map.put(values[i], frequency[i]);
+        }
+        return map;
     }
 }
