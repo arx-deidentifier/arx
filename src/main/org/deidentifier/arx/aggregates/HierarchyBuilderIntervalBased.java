@@ -980,7 +980,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 
             // Step 4.3 Error if < lower
             } else if (type.compare(value, tempLower.labelBound) < 0) {
-                throw new IllegalArgumentException("Data item " + type.format(value) + " is < minim value (" + type.format(tempLower.labelBound) + ")");
+                throw new IllegalArgumentException("Data item " + type.format(value) + " is < minimum value (" + type.format(tempLower.labelBound) + ")");
                 
             // Step 4.4 Bottom coding    
             } else if (type.compare(value, tempLower.snapBound) < 0) {
