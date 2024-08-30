@@ -18,7 +18,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -110,12 +111,12 @@ public class Update implements Runnable {
         StringBuilder builder = new StringBuilder();
         BufferedReader in = null;
         try {
-            in = new BufferedReader(new InputStreamReader(new URL(UPDATE_URL).openStream(), CHARSET ));
+            in = new BufferedReader(new InputStreamReader(new URI(UPDATE_URL).toURL().openStream(), CHARSET ));
             String line;
             while ((line = in.readLine()) != null) {
                 builder.append(line).append("\n"); //$NON-NLS-1$
             }
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             // Ignore
         } finally {
             if (in != null) {
