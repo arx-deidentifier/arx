@@ -419,6 +419,12 @@ public class ARXAnonymizer { // NO_UCD
             }
         }
         
+        // Check if more than 64 QIs
+        int _numQIs = handle.getDefinition().getQuasiIdentifyingAttributes().size();
+        if (_numQIs > 64) {
+            throw new IllegalArgumentException("No more than 64 quasi-identifying variables are supported (specified: " + _numQIs + ")");
+        }
+        
         // Check response variables
         if (config.getQualityModel() instanceof MetricSDClassification) {
             if (handle.getDefinition().getResponseVariables().isEmpty()) {
@@ -431,6 +437,7 @@ public class ARXAnonymizer { // NO_UCD
             }
         }
         
+        // Check sensitive variables
         for (String attr : handle.getDefinition().getSensitiveAttributes()){
             boolean found = false;
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
