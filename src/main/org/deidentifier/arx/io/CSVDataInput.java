@@ -587,6 +587,7 @@ public class CSVDataInput {
         format.setComment('\0');
 
         CsvParserSettings settings = new CsvParserSettings();
+        settings.setSkipEmptyLines(false);
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
