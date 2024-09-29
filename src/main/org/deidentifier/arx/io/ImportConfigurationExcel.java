@@ -18,7 +18,7 @@
 package org.deidentifier.arx.io;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
 /**
@@ -225,7 +225,7 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
             if (!column.isIndexSpecified()) {
                 boolean found = false;
                 for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
-                    row.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
+                    row.getCell(i).setCellType(CellType.STRING);
                     if (row.getCell(i).getStringCellValue().equals(column.getName())) {
                         found = true;
                         column.setIndex(i);
