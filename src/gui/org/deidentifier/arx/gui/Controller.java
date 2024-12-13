@@ -604,7 +604,7 @@ public class Controller implements IView {
         }
         
         // Open configuration dialog
-        ModelAnonymizationConfiguration configuration = this.actionShowLocalAnonymizationDialog();
+        ModelAnonymizationConfiguration configuration = this.actionShowAnonymizationDialog();
         if (configuration == null) {
             return;
         }
@@ -1817,11 +1817,11 @@ public class Controller implements IView {
     }
 
     /**
-     * Shows a dialog for configuration of local anonymization.
+     * Shows a dialog for configuration of anonymization.
      * @return Returns the parameters selected by the user. Returns a pair. 
      *         First: max. time per iteration. Second: min. records per iteration.
      */
-    public ModelAnonymizationConfiguration actionShowLocalAnonymizationDialog() {
+    public ModelAnonymizationConfiguration actionShowAnonymizationDialog() {
         return main.showLocalAnonymizationDialog(model);
     }
 
