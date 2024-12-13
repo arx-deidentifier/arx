@@ -75,6 +75,8 @@ public class DialogAnonymization extends TitleAreaDialog {
     private Text                            txtHeuristicSearchStepLimit;
     /** View */
     private Text                            textNumIterations;
+    /** Button */
+    private Button                          btnUseCodingModelSettings;
     /** View */    
     private Button                          radioTimeLimit;
     /** View */
@@ -185,6 +187,10 @@ public class DialogAnonymization extends TitleAreaDialog {
             configuration.setNumIterations(getNumIterations());
         }
         
+        // Handle parameter
+        configuration.setUseCodingModelSettings(this.btnUseCodingModelSettings.getSelection());
+        
+        // Handle parameters
         if (btnLocalTransformation.isEnabled() && btnLocalTransformation.getSelection()) {
             configuration.setTransformationType(TransformationType.LOCAL);
         } else if (btnGlobalTransformation.isEnabled() && btnGlobalTransformation.getSelection()) {
@@ -380,12 +386,12 @@ public class DialogAnonymization extends TitleAreaDialog {
         GridData data3 = SWTUtil.createFillGridData();
         data3.horizontalIndent = 5;
         group3.setLayoutData(data3);
-        group3.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        group3.setLayout(GridLayoutFactory.swtDefaults().numColumns(3).create());
 
         // Radio - global transformation
         this.btnGlobalTransformation = new Button(group3, SWT.RADIO);
         this.btnGlobalTransformation.setText(Resources.getMessage("DialogAnonymization.10")); //$NON-NLS-1$
-        this.btnGlobalTransformation.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+        this.btnGlobalTransformation.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
 
         // Radio - local transformation
         this.btnLocalTransformation = new Button(group3, SWT.RADIO);
@@ -394,6 +400,10 @@ public class DialogAnonymization extends TitleAreaDialog {
         // Tet - number iterations
         this.textNumIterations = new Text(group3, SWT.BORDER);
         this.textNumIterations.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+        
+        this.btnUseCodingModelSettings = new Button(group3, SWT.CHECK);
+        this.btnUseCodingModelSettings.setText(Resources.getMessage("DialogAnonymization.23")); //$NON-NLS-1$
+        this.btnUseCodingModelSettings.setLayoutData(GridDataFactory.swtDefaults().create());
 
         /*
          * Set initial values 
@@ -425,6 +435,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             case LOCAL: btnLocalTransformation.setSelection(true); break;
         }
         this.textNumIterations.setText(String.valueOf(configuration.getNumIterations()));
+        this.btnUseCodingModelSettings.setSelection(configuration.isUseCodingModelSettings());
         
         /*
          * Customize according to currently available settings
@@ -438,6 +449,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             this.btnGlobalTransformation.setSelection(true);
             this.configuration.setTransformationType(TransformationType.GLOBAL);
             this.textNumIterations.setEnabled(false);
+            this.btnUseCodingModelSettings.setEnabled(false);
             createMessage(group3, 2, Resources.getMessage("DialogAnonymization.12")); //$NON-NLS-1$
         }
 
@@ -566,6 +578,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radioStepLimit.setSelection(true);
+                radioTimeLimit.setSelection(false);
                 checkAndUpdateModel();
             }
         });
@@ -574,6 +587,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radioTimeLimit.setSelection(true);
+                radioStepLimit.setSelection(false);
                 checkAndUpdateModel();
             }
         });
@@ -595,6 +609,15 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.textNumIterations.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
+                btnLocalTransformation.setSelection(true);
+                btnGlobalTransformation.setSelection(false);
+                checkAndUpdateModel();
+            }
+        });
+        
+        this.btnUseCodingModelSettings.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
                 btnLocalTransformation.setSelection(true);
                 btnGlobalTransformation.setSelection(false);
                 checkAndUpdateModel();
