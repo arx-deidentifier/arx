@@ -578,6 +578,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radioStepLimit.setSelection(true);
+                radioTimeLimit.setSelection(false);
                 checkAndUpdateModel();
             }
         });
@@ -586,6 +587,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radioTimeLimit.setSelection(true);
+                radioStepLimit.setSelection(false);
                 checkAndUpdateModel();
             }
         });
