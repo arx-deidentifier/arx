@@ -60,6 +60,8 @@ public class ModelAnonymizationConfiguration implements Serializable {
     private ModelAnonymizationConfiguration.TransformationType transformationType = TransformationType.GLOBAL;
     /** Limits */
     private Boolean                                            stepLimitEnabled   = false;
+    /** Code model settings*/
+    private Boolean                                            useCodingModelSettings = false;
 
     /**
      * Creates a new instance
@@ -144,6 +146,18 @@ public class ModelAnonymizationConfiguration implements Serializable {
     }
     
     /**
+     * Use coding model settings from main UI
+     * @return
+     */
+    public boolean isUseCodingModelSettings() {
+        // Backwards compatibility
+        if (this.useCodingModelSettings == null) {
+            this.useCodingModelSettings = false;
+        }
+        return this.useCodingModelSettings;
+    }
+    
+    /**
      * @param heuristicSearchStepLimit the heuristicSearchStepLimit to set
      */
     public void setHeuristicSearchStepLimit(int heuristicSearchStepLimit) {
@@ -156,7 +170,7 @@ public class ModelAnonymizationConfiguration implements Serializable {
     public void setHeuristicSearchTimeLimit(double heuristicSearchTimeLimit) {
         model.setHeuristicSearchTimeLimit((int)(heuristicSearchTimeLimit * 1000d));
     }
-    
+
     /**
      * @param numIterations the numIterations to set
      */
@@ -190,5 +204,13 @@ public class ModelAnonymizationConfiguration implements Serializable {
      */
     public void setTransformationType(ModelAnonymizationConfiguration.TransformationType transformationType) {
         this.transformationType = transformationType;
+    }
+
+    /**
+     * Set use coding model
+     * @param useCodingModelSettings
+     */
+    public void setUseCodingModelSettings(boolean useCodingModelSettings) {
+        this.useCodingModelSettings = useCodingModelSettings;
     }
 }

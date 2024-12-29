@@ -111,7 +111,14 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
             // Overwrite user-defined settings to prepare local recoding
             if (transformationType == TransformationType.LOCAL) {
                 MetricConfiguration metricConfig = config.getQualityModel().getConfiguration();
-                metricConfig.setGsFactor(0d);
+                
+                // Use user-defined gs factor, if configured
+                if (model.getAnonymizationConfiguration().isUseCodingModelSettings()) {
+                    metricConfig.setGsFactor(model.getMetricConfiguration().getGsFactor());
+                // Default is 0
+                } else {
+                    metricConfig.setGsFactor(0d);
+                }
                 config.setQualityModel(config.getQualityModel().getDescription().createInstance(metricConfig));
                 config.setSuppressionLimit(1d - (1d / (double)model.getLocalRecodingModel().getNumIterations()));
             }

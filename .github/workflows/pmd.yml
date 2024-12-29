@@ -32,7 +32,7 @@ jobs:
           distribution: 'temurin'
       - name: Run PMD
         id: pmd
-        uses: pmd/pmd-github-action@40392a149b9cfa24bf4c03989cc762e6814668bd
+        uses: pmd/pmd-github-action@v2
         with:
           rulesets: 'ruleset.xml'
           sourcePath: 'src/main'
