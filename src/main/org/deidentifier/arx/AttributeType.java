@@ -853,7 +853,7 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
          * Returns the aggregate function.
          * @return
          */
-        protected DistributionAggregateFunction getFunction() {
+        public DistributionAggregateFunction getFunction() {
             return function;
         }
     }
