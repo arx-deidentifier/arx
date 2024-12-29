@@ -958,6 +958,14 @@ public abstract class DistributionAggregateFunction implements Serializable {
     }
     
     /**
+     * Returns whether this function ignores missing data
+     * @return
+     */
+    public boolean isIgnoreMissingData() {
+        return this.ignoreMissingData;
+    }
+    
+    /**
      * Adds all values from the distribution to the given descriptive statistics object
      * @param statistics
      * @param distribution
