@@ -49,9 +49,10 @@ public class RiskModelSampleSummary {
          * @param rA
          * @param rB
          * @param rC
+         * @param rM
          */
-        protected JournalistRisk(double t, double rA, double rB, double rC) {
-            super(t, rA, rB, rC);
+        protected JournalistRisk(double t, double rA, double rB, double rC, double rM) {
+            super(t, rA, rB, rC, rM);
         }
     }
     
@@ -94,9 +95,10 @@ public class RiskModelSampleSummary {
          * @param rA
          * @param rB
          * @param rC
+         * @param rM
          */
-        protected ProsecutorRisk(double t,double rA, double rB, double rC) {
-            super(t, rA, rB, rC);
+        protected ProsecutorRisk(double t,double rA, double rB, double rC, double rM) {
+            super(t, rA, rB, rC, rM);
         }
     }
     /**
@@ -112,6 +114,8 @@ public class RiskModelSampleSummary {
         private final double rA;
         /** Maximum probability of re-identification*/
         private final double rB;
+        /** Minimum probability of re-identification*/
+        private final double rM;
         /** Proportion of records that can be re-identified on average*/
         private final double rC;
         
@@ -121,12 +125,14 @@ public class RiskModelSampleSummary {
          * @param rA
          * @param rB
          * @param rC
+         * @param rM
          */
-        protected RiskSummary(double t, double rA, double rB, double rC) {
+        protected RiskSummary(double t, double rA, double rB, double rC, double rM) {
             this.t = t;
             this.rA = rA;
             this.rB = rB;
             this.rC = rC;
+            this.rM = rM;
         }
 
         /**
@@ -151,6 +157,14 @@ public class RiskModelSampleSummary {
          */
         public double getHighestRisk() {
             return Double.isNaN(rB) ? 0d : rB;
+        }
+        
+        /**
+         * Minimum probability of re-identification
+         * @return
+         */
+        public double getLowestRisk() {
+            return Double.isNaN(rM) ? 0d : rM;
         }
 
         /**
@@ -219,8 +233,8 @@ public class RiskModelSampleSummary {
             population = sample;
         }
         if (sample.size() == 0) {
-            this.prosecutorRisk = new ProsecutorRisk(threshold, 0d, 0d, 0d);
-            this.journalistRisk = new JournalistRisk(threshold, 0d, 0d, 0d);
+            this.prosecutorRisk = new ProsecutorRisk(threshold, 0d, 0d, 0d, 0d);
+            this.journalistRisk = new JournalistRisk(threshold, 0d, 0d, 0d, 0d);
             this.marketerRisk = new MarketerRisk(0d);          
         } else {
             this.prosecutorRisk = getProsecutorRisk(population, sample, 0.9d, stop, progress);
@@ -359,12 +373,14 @@ public class RiskModelSampleSummary {
         // Init
         double rA = 0d;
         double rB = 0d;
+        double rM = 0d;
         double rC = 0d;
         double rC1 = 0d;
         double rC2 = 0d;
         double numRecordsInSample = 0d;
         double numClassesInSample = 0d;
         double smallestClassSizeInPopulation = Integer.MAX_VALUE;
+        double largestClassSizeInPopulation = Integer.MIN_VALUE;
         int maxindex = sample.size();
         int index = 0;
         
@@ -393,6 +409,10 @@ public class RiskModelSampleSummary {
             if (groupSizeInPopulation < smallestClassSizeInPopulation) {
                 smallestClassSizeInPopulation = groupSizeInPopulation;
             }
+            // Compute rM
+            if (groupSizeInPopulation > largestClassSizeInPopulation) {
+                largestClassSizeInPopulation = groupSizeInPopulation;
+            }
             // Compute rC
             numClassesInSample++;
             numRecordsInSample += groupSizeInSample;
@@ -411,6 +431,9 @@ public class RiskModelSampleSummary {
         
         // Compute rB: smallest class is first class in the histogram
         rB = 1d / smallestClassSizeInPopulation;
+        
+        // Compute rM
+        rM = 1d / largestClassSizeInPopulation;
 
         // Compute rC
         rC1 = numClassesInSample / rC1;
@@ -418,7 +441,7 @@ public class RiskModelSampleSummary {
         rC = Math.max(rC1,  rC2);
         
         // Return
-        return new JournalistRisk(threshold, rA, rB, rC); 
+        return new JournalistRisk(threshold, rA, rB, rC, rM); 
     }
 
     /**
@@ -495,10 +518,12 @@ public class RiskModelSampleSummary {
         // Init
         double rA = 0d;
         double rB = 0d;
+        double rM = 0d;
         double rC = 0d;
         double numRecords = 0d;
         double numClasses = 0d;
         double smallestClassSize = Integer.MAX_VALUE;
+        double largestClassSize = Integer.MIN_VALUE;
         int maxindex = sample.size();
         int index = 0;
         
@@ -521,6 +546,10 @@ public class RiskModelSampleSummary {
             if (groupSize < smallestClassSize) {
                 smallestClassSize = groupSize;
             }
+            // Compute rM
+            if (groupSize < largestClassSize) {
+                largestClassSize = groupSize;
+            }
             // Compute rC
             numClasses++;
             numRecords += groupSize;
@@ -538,10 +567,13 @@ public class RiskModelSampleSummary {
         // Compute rB: smallest class is first class in the histogram
         rB = 1d / smallestClassSize;
 
+        // Compute rB
+        rM = 1d / largestClassSize;
+        
         // Compute rC
         rC = numClasses / numRecords;
         
         // Return
-        return new ProsecutorRisk(threshold, rA, rB, rC); 
+        return new ProsecutorRisk(threshold, rA, rB, rC, rM); 
     }
 }
