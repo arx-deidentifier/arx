@@ -139,6 +139,15 @@ public class RiskModelSampleWildcard {
             throw new IllegalArgumentException("Wildcard must not be null");
         }
         
+        // Sanity check
+        if (identifiers.isEmpty()) {
+            this.recordsAtRisk = 0d;
+            this.highestRisk = 0d;
+            this.lowestRisk = 0d;
+            this.averageRisk = 0d;
+            return;
+        }
+        
         // Calculate groups
         Groupify<TupleWrapper> groups = getGroups(handle, identifiers, 0d, 0.3d, stop, progress);
         
