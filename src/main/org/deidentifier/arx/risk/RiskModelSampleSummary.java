@@ -380,7 +380,7 @@ public class RiskModelSampleSummary {
         double numRecordsInSample = 0d;
         double numClassesInSample = 0d;
         double smallestClassSizeInPopulation = Integer.MAX_VALUE;
-        double largestClassSizeInPopulation = Integer.MIN_VALUE;
+        double largestClassSizeInPopulation = -Double.MAX_VALUE;
         int maxindex = sample.size();
         int index = 0;
         
@@ -523,7 +523,7 @@ public class RiskModelSampleSummary {
         double numRecords = 0d;
         double numClasses = 0d;
         double smallestClassSize = Integer.MAX_VALUE;
-        double largestClassSize = Integer.MIN_VALUE;
+        double largestClassSize = -Double.MAX_VALUE;
         int maxindex = sample.size();
         int index = 0;
         
@@ -547,7 +547,7 @@ public class RiskModelSampleSummary {
                 smallestClassSize = groupSize;
             }
             // Compute rM
-            if (groupSize < largestClassSize) {
+            if (groupSize > largestClassSize) {
                 largestClassSize = groupSize;
             }
             // Compute rC
