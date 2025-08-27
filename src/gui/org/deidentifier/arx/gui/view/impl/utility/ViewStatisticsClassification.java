@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.aggregates.StatisticsClassification.ROCCurve;
@@ -999,12 +1000,31 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     @Override
     protected void doUpdate(final AnalysisContextClassification context) {
 
-        // The statistics builder
-        final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
+        // Classification configuration
         final String[] features = context.model.getSelectedFeaturesAsArray();
         final String[] targetVariables = context.model.getSelectedClassesAsArray();
-        final ARXClassificationConfiguration<?> config = context.model.getClassificationModel().getCurrentConfiguration();
         final ARXFeatureScaling scaling = context.model.getClassificationModel().getFeatureScaling();
+        
+        // Make sure that an analysis is done through the UI, even if when training/test set is selected and
+        // the configuration is non-optimal
+        DataHandle handle = context.handle;
+        ARXClassificationConfiguration<?> config = context.model.getClassificationModel().getCurrentConfiguration();
+        if (config.isUseTrainingTestSet() && !handle.isSubsetAvailable()) {
+            
+            // Try to fix by switching to the superset
+            if (handle.isSupersetAvailable()) {
+                handle = handle.getSupersetHandle();
+            
+            // Fix by switching to k-fold cross validation
+            } else {
+                config = config.clone();
+                config.setUseTrainingTestSet(false);
+            }
+        }
+        
+        // Obtain statistics builder
+        final StatisticsBuilderInterruptible builder = handle.getStatistics().getInterruptibleInstance();
+        final ARXClassificationConfiguration<?> _config = config;
         
         // Break, if nothing do
         if (context.model.getSelectedFeatures().isEmpty() ||
@@ -1114,7 +1134,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     // Compute
                     StatisticsClassification result = builder.getClassificationPerformance(features,
                                                                                            targetVariable,
-                                                                                           config,
+                                                                                           _config,
                                                                                            scaling);
                     progress++;
                     if (stopped) {

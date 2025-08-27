@@ -28,6 +28,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.classification.ClassificationDataSpecification;
 import org.deidentifier.arx.aggregates.classification.ClassificationMethod;
 import org.deidentifier.arx.aggregates.classification.ClassificationResult;
@@ -266,8 +267,6 @@ public class StatisticsClassification {
     private final WrappedInteger  progress;
     /** Number of classes */
     private int                   numClasses;
-    /** Number of samples*/
-    private int                   numSamples;
     /** Random */
     private final Random          random;
     /** Measurements */
@@ -325,9 +324,6 @@ public class StatisticsClassification {
         this.interrupt = interrupt;
         this.progress = progress;
         
-        // Number of records to consider
-        this.numSamples = getNumSamples(inputHandle.getNumRows(), config);
-        
         // Initialize random
         if (!config.isDeterministic()) {
             this.random = new Random();
@@ -342,27 +338,53 @@ public class StatisticsClassification {
                                                                                             features,
                                                                                             clazz,
                                                                                             interrupt);
-
+        
+        // TODO: Check whether training set is available
+        if (config.isUseTrainingTestSet() && !inputHandle.isSubsetAvailable()) {
+            throw new IllegalArgumentException("Training and test set can only be used with a subset");
+        }
+        
         // Number of class values
         this.numClasses = specification.classMap.size();
+
+        // Determine folds and samples to consider
+        int numRecords = getNumSamples(inputHandle, config);
+        boolean useTrainingTestSet = config.isUseTrainingTestSet();
+        List<List<Integer>> folds = null;
+        if (useTrainingTestSet) {
+            
+            // Use test and training set
+            folds = getTestTrainingFolds(inputHandle, numRecords);
+            
+        } else {
+            
+            // K-fold cross-validation
+            int k = numRecords > config.getNumFolds() ? config.getNumFolds() : numRecords;
+            folds = getFolds(inputHandle.getNumRows(), numRecords, k);
+        }
         
-        // Train and evaluate
-        int k = numSamples > config.getNumFolds() ? config.getNumFolds() : numSamples;
-        List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), numSamples, k);
+        // Determine number of classifications
+        int numClassifications = useTrainingTestSet ? folds.get(0).size() : numRecords;
 
         // Track
         int classifications = 0;
-        double total = 100d / ((double)numSamples * (double)folds.size());
+        double total = useTrainingTestSet ? (100d / (double)folds.get(0).size() + folds.get(1).size()) : 
+                                            (100d / ((double)numClassifications * (double)folds.size()));
         double done = 0d;
         
         // ROC
-        double[] inputConfidences = new double[numSamples * ( 1 + numClasses)];
-        double[] outputConfidences = (inputHandle == outputHandle) ? null : new double[numSamples * ( 1 + numClasses)];
-        double[] zerorConfidences = new double[numSamples * ( 1 + numClasses)];
+        double[] inputConfidences = new double[numClassifications * ( 1 + numClasses)];
+        double[] outputConfidences = (inputHandle == outputHandle) ? null : new double[numClassifications * ( 1 + numClasses)];
+        double[] zerorConfidences = new double[numClassifications * ( 1 + numClasses)];
         int confidencesIndex = 0;
                 
         // For each fold as a validation set
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
+            
+            // Just run one iteration if using test and traning set
+            if (useTrainingTestSet && evaluationFold > 0) {
+                break;
+            }
             
             // Create classifiers
             ClassificationMethod inputClassifier = getClassifier(interrupt, specification, config, inputHandle);
@@ -512,6 +534,171 @@ public class StatisticsClassification {
     }
     
     /**
+     * Returns the resulting accuracy. Obtained by generating a
+     * classification model from the output (or input) dataset.
+     * 
+     * @return
+     */
+    public double getAccuracy() {
+        return this.accuracy;
+    }
+
+    /**
+     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
+     * each classification event.
+     * 
+     * @return
+     */
+    public double getAverageError() {
+        return this.averageError;
+    }
+
+    /**
+     * Returns the brier score of the classifier trained on output data.
+     * @return
+     */
+    public double getBrierScore() {
+        return brierScore;
+    }
+    
+    /**
+     * Returns the brier skill score, defined as 1-(brier output/brier input)
+     * @return
+     */
+    public double getBrierSkillScore() {
+        return brierScore == 0d ? 0d : (1 - brierScore / originalBrierScore);
+    }
+    
+    /**
+     * Returns the set of class attributes
+     * @return
+     */
+    public Set<String> getClassValues() {
+        return this.originalROC.keySet();
+    }
+
+    /**
+     * Returns the number of classes
+     * @return
+     */
+    public int getNumClasses() {
+        return this.numClasses;
+    }
+
+    /**
+     * Returns the number of measurements
+     * @return
+     */
+    public int getNumMeasurements() {
+        return this.numMeasurements;
+    }
+    
+    /**
+     * Returns the maximal accuracy. Obtained by generating a
+     * classification model from the input dataset.
+     * 
+     * @return
+     */
+    public double getOriginalAccuracy() {
+        return this.originalAccuracy;
+    }
+
+    /**
+     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
+     * each classification event.
+     * 
+     * @return
+     */
+    public double getOriginalAverageError() {
+        return this.originalAverageError;
+    }
+    
+    /**
+     * Returns the brier score of the classifier trained on input data.
+     * @return
+     */
+    public double getOriginalBrierScore() {
+        return originalBrierScore;
+    }
+    
+    /**
+     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
+     * @param clazz
+     * @return
+     */
+    public ROCCurve getOriginalROCCurve(String clazz) {
+        return this.originalROC.get(clazz);
+    }
+
+    /**
+     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
+     * @param clazz
+     * @return
+     */
+    public ROCCurve getROCCurve(String clazz) {
+        return this.ROC.get(clazz);
+    }
+
+    /**
+     * Returns the minimal accuracy. Obtained by training a
+     * ZeroR classifier on the input dataset.
+     * 
+     * @return
+     */
+    public double getZeroRAccuracy() {
+        return this.zeroRAccuracy;
+    }
+    
+    /**
+     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
+     * each classification event.
+     * 
+     * @return
+     */
+    public double getZeroRAverageError() {
+        return this.zeroRAverageError;
+    }
+
+    /**
+     * Returns the brier score of the ZeroR classifier. 
+     * @return
+     */
+    public double getZerorBrierScore() {
+        return zerorBrierScore;
+    }
+
+    /**
+     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
+     * @param clazz
+     * @return
+     */
+    public ROCCurve getZeroRROCCurve(String clazz) {
+        return this.zerorROC.get(clazz);
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("StatisticsClassification{\n");
+        builder.append(" - Accuracy:\n");
+        builder.append("   * Original: ").append(originalAccuracy).append("\n");
+        builder.append("   * ZeroR: ").append(zeroRAccuracy).append("\n");
+        builder.append("   * Output: ").append(accuracy).append("\n");
+        builder.append(" - Average error:\n");
+        builder.append("   * Original: ").append(originalAverageError).append("\n");
+        builder.append("   * ZeroR: ").append(zeroRAverageError).append("\n");
+        builder.append("   * Output: ").append(averageError).append("\n");
+        builder.append(" - Brier score:\n");
+        builder.append("   * Original: ").append(originalBrierScore).append("\n");
+        builder.append("   * ZeroR: ").append(zerorBrierScore).append("\n");
+        builder.append("   * Output: ").append(brierScore).append("\n");
+        builder.append(" - Number of classes: ").append(numClasses).append("\n");
+        builder.append(" - Number of measurements: ").append(numMeasurements).append("\n");
+        builder.append("}");
+        return builder.toString();
+    }
+
+    /**
      * Calculate brier score.
      * @param confidences
      * @param handle
@@ -544,171 +731,6 @@ public class StatisticsClassification {
     }
 
     /**
-     * Returns the resulting accuracy. Obtained by generating a
-     * classification model from the output (or input) dataset.
-     * 
-     * @return
-     */
-    public double getAccuracy() {
-        return this.accuracy;
-    }
-    
-    /**
-     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
-     * each classification event.
-     * 
-     * @return
-     */
-    public double getAverageError() {
-        return this.averageError;
-    }
-    
-    /**
-     * Returns the brier score of the ZeroR classifier. 
-     * @return
-     */
-    public double getZerorBrierScore() {
-        return zerorBrierScore;
-    }
-
-    /**
-     * Returns the brier score of the classifier trained on output data.
-     * @return
-     */
-    public double getBrierScore() {
-        return brierScore;
-    }
-
-    /**
-     * Returns the brier score of the classifier trained on input data.
-     * @return
-     */
-    public double getOriginalBrierScore() {
-        return originalBrierScore;
-    }
-    
-    /**
-     * Returns the brier skill score, defined as 1-(brier output/brier input)
-     * @return
-     */
-    public double getBrierSkillScore() {
-        return brierScore == 0d ? 0d : (1 - brierScore / originalBrierScore);
-    }
-
-    /**
-     * Returns the set of class attributes
-     * @return
-     */
-    public Set<String> getClassValues() {
-        return this.originalROC.keySet();
-    }
-    
-    /**
-     * Returns the number of classes
-     * @return
-     */
-    public int getNumClasses() {
-        return this.numClasses;
-    }
-    
-    /**
-     * Returns the number of measurements
-     * @return
-     */
-    public int getNumMeasurements() {
-        return this.numMeasurements;
-    }
-
-    /**
-     * Returns the maximal accuracy. Obtained by generating a
-     * classification model from the input dataset.
-     * 
-     * @return
-     */
-    public double getOriginalAccuracy() {
-        return this.originalAccuracy;
-    }
-
-    /**
-     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
-     * each classification event.
-     * 
-     * @return
-     */
-    public double getOriginalAverageError() {
-        return this.originalAverageError;
-    }
-    
-    /**
-     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
-     * @param clazz
-     * @return
-     */
-    public ROCCurve getOriginalROCCurve(String clazz) {
-        return this.originalROC.get(clazz);
-    }
-
-    /**
-     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
-     * @param clazz
-     * @return
-     */
-    public ROCCurve getZeroRROCCurve(String clazz) {
-        return this.zerorROC.get(clazz);
-    }
-
-    /**
-     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
-     * @param clazz
-     * @return
-     */
-    public ROCCurve getROCCurve(String clazz) {
-        return this.ROC.get(clazz);
-    }
-    
-    /**
-     * Returns the minimal accuracy. Obtained by training a
-     * ZeroR classifier on the input dataset.
-     * 
-     * @return
-     */
-    public double getZeroRAccuracy() {
-        return this.zeroRAccuracy;
-    }
-
-    /**
-     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
-     * each classification event.
-     * 
-     * @return
-     */
-    public double getZeroRAverageError() {
-        return this.zeroRAverageError;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("StatisticsClassification{\n");
-        builder.append(" - Accuracy:\n");
-        builder.append("   * Original: ").append(originalAccuracy).append("\n");
-        builder.append("   * ZeroR: ").append(zeroRAccuracy).append("\n");
-        builder.append("   * Output: ").append(accuracy).append("\n");
-        builder.append(" - Average error:\n");
-        builder.append("   * Original: ").append(originalAverageError).append("\n");
-        builder.append("   * ZeroR: ").append(zeroRAverageError).append("\n");
-        builder.append("   * Output: ").append(averageError).append("\n");
-        builder.append(" - Brier score:\n");
-        builder.append("   * Original: ").append(originalBrierScore).append("\n");
-        builder.append("   * ZeroR: ").append(zerorBrierScore).append("\n");
-        builder.append("   * Output: ").append(brierScore).append("\n");
-        builder.append(" - Number of classes: ").append(numClasses).append("\n");
-        builder.append(" - Number of measurements: ").append(numMeasurements).append("\n");
-        builder.append("}");
-        return builder.toString();
-    }
-    
-    /**
      * Checks whether an interruption happened.
      */
     private void checkInterrupt() {
@@ -716,7 +738,7 @@ public class StatisticsClassification {
             throw new ComputationInterruptedException("Interrupted");
         }
     }
-
+    
     /**
      * Creates the folds
      * @param numRecords
@@ -765,20 +787,59 @@ public class StatisticsClassification {
         rows = null;
         return folds;
     }
-    
+
     /**
-     * Returns the number of samples as the minimum of actual number of rows in
-     * the dataset and maximal number of rows as specified in config.
+     * Returns the number of samples as the minimum of actual number of records in
+     * the dataset and maximal number of records as specified in the config.
      * 
-     * @param numRows
+     * @param data
      * @param config
      * @return
      */
-    private int getNumSamples(int numRows, ARXClassificationConfiguration<?> config) {
-        int numSamples = numRows;
+    private int getNumSamples(DataHandleInternal data, ARXClassificationConfiguration<?> config) {
+        int numSamples = data.getNumRows();
         if (config.getMaxRecords() > 0) {
             numSamples = Math.min(config.getMaxRecords(), numSamples);
         }
         return numSamples;
+    }
+    
+    /**
+     * Returns two folds. First fold for testing, second fold for training  
+     * @param data
+     * @param maxRows
+     * @return
+     */
+    private List<List<Integer>> getTestTrainingFolds(DataHandleInternal data, int maxRows) {
+
+        // Calculate sizes of sets
+        int trainingSetSize = Math.min(data.getView().getNumRows(), maxRows);
+        int testSetSize = Math.min((data.getNumRows() - data.getView().getNumRows()), maxRows);
+        
+        // Prepare indexes of training records
+        List<Integer> trainingRecords = new ArrayList<>();
+        List<Integer> testRecords = new ArrayList<>();
+        RowSet subset = data.getSubset().getSet();
+        for (int row = 0; row < data.getNumRows(); row++) {
+            if (subset.contains(row)) {
+                trainingRecords.add(row);
+            } else {
+                testRecords.add(row);
+            }
+        }
+        
+        // Shuffle
+        Collections.shuffle(trainingRecords, random);
+        Collections.shuffle(testRecords, random);
+        
+        // Extract sets of adequate size
+        trainingRecords = trainingRecords.subList(0, trainingSetSize);
+        testRecords = testRecords.subList(0, testSetSize);
+
+        // Return
+        ArrayList<List<Integer>> folds = new ArrayList<>();
+        folds.add(testRecords);
+        folds.add(trainingRecords);
+        return folds;
     }
 }

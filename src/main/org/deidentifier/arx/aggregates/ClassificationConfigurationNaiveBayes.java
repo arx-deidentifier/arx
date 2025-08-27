@@ -70,6 +70,7 @@ public class ClassificationConfigurationNaiveBayes extends ARXClassificationConf
      * @param vectorLength
      * @param type
      * @param sigma
+     * @param useTrainingTestSet
      */
     protected ClassificationConfigurationNaiveBayes(boolean deterministic,
                                                     int maxRecords,
@@ -77,8 +78,9 @@ public class ClassificationConfigurationNaiveBayes extends ARXClassificationConf
                                                     long seed,
                                                     int vectorLength,
                                                     Type type,
-                                                    double sigma) {
-        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength);
+                                                    double sigma,
+                                                    boolean useTrainingTestSet) {
+        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength, useTrainingTestSet);
         this.type = type;
         this.sigma = sigma;
     }
@@ -91,7 +93,8 @@ public class ClassificationConfigurationNaiveBayes extends ARXClassificationConf
                                                          super.getSeed(),
                                                          super.getVectorLength(),
                                                          type,
-                                                         sigma);
+                                                         sigma,
+                                                         super.isUseTrainingTestSet());
     }
 
     /**

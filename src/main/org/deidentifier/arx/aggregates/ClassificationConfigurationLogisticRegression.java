@@ -102,6 +102,7 @@ public class ClassificationConfigurationLogisticRegression extends ARXClassifica
      * @param numberOfFolds
      * @param deterministic
      * @param prior
+     * @param useTrainingTestSet
      */
     protected ClassificationConfigurationLogisticRegression(double alpha,
                                                             double decayExponent,
@@ -113,8 +114,9 @@ public class ClassificationConfigurationLogisticRegression extends ARXClassifica
                                                             int seed,
                                                             int numberOfFolds,
                                                             boolean deterministic,
-                                                            PriorFunction prior) {
-        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength);
+                                                            PriorFunction prior,
+                                                            boolean useTrainingTestSet) {
+        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength, useTrainingTestSet);
         this.alpha = alpha;
         this.decayExponent = decayExponent;
         this.lambda = lambda;
@@ -140,7 +142,8 @@ public class ClassificationConfigurationLogisticRegression extends ARXClassifica
                                                                  seed,
                                                                  numberOfFolds,
                                                                  deterministic,
-                                                                 prior);
+                                                                 prior,
+                                                                 super.isUseTrainingTestSet());
     }
 
     /**

@@ -380,6 +380,10 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.19"), 10, Integer.MAX_VALUE, ARXClassificationConfiguration.DEFAULT_VECTOR_LENGTH) { //$NON-NLS-1$
             protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getVectorLength(); }
             protected void setValue(Object t) { model.getClassificationModel().setVectorLength((Integer)t); }});
+
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.22"), ARXClassificationConfiguration.DEFAULT_TEST_TRAINING_SET, true) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getClassificationModel().getCurrentConfiguration().isUseTrainingTestSet(); }
+            protected void setValue(Object t) { model.getClassificationModel().setUseTrainingTestSet((Boolean)t); }});
     }
 
     /**
