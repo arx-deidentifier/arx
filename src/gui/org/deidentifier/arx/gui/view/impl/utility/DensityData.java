@@ -156,17 +156,23 @@ public class DensityData extends JHCData{
     }
 
     /** Width. */
-    private int width = -1;
-    
+    private int                     width  = -1;
+
     /** Height. */
-    private int height = -1;
-    
+    private int                     height = -1;
+
     /** First column. */
-    private final int column1;
-    
+    private final int               column1;
+
     /** Second column. */
-    private final int column2;
-    
+    private final int               column2;
+
+    /** Values to include */
+    private final boolean           showSuppressedValues;
+
+    /** Values to include */
+    private final boolean           showNullValues;
+
     /** Statistics. */
     private final StatisticsBuilder statistics;
     
@@ -176,23 +182,27 @@ public class DensityData extends JHCData{
      * @param handle
      * @param column1
      * @param column2
+     * @param showSuppressedValues 
+     * @param showNullValues 
      */
-    public DensityData(DataHandle handle, int column1, int column2) {
+    public DensityData(DataHandle handle, int column1, int column2, boolean showSuppressedValues, boolean showNullValues) {
         this.statistics = handle.getStatistics();
         this.column1 = column1;
         this.column2 = column2;
+        this.showSuppressedValues = showSuppressedValues;
+        this.showNullValues = showNullValues;
     }
 
     @Override
     public JHCHeatmap getHeatmap(int width, int height) {
-        return new DensityHeatmap(statistics.getContingencyTable(column1, width, column2, height));
+        return new DensityHeatmap(statistics.getContingencyTable(column1, width, column2, height, showSuppressedValues, showNullValues));
     }
 
     @Override
     public int getHeight() {
         if (height == -1) {
             // Perform this process when called by the background thread
-            this.height = statistics.getDistinctValues(column2).length;    
+            this.height = statistics.getDistinctValues(column2, showSuppressedValues, showNullValues).length;    
         }
         return height;
     }
@@ -201,7 +211,7 @@ public class DensityData extends JHCData{
     public int getWidth() {
         if (width == -1) {
             // Perform this process when called by the background thread
-            this.width = statistics.getDistinctValues(column1).length;
+            this.width = statistics.getDistinctValues(column1, showSuppressedValues, showNullValues).length;
         }
         return width;
     }

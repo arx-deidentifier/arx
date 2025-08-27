@@ -63,11 +63,11 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
      * @param reset
      */
     public ViewStatisticsContingencyHeatmap(final Composite parent,
-                                  final Controller controller,
-                                  final ModelPart target,
-                                  final ModelPart reset) {
+                                            final Controller controller,
+                                            final ModelPart target,
+                                            final ModelPart reset) {
         
-        super(parent, controller, target, reset, true);
+        super(parent, controller, target, reset, true, true);
     }
 
     @Override
@@ -125,12 +125,17 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
     protected void doUpdate(AnalysisContextContingency context) {
         int column1 = context.handle.getColumnIndexOf(context.attribute1);
         int column2 = context.handle.getColumnIndexOf(context.attribute2);
-        jhc.setData(new DensityData(context.handle, column1, column2), new JHCConfiguration(context.attribute1,
-                                                                                            context.attribute2,
-                                                                                            MAX_SIZE,
-                                                                                            MAX_SIZE,
-                                                                                            gradient,
-                                                                                            layout));
+        jhc.setData(new DensityData(context.handle,
+                                    column1,
+                                    column2,
+                                    context.model.isShowSuppressedValues(),
+                                    context.model.isShowNullValues()),
+                    new JHCConfiguration(context.attribute1,
+                                         context.attribute2,
+                                         MAX_SIZE,
+                                         MAX_SIZE,
+                                         gradient,
+                                         layout));
 
     }
 
