@@ -26,6 +26,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.eclipse.swt.graphics.Point;
@@ -60,6 +61,9 @@ public class Main {
             // Make fall-back toolkit look like the native UI
             if (!isUnix()) { // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=341799
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } else {
+                // Enforce light theme on GTK
+                SWTUtil.fixGTKDarkTheme();
             }
         } catch (ClassNotFoundException | InstantiationException | 
                  IllegalAccessException | UnsupportedLookAndFeelException e) {

@@ -613,6 +613,35 @@ public class SWTUtil {
     }
 
     /**
+     * Enforces a light theme on Linux/GTK
+     */
+    public static void fixGTKDarkTheme() {
+
+        // If not on gtk
+        if (!"gtk".equals(SWT.getPlatform())) return;
+
+        try {
+
+            // Get GTK settings
+            Class<?> OS = Class.forName("org.eclipse.swt.internal.gtk.OS");
+            long settings = (long) OS.getMethod("gtk_settings_get_default").invoke(null);
+            if (settings == 0L) return;
+
+            // Turn off dark preference
+            byte[] darkKey = z("gtk-application-prefer-dark-theme");
+            OS.getMethod("g_object_set", long.class, byte[].class, boolean.class).invoke(null, settings, darkKey, false);
+
+            // Set theme to Adwaita:light
+            byte[] themeKey = z("gtk-theme-name");
+            byte[] adwaita = z("Adwaita:light");
+            OS.getMethod("g_object_set", long.class, byte[].class, byte[].class).invoke(null, settings, themeKey, adwaita);
+
+        } catch (Throwable ignore) {
+            // Ignore
+        }
+    }
+
+    /**
      * Fixes the application menu on OSX.
      * @param controller
      */
@@ -671,7 +700,7 @@ public class SWTUtil {
             return Resources.getMessage("PropertiesView.170");
         }
     }
-
+    
     /**
      * Returns a pretty string representing the given double
      * @param value
@@ -731,7 +760,7 @@ public class SWTUtil {
         }
         return String.valueOf(value);
     }
-    
+   
     /**
      * Are we running on an OSX system
      * @return
@@ -739,7 +768,7 @@ public class SWTUtil {
     public static boolean isMac() {
         return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
     }
-   
+    
     /**
      * Force redraw on control hierarchy
      * @param control
@@ -791,7 +820,7 @@ public class SWTUtil {
         }
         return val;
     }
-    
+
     /**
      * Fixes bugs on OSX when scrolling in tables
      * @param table
@@ -830,5 +859,15 @@ public class SWTUtil {
                 c.setEnabled(val);
             }
         }
-    } 
+    }
+
+    /**
+     * Make NUL-terminated string
+     * @param s
+     * @return
+     */
+    private static byte[] z(String s) {
+        byte[] bytes = (s + "\0").getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        return bytes;
+    }
 }
