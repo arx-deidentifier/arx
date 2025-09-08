@@ -68,7 +68,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             map.put(Granularity.HOUR_DAY_MONTH_YEAR, "dd.MM.yyyy-HH:00");
             map.put(Granularity.DAY_MONTH_YEAR, "dd.MM.yyyy");
             map.put(Granularity.WEEK_MONTH_YEAR, "W/MM.yyyy");
-            map.put(Granularity.WEEK_YEAR, "ww/yyyy");
+            map.put(Granularity.WEEK_YEAR, "ww/YYYY");
             map.put(Granularity.MONTH_YEAR, "MM/yyyy");
             map.put(Granularity.QUARTER_YEAR, "QQQ yyyy");
         }
@@ -183,7 +183,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         /**  Granularity */
         WEEK_MONTH_YEAR("W/MM.yyyy"),
         /**  Granularity */
-        WEEK_YEAR("ww/yyyy"),
+        WEEK_YEAR("ww/YYYY"),
         /**  Granularity */
         MONTH_YEAR("MM/yyyy"),
         /**  Granularity */
@@ -542,10 +542,10 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         if (_range == null) {
             return formatter.format(dateTime);
         } else {
-            int dateUnit = Integer.valueOf(formatter.format(dateTime));
+            int dateUnit = Integer.valueOf(formatter.format(dateTime)) - 1;
             int lower    = Integer.valueOf((dateUnit) / (_range))  * (_range);
             int upper    = lower + _range;
-            String outputDate = "[" + lower + ", " + upper + "[";
+            String outputDate = "[" + (lower+1) + ", " + (upper+1) + "[";
             return outputDate;
         }
     }
