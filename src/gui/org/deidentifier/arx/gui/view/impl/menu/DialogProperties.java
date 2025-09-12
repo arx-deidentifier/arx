@@ -233,7 +233,7 @@ public class DialogProperties implements IDialog {
         
         window.addGroup(Resources.getMessage("DialogProperties.7")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 20, 10) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
             protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
         
