@@ -47,13 +47,25 @@ public class GeneralizationHierarchy {
      * @param dictionary
      */
     public GeneralizationHierarchy(final String name,
-                                   final String[][] hierarchy,
+                                   String[][] hierarchy,
                                    final int dimension,
                                    final Dictionary dictionary) {
 
         // Check
-        if (hierarchy == null || hierarchy.length == 0) { 
+        if (hierarchy == null) {
             throw new RuntimeException("Empty generalization hierarchy for attribute '" + name + "'");
+        }
+        
+        // TODO: This is a hack
+        if (hierarchy.length == 0) {
+            // As we do not cleanly distinguish between a completely empty hierarchy
+            // and a hierarchy containing just an empty string ("") when exporting and
+            // saving data in ARX (which could be done by always quoting values...),
+            // we assume that an empty hierarchy is not actually empty, but contains 
+            // a single identity rule for the empty string.
+            // This prevents bugs in some rare cases (empty attributes in files) and
+            // shouldn't lead to any bigger problems.
+            hierarchy = new String[][] {{""}};
         }
 
         // Init

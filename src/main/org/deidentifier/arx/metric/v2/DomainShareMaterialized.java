@@ -59,6 +59,18 @@ public class DomainShareMaterialized implements DomainShare {
     public DomainShareMaterialized(String[][] rawHierarchy, 
                                    String[] encodedValues, 
                                    int[][] encodedHierarchy) {
+        
+        // TODO: This is a hack
+        if (rawHierarchy.length == 0) {
+            // As we do not cleanly distinguish between a completely empty hierarchy
+            // and a hierarchy containing just an empty string ("") when exporting and
+            // saving data in ARX (which could be done by always quoting values...),
+            // we assume that an empty hierarchy is not actually empty, but contains 
+            // a single identity rule for the empty string.
+            // This prevents bugs in some rare cases (empty attributes in files) and
+            // shouldn't lead to any bigger problems.
+            rawHierarchy = new String[][] {{""}};
+        }
 
         this.size = rawHierarchy.length;
         this.duplicates = new LongDoubleOpenHashMap();
