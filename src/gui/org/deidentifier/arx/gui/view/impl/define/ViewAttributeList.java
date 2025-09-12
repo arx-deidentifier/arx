@@ -530,6 +530,7 @@ public class ViewAttributeList implements IView {
         // No hierarchy
         if (hierarchy == null || 
             hierarchy.getHierarchy() == null ||
+            hierarchy.getHierarchy().length == 0 ||
             hierarchy.getHierarchy()[0] == null || 
             hierarchy.getHierarchy()[0].length == 0) {
             result = Resources.getMessage("ViewAttributeList.5"); //$NON-NLS-1$
