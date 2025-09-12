@@ -226,7 +226,8 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                         @SuppressWarnings("unchecked")
                         public String getText(Object element) {
                             Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
-                            return SWTUtil.getPrettyString(data.getSecond().getMissings().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                            double value = data.getSecond().getMissings().getValue(data.getFirst()) * 100d;
+                            return Double.isNaN(value) ? "N/A" : SWTUtil.getPrettyString(value) + "%"; //$NON-NLS-1$ //$NON-NLS-2$
                         }            
         });
         
@@ -239,7 +240,8 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                             @SuppressWarnings("unchecked")
                             public String getText(Object element) {
                                 Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
-                                return SWTUtil.getPrettyString(data.getSecond().getGeneralizationIntensity().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                                double value = data.getSecond().getGeneralizationIntensity().getValue(data.getFirst()) * 100d;
+                                return Double.isNaN(value) ? "N/A" : SWTUtil.getPrettyString(value) + "%"; //$NON-NLS-1$ //$NON-NLS-2$
                             }            
             });
             // Create column
@@ -249,7 +251,8 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                             @SuppressWarnings("unchecked")
                             public String getText(Object element) {
                                 Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
-                                return SWTUtil.getPrettyString(data.getSecond().getGranularity().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                                double value = data.getSecond().getGranularity().getValue(data.getFirst()) * 100d;
+                                return Double.isNaN(value) ? "N/A" : SWTUtil.getPrettyString(value) + "%"; //$NON-NLS-1$ //$NON-NLS-2$
                             }            
             });
             // Create column
@@ -259,7 +262,8 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                             @SuppressWarnings("unchecked")
                             public String getText(Object element) {
                                 Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
-                                return SWTUtil.getPrettyString(data.getSecond().getNonUniformEntropy().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                                double value = data.getSecond().getNonUniformEntropy().getValue(data.getFirst()) * 100d;
+                                return Double.isNaN(value) ? "N/A" : SWTUtil.getPrettyString(value) + "%"; //$NON-NLS-1$ //$NON-NLS-2$
                             }            
             });
             // Create column
@@ -269,7 +273,8 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                             @SuppressWarnings("unchecked")
                             public String getText(Object element) {
                                 Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
-                                return SWTUtil.getPrettyString(data.getSecond().getAttributeLevelSquaredError().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                                double value = data.getSecond().getAttributeLevelSquaredError().getValue(data.getFirst()) * 100d;
+                                return Double.isNaN(value) ? "N/A" : SWTUtil.getPrettyString(value) + "%"; //$NON-NLS-1$ //$NON-NLS-2$
                             }            
             });
         }
