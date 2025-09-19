@@ -509,7 +509,7 @@ public class ImportWizardPageExcel extends WizardPage {
             
             stream = new FileInputStream(comboLocation.getText());
             workbook = WorkbookFactory.create(stream);
-        } catch (InvalidFormatException e) {
+        } catch (IOException e) {
             throw new IOException(Resources.getMessage("ImportWizardPageExcel.14")); //$NON-NLS-1$
         } catch (IllegalArgumentException e) {
             throw new IOException(Resources.getMessage("ImportWizardPageExcel.14")); //$NON-NLS-1$
