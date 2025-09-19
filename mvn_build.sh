@@ -14,6 +14,14 @@ mvn install:install-file \
   -DgroupId=org.eclipse \
   -DartifactId=draw2d \
   -Dversion=3.10.100 \
+  -Dpackaging=jar \
+  -DgeneratePom=true
+
+mvn install:install-file \
+  -Dfile=lib/ant/smile/smile-1.3.1-java7.jar \
+  -DgroupId=com.github.haifengl \
+  -DartifactId=smile \
+  -Dversion=1.3.1 \
   -Dpackaging=jar
 
 OS=$(uname -s)
