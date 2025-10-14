@@ -7,11 +7,11 @@ name: pmd
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   schedule:
-    - cron: '25 21 * * 2'
+  - cron: '25 21 * * 2'
 
 permissions:
   contents: read
@@ -24,20 +24,26 @@ jobs:
       actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-      - name: Run PMD
-        id: pmd
-        uses: pmd/pmd-github-action@v2
-        with:
-          rulesets: 'ruleset.xml'
-          sourcePath: 'src/main'
-          analyzeModifiedFilesOnly: false
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: pmd-report.sarif
+    - uses: actions/checkout@v3
+    - uses: clonedSemicolon/setup-strace@v13
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Run PMD
+      id: pmd
+      uses: pmd/pmd-github-action@v2
+      with:
+        rulesets: 'ruleset.xml'
+        sourcePath: 'src/main'
+        analyzeModifiedFilesOnly: false
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: pmd-report.sarif
+    - name: Upload strace artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: strace-logs-${{ github.job }}-${{ matrix.flavor || 'lint' }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index || 0 }}
+        path: /home/runner/strace_logs/
