@@ -85,8 +85,11 @@ public abstract class DataHandle {
     /** The current registry. */
     protected DataRegistry                 registry         = null;
 
-    /** The current research subset. */
+    /** The current subset. */
     protected DataHandle                   subset           = null;
+
+    /** The current superset. */
+    protected DataHandle                   superset         = null;
     
     /**
      * Returns the name of the specified column.
@@ -539,6 +542,27 @@ public abstract class DataHandle {
     public abstract StatisticsBuilder getStatistics();
 
     /**
+     * Returns the subset if available, this handle if not
+     * @return
+     */
+    public DataHandle getSubsetHandle() {
+        return this.getView();
+    }
+
+    /**
+     * Returns the superset if available, this handle if not
+     * @return
+     */
+    public DataHandle getSupersetHandle() {
+        checkReleased();
+        if (superset == null) {
+            return this;
+        } else {
+            return superset;
+        }
+    }
+
+    /**
      * Returns the transformation .
      *
      * @return the transformation
@@ -590,7 +614,7 @@ public abstract class DataHandle {
         checkReleased();
         return registry.isOutlier(this, row);
     }
-
+    
     /**
      * Determines whether this handle is orphaned, i.e., should not be used anymore
      *
@@ -598,6 +622,22 @@ public abstract class DataHandle {
      */
     public boolean isReleased() {
         return registry == null;
+    }
+    
+    /**
+     * Returns whether a subset is available
+     * @return
+     */
+    public boolean isSubsetAvailable() {
+        return this.subset != null;
+    }
+
+    /**
+     * Returns whether a superset is available
+     * @return
+     */
+    public boolean isSupersetAvailable() {
+        return this.superset != null;
     }
 
     /**
@@ -609,14 +649,14 @@ public abstract class DataHandle {
     public boolean isSuppressed(int row) {
         return isOutlier(row);
     }
-    
+
     /**
      * Returns an iterator over the data.
      *
      * @return the iterator
      */
     public abstract Iterator<String[]> iterator();
-    
+
     /**
      * Releases this handle and all associated resources. If a input handle is released all associated results are released
      * as well.
@@ -1012,7 +1052,7 @@ public abstract class DataHandle {
      * @return the string
      */
     protected abstract String internalGetValue(int row, int col, boolean ignoreSuppression);
-
+    
     /**
      * Returns whether this is an outlier regarding the given columns. If no columns have been
      * specified, <code>true</code> will be returned.
@@ -1039,7 +1079,7 @@ public abstract class DataHandle {
     protected boolean isAnonymous() {
         return false;
     }
-
+    
     /**
      * Sets the current header
      * @param header
@@ -1052,6 +1092,7 @@ public abstract class DataHandle {
         }
     }
     
+    
     /**
      * Updates the registry.
      *
@@ -1060,13 +1101,22 @@ public abstract class DataHandle {
     protected void setRegistry(DataRegistry registry) {
         this.registry = registry;
     }
-
+    
     /**
      * Sets the subset.
      *
      * @param handle the new view
      */
-    protected void setView(DataHandle handle) {
+    protected void setSubset(DataHandle handle) {
         subset = handle;
+    }
+    
+    /**
+     * Sets the superset.
+     *
+     * @param handle the new view
+     */
+    protected void setSuperset(DataHandle handle) {
+        superset = handle;
     }
 }

@@ -119,6 +119,11 @@ public class ModelClassification implements Serializable {
      * @param configCurrent
      */
     public void setCurrentConfiguration(ARXClassificationConfiguration<?> configCurrent){
+        if (!(configCurrent == config ||
+              configCurrent == configNaiveBayes ||
+              configCurrent == configRandomForest )) {
+            throw new IllegalArgumentException("Unknown configuration object");
+        }
         this.configCurrent = configCurrent;
     }
     
@@ -143,7 +148,7 @@ public class ModelClassification implements Serializable {
         this.configRandomForest.setMaxRecords(t);
         this.setModified();
     }
-    
+
     /**
      * TODO: Ugly hack to set base-parameters for all methods
      * @param t
@@ -154,7 +159,7 @@ public class ModelClassification implements Serializable {
         this.configRandomForest.setNumFolds(t);
         this.setModified();
     }
-
+    
     /**
      * Sets a feature scaling function
      * @param attribute
@@ -173,6 +178,17 @@ public class ModelClassification implements Serializable {
         getLogisticRegressionConfiguration().setUnmodified();
         getNaiveBayesConfiguration().setUnmodified();
         getRandomForestConfiguration().setUnmodified();
+    }
+
+    /**
+     * TODO: Ugly hack to set base-parameters for all methods
+     * @param value
+     */
+    public void setUseTrainingTestSet(boolean value) {
+        this.config.setUseTrainingTestSet(value);
+        this.configNaiveBayes.setUseTrainingTestSet(value);
+        this.configRandomForest.setUseTrainingTestSet(value);
+        this.setModified();
     }
 
     /**

@@ -30,7 +30,18 @@ import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 public abstract class ARXClassificationConfiguration<T extends ARXClassificationConfiguration<?>> implements Serializable, Cloneable {
 
     /** SVUID */
-    private static final long serialVersionUID = -8751059558718015927L;
+    private static final long   serialVersionUID          = -8751059558718015927L;
+    /** Default value */
+    public static final boolean DEFAULT_DETERMINISTIC     = true;
+    /** Default value */
+    public static final int     DEFAULT_MAX_RECORDS       = 100000;
+    /** Default value */
+    public static final int     DEFAULT_NUMBER_OF_FOLDS   = 10;
+    /** Default value */
+    public static final int     DEFAULT_VECTOR_LENGTH     = 1000;
+    /** Default value */
+    public static final boolean DEFAULT_TEST_TRAINING_SET = false;
+    
     /**
      * Creates a new instance for logistic regression classifiers
      * @return
@@ -52,15 +63,6 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     public static ClassificationConfigurationRandomForest createRandomForest() {
         return ClassificationConfigurationRandomForest.create();
     }
-    
-    /** Default value */
-    public static final boolean DEFAULT_DETERMINISTIC   = true;
-    /** Default value */
-    public static final int     DEFAULT_MAX_RECORDS     = 100000;
-    /** Default value */
-    public static final int     DEFAULT_NUMBER_OF_FOLDS = 10;
-    /** Default value */
-    public static final int     DEFAULT_VECTOR_LENGTH   = 1000;
 
     /** Deterministic */
     private boolean             deterministic           = DEFAULT_DETERMINISTIC;
@@ -74,7 +76,9 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     private int                 vectorLength            = DEFAULT_VECTOR_LENGTH;
     /** Modified */
     private boolean             modified                = false;
-
+    /** Training/test set */
+    private Boolean             useTrainingTestSet      = false;
+    
     /**
      * Creates a new instance with default settings
      */
@@ -89,13 +93,15 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
      * @param numberOfFolds
      * @param seed
      * @param vectorLength
+     * @param useTrainingTestSet
      */
-    protected ARXClassificationConfiguration(boolean deterministic, int maxRecords, int numberOfFolds, long seed, int vectorLength) {
+    protected ARXClassificationConfiguration(boolean deterministic, int maxRecords, int numberOfFolds, long seed, int vectorLength, boolean useTrainingTestSet) {
         this.deterministic = deterministic;
         this.maxRecords = maxRecords;
         this.numberOfFolds = numberOfFolds;
         this.seed = seed;
         this.vectorLength = vectorLength;
+        this.useTrainingTestSet = useTrainingTestSet;
     }
 
     @Override
@@ -146,6 +152,17 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     }
     
     /**
+     * Returns whether to use a training and a test set
+     * @return
+     */
+    public boolean isUseTrainingTestSet() {
+        if (this.useTrainingTestSet == null) {
+            this.useTrainingTestSet = DEFAULT_TEST_TRAINING_SET;
+        }
+        return this.useTrainingTestSet;
+    }
+    
+    /**
      * Parses another configuration
      * @param config
      */
@@ -155,6 +172,7 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
         this.setNumFolds(config.numberOfFolds);
         this.setSeed((int)config.seed);
         this.setVectorLength(config.vectorLength);
+        this.setUseTrainingTestSet(config.useTrainingTestSet);
     }
     
     /**
@@ -228,6 +246,16 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
         this.modified = false;
     }
     
+    /**
+     * Sets whether to use a training and a test set
+     * @param value
+     */
+    @SuppressWarnings("unchecked")
+    public T setUseTrainingTestSet(boolean value) {
+        this.useTrainingTestSet = value;
+        return (T)this;
+    }
+
     /**
      * @param vectorLength the vectorLength to set
      */
