@@ -111,7 +111,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                                  final ModelPart target,
                                  final ModelPart reset) {
         
-        super(parent, controller, target, reset, false);
+        super(parent, controller, target, reset, false, false);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     

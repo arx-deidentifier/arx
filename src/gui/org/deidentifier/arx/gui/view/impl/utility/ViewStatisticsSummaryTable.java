@@ -65,7 +65,7 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextDi
                                      final ModelPart target,
                                      final ModelPart reset) {
         
-        super(parent, controller, target, reset, true);
+        super(parent, controller, target, reset, true, false);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     

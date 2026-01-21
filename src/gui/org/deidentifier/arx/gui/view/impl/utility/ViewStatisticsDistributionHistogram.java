@@ -85,7 +85,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                                                final ModelPart target,
                                                final ModelPart reset) {
         
-        super(parent, controller, target, reset, true);
+        super(parent, controller, target, reset, true, true);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
 
@@ -344,7 +344,10 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 long time = System.currentTimeMillis();
                 
                 // Perform work
-                this.distribution = builder.getFrequencyDistribution(column, hierarchy);
+                this.distribution = builder.getFrequencyDistribution(column,
+                                                                     hierarchy,
+                                                                     context.model.isShowSuppressedValues(),
+                                                                     context.model.isShowNullValues());
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){

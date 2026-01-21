@@ -195,10 +195,28 @@ public class StatisticsBuilderInterruptible { // NO_UCD
      * @return
      * @throws InterruptedException
      */
-    public StatisticsContingencyTable
-            getContingencyTable(int column1, int column2) throws InterruptedException {
+    public StatisticsContingencyTable getContingencyTable(int column1, int column2) throws InterruptedException {
+        return this.getContingencyTable(column1, column2, true, true);
+    }
+    
+    /**
+     * Returns a contingency table for the given columns. This method assumes
+     * that the order of string data items will be derived from the
+     * hierarchies provided in the data definition (if any)
+     *
+     * @param column1 The first column
+     * @param column2 The second column
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     * @throws InterruptedException
+     */
+    public StatisticsContingencyTable getContingencyTable( int column1,
+                                                           int column2,
+                                                           boolean includeSuppressedValues,
+                                                           boolean includeNullValues) throws InterruptedException {
         try {
-            return builder.getContingencyTable(column1, column2);
+            return builder.getContingencyTable(column1, column2, includeSuppressedValues, includeNullValues);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -329,6 +347,27 @@ public class StatisticsBuilderInterruptible { // NO_UCD
     }
 
     /**
+     * Returns the distinct set of data items from the given column.
+     * @param column
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     * @throws InterruptedException
+     */
+    public String[] getDistinctValues(int column, boolean includeSuppressedValues,
+                                      boolean includeNullValues) throws InterruptedException {
+        try {
+            return builder.getDistinctValues(column, includeSuppressedValues, includeNullValues);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+
+    /**
      * Returns an ordered list of the distinct set of data items from the given
      * column. This method assumes that the order of string data items can (and
      * should) be derived from the hierarchy provided in the data definition (if
@@ -385,11 +424,41 @@ public class StatisticsBuilderInterruptible { // NO_UCD
      * @return
      * @throws InterruptedException
      */
-    public String[]
-            getDistinctValuesOrdered(int column, Hierarchy hierarchy) throws InterruptedException {
+    public String[] getDistinctValuesOrdered(int column, Hierarchy hierarchy) throws InterruptedException {
         
         try {
             return builder.getDistinctValuesOrdered(column, hierarchy == null ? null : hierarchy.getHierarchy());
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+
+    /**
+     * Returns an ordered list of the distinct set of data items from the given
+     * column. This method assumes that the order of string data items can (and
+     * should) be derived from the provided hierarchy
+     *
+     * @param column The column
+     * @param hierarchy The hierarchy, may be null
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     * @throws InterruptedException
+     */
+    public String[] getDistinctValuesOrdered(int column,
+                                             Hierarchy hierarchy,
+                                             boolean includeSuppressedValues,
+                                             boolean includeNullValues) throws InterruptedException {
+        
+        try {
+            return builder.getDistinctValuesOrdered(column,
+                                                    hierarchy == null ? null : hierarchy.getHierarchy(),
+                                                    includeSuppressedValues,
+                                                    includeNullValues);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -405,8 +474,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
      * @return
      * @throws InterruptedException
      */
-    public StatisticsEquivalenceClasses
-            getEquivalenceClassStatistics() throws InterruptedException {
+    public StatisticsEquivalenceClasses getEquivalenceClassStatistics() throws InterruptedException {
         try {
             return builder.getEquivalenceClassStatistics();
         } catch (Exception e) {
@@ -476,6 +544,34 @@ public class StatisticsBuilderInterruptible { // NO_UCD
         
         try {
             return builder.getFrequencyDistribution(column, hierarchy == null ? null : hierarchy.getHierarchy());
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+
+    /**
+     * Returns a frequency distribution for the values in the given column. The order for string data items
+     * is derived from the provided hierarchy
+     * 
+     * @param column The column
+     * @param hierarchy The hierarchy, may be null
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, 
+                                                                    Hierarchy hierarchy,
+                                                                    boolean includeSuppressedValues,
+                                                                    boolean includeNullValues) throws InterruptedException {
+        try {
+            return builder.getFrequencyDistribution(column,
+                                                    hierarchy == null ? null : hierarchy.getHierarchy(),
+                                                    includeSuppressedValues,
+                                                    includeNullValues);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");

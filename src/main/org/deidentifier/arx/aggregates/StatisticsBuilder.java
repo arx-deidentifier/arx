@@ -130,7 +130,7 @@ public class StatisticsBuilder {
                                             interrupt, 
                                             progress);
     }
-    
+
     /**
      * Returns a contingency table for the given columns.
      *
@@ -146,9 +146,33 @@ public class StatisticsBuilder {
      */
     public StatisticsContingencyTable getContingencyTable(int column1, boolean orderFromDefinition1,
                                                           int column2, boolean orderFromDefinition2) {
+        return getContingencyTable(column1, orderFromDefinition1,
+                                   column2, orderFromDefinition2,
+                                   true, true);
+    }
+    /**
+     * Returns a contingency table for the given columns.
+     *
+     * @param column1 The first column
+     * @param orderFromDefinition1 Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
+     * @param column2 The second column
+     * @param orderFromDefinition2 Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public StatisticsContingencyTable getContingencyTable(int column1, boolean orderFromDefinition1,
+                                                          int column2, boolean orderFromDefinition2,
+                                                          boolean includeSuppressedValues,
+                                                          boolean includeNullValues) {
         
         return getContingencyTable(column1, getHierarchy(column1, orderFromDefinition1),
-                                   column2, getHierarchy(column2, orderFromDefinition2));
+                                   column2, getHierarchy(column2, orderFromDefinition2),
+                                   includeSuppressedValues, includeNullValues);
     }
     
     /**
@@ -162,6 +186,23 @@ public class StatisticsBuilder {
      */
     public StatisticsContingencyTable getContingencyTable(int column1, int column2) {
         return getContingencyTable(column1, true, column2, true);
+    }
+
+    /**
+     * Returns a contingency table for the given columns. This method assumes that the
+     * order of string data items will be derived from the hierarchies provided
+     * in the data definition (if any)
+     * 
+     * @param column1 The first column
+     * @param column2 The second column
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public StatisticsContingencyTable getContingencyTable(int column1, int column2,
+                                                          boolean includeSuppressedValues,
+                                                          boolean includeNullValues) {
+        return getContingencyTable(column1, true, column2, true, includeSuppressedValues, includeNullValues);
     }
     
     /**
@@ -189,6 +230,37 @@ public class StatisticsBuilder {
         return getContingencyTable(column1, size1, getHierarchy(column1, orderFromDefinition1),
                                    column2, size2, getHierarchy(column2, orderFromDefinition2));
     }
+
+    /**
+     * Returns a contingency table for the given columns.
+     *
+     * @param column1 The first column
+     * @param size1 The maximal size in this dimension
+     * @param orderFromDefinition1 Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
+     * @param column2 The second column
+     * @param size2 The maximal size in this dimension
+     * @param orderFromDefinition2 Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public StatisticsContingencyTable getContingencyTable(int column1,
+                                                          int size1,
+                                                          boolean orderFromDefinition1,
+                                                          int column2,
+                                                          int size2,
+                                                          boolean orderFromDefinition2,
+                                                          boolean includeSuppressedValues,
+                                                          boolean includeNullValues) {
+        
+        return getContingencyTable(column1, size1, getHierarchy(column1, orderFromDefinition1),
+                                   column2, size2, getHierarchy(column2, orderFromDefinition2),
+                                   includeSuppressedValues, includeNullValues);
+    }
     
     /**
      * Returns a contingency table for the given columns. This method assumes that the
@@ -207,7 +279,29 @@ public class StatisticsBuilder {
                                                           int size2) {
         return getContingencyTable(column1, size1, true, column2, size2, true);
     }
-    
+
+    /**
+     * Returns a contingency table for the given columns. This method assumes that the
+     * order of string data items can (and should) be derived from the hierarchies provided
+     * in the data definition (if any)
+     * 
+     * @param column1 The first column
+     * @param size1 The maximal size in this dimension
+     * @param column2 The second column
+     * @param size2 The maximal size in this dimension
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public StatisticsContingencyTable getContingencyTable(int column1,
+                                                          int size1,
+                                                          int column2,
+                                                          int size2,
+                                                          boolean includeSuppressedValues,
+                                                          boolean includeNullValues) {
+        return getContingencyTable(column1, size1, true, column2, size2, true, includeSuppressedValues, includeNullValues);
+    }
+
     /**
      * Returns a contingency table for the given columns. The order for string data items is derived
      * from the provided hierarchies
@@ -226,6 +320,33 @@ public class StatisticsBuilder {
                                                           int column2,
                                                           int size2,
                                                           String[][] hierarchy2) {
+        return getContingencyTable(column1, size1, hierarchy1,
+                                   column2, size2, hierarchy2,
+                                   true, true);
+    }
+        
+    /**
+     * Returns a contingency table for the given columns. The order for string data items is derived
+     * from the provided hierarchies
+     * 
+     * @param column1 The first column
+     * @param size1 The maximal size in this dimension
+     * @param hierarchy1 The hierarchy for the first column, may be null
+     * @param column2 The second column
+     * @param size2 The maximal size in this dimension
+     * @param hierarchy2 The hierarchy for the second column, may be null
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public StatisticsContingencyTable getContingencyTable(int column1,
+                                                          int size1,
+                                                          String[][] hierarchy1,
+                                                          int column2,
+                                                          int size2,
+                                                          String[][] hierarchy2,
+                                                          boolean includeSuppressedValues,
+                                                          boolean includeNullValues) {
         
         // Reset stop flag
         interrupt.value = false;
@@ -239,7 +360,9 @@ public class StatisticsBuilder {
         StatisticsContingencyTable table = getContingencyTable(column1,
                                                                hierarchy1,
                                                                column2,
-                                                               hierarchy2);
+                                                               hierarchy2,
+                                                               includeSuppressedValues,
+                                                               includeNullValues);
         
         // Check if suitable
         if (table.values1.length <= size1 &&
@@ -325,7 +448,7 @@ public class StatisticsBuilder {
         // Result result
         return new StatisticsContingencyTable(values1, values2, table.count, max, iterator);
     }
-    
+
     /**
      * Returns a contingency table for the given columns. The order for string data items is derived
      * from the provided hierarchies
@@ -340,13 +463,34 @@ public class StatisticsBuilder {
                                                           String[][] hierarchy1,
                                                           int column2,
                                                           String[][] hierarchy2) {
+        return getContingencyTable(column1, hierarchy1, column2, hierarchy2, true, true);
+    }
+    
+    /**
+     * Returns a contingency table for the given columns. The order for string data items is derived
+     * from the provided hierarchies
+     * 
+     * @param column1 The first column
+     * @param hierarchy1 The hierarchy for the first column, may be null
+     * @param column2 The second column
+     * @param hierarchy2 The hierarchy for the second column, may be null
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public StatisticsContingencyTable getContingencyTable(int column1,
+                                                          String[][] hierarchy1,
+                                                          int column2,
+                                                          String[][] hierarchy2,
+                                                          boolean includeSuppressedValues,
+                                                          boolean includeNullValues) {
         
         // Reset stop flag
         interrupt.value = false;
         
         // Init
-        String[] values1 = getDistinctValuesOrdered(column1, hierarchy1);
-        String[] values2 = getDistinctValuesOrdered(column2, hierarchy2);
+        String[] values1 = getDistinctValuesOrdered(column1, hierarchy1, includeSuppressedValues, includeNullValues);
+        String[] values2 = getDistinctValuesOrdered(column2, hierarchy2, includeSuppressedValues, includeNullValues);
         
         // Create maps of indexes
         Map<String, Integer> indexes1 = new HashMap<String, Integer>();
@@ -365,8 +509,11 @@ public class StatisticsBuilder {
         final Map<Entry, Integer> entries = new HashMap<Entry, Integer>();
         for (int row = 0; row < handle.getNumRows(); row++) {
             checkInterrupt();
-            int index1 = indexes1.get(handle.getValue(row, column1));
-            int index2 = indexes2.get(handle.getValue(row, column2));
+            Integer index1 = indexes1.get(handle.getValue(row, column1));
+            Integer index2 = indexes2.get(handle.getValue(row, column2));
+            if (index1 == null || index2 == null) {
+                continue;
+            }
             Entry entry = new Entry(index1, index2);
             Integer previous = entries.get(entry);
             int value = previous != null ? previous + 1 : 1;
@@ -421,12 +568,43 @@ public class StatisticsBuilder {
      * @return
      */
     public String[] getDistinctValues(int column) {
-        return this.handle.getDistinctValues(column, new InterruptHandler() {
+        return this.getDistinctValues(column, true, true);
+    }
+
+    /**
+     * Returns the distinct set of data items from the given column.
+     *
+     * @param column The column
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public String[] getDistinctValues(int column,
+                                      boolean includeSuppressedValues,
+                                      boolean includeNullValues) {
+        
+        // Get from handle
+        String[] list = this.handle.getDistinctValues(column, new InterruptHandler() {
             @Override
             public void checkInterrupt() {
                 StatisticsBuilder.this.checkInterrupt();
             }
         });
+
+        // Remove unwanted values
+        if (!includeNullValues || !includeSuppressedValues) {
+            List<String> result = new ArrayList<>();
+            for (String s : list) {
+                if ((includeSuppressedValues || !DataType.isAny(s)) &&
+                    (includeNullValues || !DataType.isNull(s))) {
+                    result.add(s);
+                }
+            }
+            list = result.toArray(new String[result.size()]);
+        }
+        
+        // Done
+        return list;
     }
     
     /**
@@ -453,7 +631,7 @@ public class StatisticsBuilder {
     public String[] getDistinctValuesOrdered(int column, boolean orderFromDefinition) {
         return getDistinctValuesOrdered(column, getHierarchy(column, orderFromDefinition));
     }
-    
+
     /**
      * Returns an ordered list of the distinct set of data items from the given column. This method assumes
      * that the order of string data items can (and should) be derived from the provided hierarchy
@@ -463,6 +641,23 @@ public class StatisticsBuilder {
      * @return
      */
     public String[] getDistinctValuesOrdered(int column, String[][] hierarchy) {
+        return this.getDistinctValuesOrdered(column, hierarchy, true, true);
+    }
+        
+    /**
+     * Returns an ordered list of the distinct set of data items from the given column. This method assumes
+     * that the order of string data items can (and should) be derived from the provided hierarchy
+     * 
+     * @param column The column
+     * @param hierarchy The hierarchy, may be null
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public String[] getDistinctValuesOrdered(int column, 
+                                             String[][] hierarchy, 
+                                             boolean includeSuppressedValues,
+                                             boolean includeNullValues) {
         
         // Reset stop flag
         interrupt.value = false;
@@ -556,6 +751,18 @@ public class StatisticsBuilder {
         }
         
         progress.value = 40;
+        
+        // Remove unwanted values
+        if (!includeNullValues || !includeSuppressedValues) {
+            List<String> result = new ArrayList<>();
+            for (String s : list) {
+                if ((includeSuppressedValues || !DataType.isAny(s)) &&
+                    (includeNullValues || !DataType.isNull(s))) {
+                    result.add(s);
+                }
+            }
+            list = result.toArray(new String[result.size()]);
+        }
         
         // Done
         return list;
@@ -667,13 +874,34 @@ public class StatisticsBuilder {
      * @param hierarchy The hierarchy, may be null
      * @return
      */
-    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, String[][] hierarchy) {
+    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, 
+                                                                    String[][] hierarchy) {
+        return getFrequencyDistribution(column, hierarchy, true, true);
+    }
+    
+    /**
+     * Returns a frequency distribution for the values in the given column. The order for string data items
+     * is derived from the provided hierarchy
+     * 
+     * @param column The column
+     * @param hierarchy The hierarchy, may be null
+     * @param includeSuppressedValues
+     * @param includeNullValues
+     * @return
+     */
+    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, 
+                                                                    String[][] hierarchy,
+                                                                    boolean includeSuppressedValues,
+                                                                    boolean includeNullValues) {
 
         // Reset stop flag
         interrupt.value = false;
         
         // Init
-        String[] values = getDistinctValuesOrdered(column, hierarchy);
+        String[] values = getDistinctValuesOrdered(column,
+                                                   hierarchy,
+                                                   includeSuppressedValues,
+                                                   includeNullValues);
         double[] frequencies = new double[values.length];
 
         // Create map of indexes
@@ -689,7 +917,10 @@ public class StatisticsBuilder {
         for (int row = 0; row < handle.getNumRows(); row++) {
             checkInterrupt();
             String value = handle.getValue(row, column);
-            frequencies[indexes.get(value)]++;
+            Integer index = indexes.get(value);
+            if (index != null) {
+                frequencies[index]++;
+            }
         }
         
         progress.value = 80;

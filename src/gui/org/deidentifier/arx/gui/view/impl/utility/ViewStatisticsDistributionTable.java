@@ -57,11 +57,11 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
      * @param reset
      */
     public ViewStatisticsDistributionTable(final Composite parent,
-                                     final Controller controller,
-                                     final ModelPart target,
-                                     final ModelPart reset) {
+                                           final Controller controller,
+                                           final ModelPart target,
+                                           final ModelPart reset) {
         
-        super(parent, controller, target, reset, true);
+        super(parent, controller, target, reset, true, true);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
@@ -180,7 +180,10 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                 long time = System.currentTimeMillis();
                 
                 // Perform work
-                this.distribution = builder.getFrequencyDistribution(column, hierarchy);
+                this.distribution = builder.getFrequencyDistribution(column, 
+                                                                     hierarchy,
+                                                                     context.model.isShowSuppressedValues(),
+                                                                     context.model.isShowNullValues());
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){

@@ -64,11 +64,11 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
      * @param reset
      */
     public ViewStatisticsContingencyTable(final Composite parent,
-                       final Controller controller,
-                       final ModelPart target,
-                       final ModelPart reset) {
+                                          final Controller controller,
+                                          final ModelPart target,
+                                          final ModelPart reset) {
         
-        super(parent, controller, target, reset, true);
+        super(parent, controller, target, reset, true, true);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
@@ -184,7 +184,10 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                 long time = System.currentTimeMillis();
                 
                 // Perform work
-                contingency = builder.getContingencyTable(column1, column2);
+                contingency = builder.getContingencyTable(column1,
+                                                          column2,
+                                                          context.model.isShowSuppressedValues(),
+                                                          context.model.isShowNullValues());
 
                 @SuppressWarnings("unchecked")
                 List<Integer>[] inputValues = new List[contingency.values1.length];
