@@ -33,13 +33,7 @@ import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.GeneticAlgorithm;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
 import org.deidentifier.arx.algorithm.LIGHTNINGTopDownAlgorithm;
-import org.deidentifier.arx.criteria.BasicBLikeness;
-import org.deidentifier.arx.criteria.DDisclosurePrivacy;
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
-import org.deidentifier.arx.criteria.EnhancedBLikeness;
-import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.criteria.LDiversity;
-import org.deidentifier.arx.criteria.TCloseness;
+import org.deidentifier.arx.criteria.*;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -209,6 +203,20 @@ public class ARXAnonymizer { // NO_UCD
         // Update registry
         DataHandle handle = data.getHandle();
         handle.getDefinition().materializeHierarchies(handle);
+
+        // Check constraints for sample-based criteria
+        if (config.isPrivacyModelSpecified(SampleBasedCriterion.class)) {
+            int nonMonotonic = 0;
+            for (SampleBasedCriterion c : config.getPrivacyModels(SampleBasedCriterion.class)) {
+                if (!c.isMonotonicWithSuppression()) {
+                    nonMonotonic++;
+                }
+            }
+            if (nonMonotonic > 1) {
+                throw new IllegalArgumentException("At most one sample-based privacy model that is not monotonic with suppression (e.g. population uniqueness) can be specified");
+            }
+        }
+
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
         

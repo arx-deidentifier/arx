@@ -1647,7 +1647,19 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Compute array of sample-based criteria
         this.bCriteria = new SampleBasedCriterion[0];
         if (this.isPrivacyModelSpecified(SampleBasedCriterion.class)) {
-            this.bCriteria = this.getPrivacyModels(SampleBasedCriterion.class).toArray(new SampleBasedCriterion[0]);
+            List<SampleBasedCriterion> monotonic = new ArrayList<SampleBasedCriterion>();
+            List<SampleBasedCriterion> nonMonotonic = new ArrayList<SampleBasedCriterion>();
+            for (SampleBasedCriterion criterion : this.getPrivacyModels(SampleBasedCriterion.class)) {
+                if (criterion.isMonotonicWithSuppression()) {
+                    monotonic.add(criterion);
+                } else {
+                    nonMonotonic.add(criterion);
+                }
+            }
+            // Enforce criteria that are not monotonic with suppression last, so that the
+            // additional suppression cannot violate criteria that have already been enforced
+            monotonic.addAll(nonMonotonic);
+            this.bCriteria = monotonic.toArray(new SampleBasedCriterion[0]);
         }
 
         // Compute snapshot length
