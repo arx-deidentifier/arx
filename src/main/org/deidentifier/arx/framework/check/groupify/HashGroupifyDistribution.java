@@ -236,6 +236,14 @@ public class HashGroupifyDistribution {
 
         // Start parameters
         int low = 0;
+        while (low < entries.length && !entries[low].isNotOutlier) {
+            // skip what earlier criteria suppressed
+            low++;
+        }
+        if (low == entries.length) {
+            // nothing left to suppress
+            return;
+        }
         int high = entries.length - 1;
         int mid = (low + high) / 2;
         State state = State.ABORT;
@@ -288,6 +296,10 @@ public class HashGroupifyDistribution {
      */
     public void suppressWhileNotFulfilledLinear(PrivacyCondition condition) {
         for (int i=0; i<entries.length; i++) {
+            if (!entries[i].isNotOutlier) {
+                // skip what earlier criteria suppressed
+                continue;
+            }
             State state = condition.isFulfilled(this);
             if (state == State.NOT_FULFILLED) {
                 suppressEntry(entries[i]);
@@ -326,6 +338,9 @@ public class HashGroupifyDistribution {
      * @param entry
      */
     private void suppressEntry(HashGroupifyEntry entry) {
+        if (!entry.isNotOutlier) {
+            throw new IllegalStateException("Internal error. Entry has already been suppressed.");
+        }
         entry.isNotOutlier = false;
         removeFromDistribution(entry.count);
         this.internalNumSuppressed += entry.count;

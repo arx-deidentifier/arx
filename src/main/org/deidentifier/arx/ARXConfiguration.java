@@ -18,15 +18,8 @@
 package org.deidentifier.arx;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.criteria.BasicBLikeness;
@@ -1648,6 +1641,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.bCriteria = new SampleBasedCriterion[0];
         if (this.isPrivacyModelSpecified(SampleBasedCriterion.class)) {
             this.bCriteria = this.getPrivacyModels(SampleBasedCriterion.class).toArray(new SampleBasedCriterion[0]);
+
+            // Enforce criteria that are not monotonic with suppression last
+            Arrays.sort(this.bCriteria, new Comparator<SampleBasedCriterion>() {
+                @Override
+                public int compare(SampleBasedCriterion a, SampleBasedCriterion b) {
+                    return Boolean.compare(b.isMonotonicWithSuppression(), a.isMonotonicWithSuppression());
+                }
+            });
         }
 
         // Compute snapshot length

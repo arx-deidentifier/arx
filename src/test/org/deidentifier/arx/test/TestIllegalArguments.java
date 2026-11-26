@@ -19,15 +19,14 @@ package org.deidentifier.arx.test;
 
 import java.io.IOException;
 
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.*;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.PopulationUniqueness;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -424,6 +423,29 @@ public class TestIllegalArguments extends AbstractTest {
             config.addPrivacyModel(new DistinctLDiversity("not-present", 3));
             config.setSuppressionLimit(1d);
             anonymizer.anonymize(data, config);
+        } catch (final IllegalArgumentException e) {
+            return;
+        }
+        Assert.fail();
+    }
+
+    /**
+     * Performs a test.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testMultipleNonMonotonicSampleBasedModels() throws IOException {
+
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+
+        try {
+            final ARXConfiguration config = ARXConfiguration.create();
+            ARXPopulationModel population = ARXPopulationModel.create(provider.getData().getHandle().getNumRows(), 0.1d);
+            config.addPrivacyModel(new PopulationUniqueness(0.05d, RiskModelPopulationUniqueness.PopulationUniquenessModel.DANKAR, population));
+            config.addPrivacyModel(new PopulationUniqueness(0.05d, RiskModelPopulationUniqueness.PopulationUniquenessModel.PITMAN, population));
+            config.setSuppressionLimit(1d);
+            anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
         }
