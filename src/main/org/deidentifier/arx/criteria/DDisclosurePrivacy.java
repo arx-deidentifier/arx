@@ -56,15 +56,22 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
 
     /** The original distribution. */
     private double[]            distribution;
+
+    /** Number of sensitive values with positive global frequency */
+    private int                 required;
     
     /**
      * Creates a new instance
      *
      * @param attribute
-     * @param delta
+     * @param delta Threshold, must be > 0. With delta = infinity, the model only requires
+     *              every sensitive value of the dataset to occur in every equivalence class.
      */
     public DDisclosurePrivacy(String attribute, double delta) {
-        super(attribute, false, false);
+        super(attribute, false, true);
+        if (!(delta > 0d)) {
+            throw new IllegalArgumentException("Delta (" + delta + ") must be > 0");
+        }
         this.d = delta;
     }
 
@@ -92,19 +99,17 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     public void initialize(DataManager manager, ARXConfiguration config) {
         super.initialize(manager, config);
         distribution = manager.getDistribution(attribute);
+        required = 0; // Number of sensitive values that occur in the dataset
+        for (double f : distribution) if (f > 0d) required++;
     }
 
     @Override
     public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
 
-        // For table t
-        // Foreach class c
-        //     Foreach sensitive value s
-        //         abs(log(freq(s, c)/freq(s, t)) < delta
-        
         // Init
         int[] buckets = entry.distributions[index].getBuckets();
         double count = entry.count;
+        int present = 0; // Number of distinct sensitive values in this class.
         
         // For each value in c
         for (int i = 0; i < buckets.length; i += 2) {
@@ -115,7 +120,14 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
                 if (value >= d) {
                     return false;
                 }
+                present++;
             }
+        }
+
+        // A value that is absent from the class has |log2(0)| = infinity, which never stratifies
+        // the strict inequality |log2(...)| < d of the definition, not even for d = infinity.
+        if (present < required) {
+            return false;
         }
 
         // check
