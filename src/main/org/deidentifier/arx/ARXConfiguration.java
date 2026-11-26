@@ -18,15 +18,8 @@
 package org.deidentifier.arx;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.criteria.BasicBLikeness;
@@ -1647,19 +1640,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Compute array of sample-based criteria
         this.bCriteria = new SampleBasedCriterion[0];
         if (this.isPrivacyModelSpecified(SampleBasedCriterion.class)) {
-            List<SampleBasedCriterion> monotonic = new ArrayList<SampleBasedCriterion>();
-            List<SampleBasedCriterion> nonMonotonic = new ArrayList<SampleBasedCriterion>();
-            for (SampleBasedCriterion criterion : this.getPrivacyModels(SampleBasedCriterion.class)) {
-                if (criterion.isMonotonicWithSuppression()) {
-                    monotonic.add(criterion);
-                } else {
-                    nonMonotonic.add(criterion);
+            this.bCriteria = this.getPrivacyModels(SampleBasedCriterion.class).toArray(new SampleBasedCriterion[0]);
+
+            // Enforce criteria that are not monotonic with suppression last
+            Arrays.sort(this.bCriteria, new Comparator<SampleBasedCriterion>() {
+                @Override
+                public int compare(SampleBasedCriterion a, SampleBasedCriterion b) {
+                    return Boolean.compare(b.isMonotonicWithSuppression(), a.isMonotonicWithSuppression());
                 }
-            }
-            // Enforce criteria that are not monotonic with suppression last, so that the
-            // additional suppression cannot violate criteria that have already been enforced
-            monotonic.addAll(nonMonotonic);
-            this.bCriteria = monotonic.toArray(new SampleBasedCriterion[0]);
+            });
         }
 
         // Compute snapshot length
